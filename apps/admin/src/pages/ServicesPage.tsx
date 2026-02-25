@@ -1,49 +1,36 @@
-import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import DataTable from "../components/DataTable";
-import FormModal from "../components/FormModal";
 
 const columns = [
-    { key: "id", label: "ID" },
+    { key: "id", label: "ID", width: "60px" },
     { key: "title", label: "Başlık" },
-    { key: "slug", label: "Slug" },
-    { key: "service_type", label: "Tür" },
-    { key: "price", label: "Fiyat", render: (v: number) => v ? `₺${v.toLocaleString("tr-TR")}` : "—" },
-];
-
-const formFields = [
-    { key: "title", label: "Başlık", required: true },
-    { key: "slug", label: "Slug", required: true },
-    { key: "description", label: "Açıklama", type: "textarea" as const },
-    { key: "content", label: "Detay (HTML)", type: "textarea" as const },
     {
-        key: "service_type", label: "Tür", type: "select" as const, options: [
-            { value: "analysis", label: "Analiz" },
-            { value: "setup", label: "Kurulum" },
-            { value: "audit", label: "Denetim" },
-            { value: "consulting", label: "Danışmanlık" },
-            { value: "training", label: "Eğitim" },
-        ]
+        key: "slug", label: "Slug", render: (v: string) => (
+            <code className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded">{v}</code>
+        )
     },
-    { key: "price", label: "Fiyat (₺)", type: "number" as const },
+    {
+        key: "service_type", label: "Tür", render: (v: string) => (
+            <span className="badge badge-muted capitalize">{v || "—"}</span>
+        )
+    },
 ];
 
 export default function ServicesPage() {
-    const [modal, setModal] = useState<{ mode: "add" | "edit"; data?: any } | null>(null);
-    const queryClient = useQueryClient();
+    const navigate = useNavigate();
     const { data, isLoading } = useQuery({ queryKey: ["services"], queryFn: () => api.getServices() });
-
-    const handleSubmit = async (formData: Record<string, any>) => {
-        if (modal?.mode === "edit" && modal.data?.id) await api.updateService(modal.data.id, formData);
-        else await api.createService(formData);
-        queryClient.invalidateQueries({ queryKey: ["services"] });
-    };
-
     return (
-        <>
-            <DataTable title="Hizmetler" icon="🔧" columns={columns} data={data?.data || []} isLoading={isLoading} onAdd={() => setModal({ mode: "add" })} onEdit={(row) => setModal({ mode: "edit", data: row })} addLabel="Yeni Hizmet" />
-            {modal && <FormModal title={modal.mode === "edit" ? "Hizmet Düzenle" : "Yeni Hizmet"} fields={formFields} initialData={modal.data} onSubmit={handleSubmit} onClose={() => setModal(null)} />}
-        </>
+        <DataTable
+            title="Hizmetler"
+            description="Sunulan hizmetler ve servisler"
+            columns={columns}
+            data={data?.data || []}
+            isLoading={isLoading}
+            onAdd={() => navigate("/services/new")}
+            onEdit={(row) => navigate(`/services/${row.id}/edit`)}
+            addLabel="Yeni Hizmet"
+        />
     );
 }

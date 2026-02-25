@@ -1,18 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
+import { ShoppingCart, TrendingUp } from "lucide-react";
 
-const paymentColors: Record<string, string> = {
-    pending: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-    paid: "bg-success/10 text-success border-success/20",
-    failed: "bg-destructive/10 text-destructive border-destructive/20",
-    refunded: "bg-muted text-muted-foreground border-border",
+const paymentStatus: Record<string, { label: string; cls: string }> = {
+    pending: { label: "Bekliyor", cls: "badge-warning" },
+    paid: { label: "Ödendi", cls: "badge-success" },
+    failed: { label: "Başarısız", cls: "badge-danger" },
+    refunded: { label: "İade", cls: "badge-muted" },
 };
-const statusColors: Record<string, string> = {
-    pending: "bg-yellow-500/10 text-yellow-400",
-    processing: "bg-accent/10 text-accent",
-    shipped: "bg-purple-500/10 text-purple-400",
-    delivered: "bg-success/10 text-success",
-    cancelled: "bg-destructive/10 text-destructive",
+
+const fulfillmentStatus: Record<string, { label: string; cls: string }> = {
+    pending: { label: "Hazırlanıyor", cls: "badge-warning" },
+    processing: { label: "İşlemde", cls: "badge-accent" },
+    shipped: { label: "Kargoda", cls: "badge-success" },
+    delivered: { label: "Teslim", cls: "badge-success" },
+    cancelled: { label: "İptal", cls: "badge-danger" },
 };
 
 export default function OrdersPage() {
@@ -21,65 +23,86 @@ export default function OrdersPage() {
         queryFn: () => api.getOrders(),
     });
 
+    const orders: any[] = data?.data || [];
+    const totalRevenue = orders
+        .filter((o) => o.payment_status === "paid")
+        .reduce((sum, o) => sum + (o.total_amount ?? 0), 0);
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+        );
+    }
+
     return (
         <div>
-            <div className="mb-6">
-                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                    🛒 Siparişler
-                </h1>
-                <p className="text-sm text-muted-foreground mt-1">E-ticaret siparişleri ve ödeme durumları</p>
+            <div className="page-header flex items-center justify-between">
+                <div>
+                    <h1 className="page-title">Siparişler</h1>
+                    <p className="page-subtitle">E-ticaret sipariş takibi</p>
+                </div>
+                {totalRevenue > 0 && (
+                    <div className="flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-1.5">
+                        <TrendingUp size={13} />
+                        <span className="font-medium">
+                            Toplam: ₺{totalRevenue.toLocaleString("tr-TR")}
+                        </span>
+                    </div>
+                )}
             </div>
 
-            {isLoading ? (
-                <div className="flex items-center justify-center py-20">
-                    <div className="animate-spin w-8 h-8 border-2 border-accent border-t-transparent rounded-full" />
-                </div>
-            ) : !data?.data?.length ? (
-                <div className="bg-card border border-border rounded-xl p-20 text-center">
-                    <p className="text-4xl mb-3">📭</p>
-                    <p className="text-sm text-muted-foreground">Henüz sipariş yok</p>
+            {orders.length === 0 ? (
+                <div className="card p-12 text-center">
+                    <ShoppingCart size={32} strokeWidth={1} className="text-slate-300 mx-auto mb-3" />
+                    <p className="text-sm text-slate-500">Henüz sipariş bulunmuyor</p>
                 </div>
             ) : (
-                <div className="bg-card border border-border rounded-xl overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b border-border">
-                                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase">Sipariş No</th>
-                                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase">Müşteri</th>
-                                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase">Toplam</th>
-                                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase">Ödeme</th>
-                                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase">Durum</th>
-                                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase">Tarih</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-border">
-                                {data.data.map((order: any) => (
-                                    <tr key={order.id} className="hover:bg-background/50 transition-colors">
-                                        <td className="px-4 py-3 text-sm font-mono text-card-foreground">{order.order_number}</td>
-                                        <td className="px-4 py-3 text-sm text-card-foreground">
-                                            <div>{order.customer_name}</div>
-                                            <div className="text-xs text-muted-foreground">{order.customer_email}</div>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm font-medium text-foreground">₺{order.total?.toLocaleString("tr-TR")}</td>
-                                        <td className="px-4 py-3">
-                                            <span className={`text-[10px] px-2 py-0.5 rounded-full border ${paymentColors[order.payment_status]}`}>
-                                                {order.payment_status}
+                <div className="table-wrap">
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th>Sipariş No</th>
+                                <th>Müşteri</th>
+                                <th>Tutar</th>
+                                <th>Ödeme</th>
+                                <th>Durum</th>
+                                <th>Tarih</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {orders.map((order) => {
+                                const ps = paymentStatus[order.payment_status] ?? { label: order.payment_status, cls: "badge-muted" };
+                                const fs = fulfillmentStatus[order.fulfillment_status] ?? { label: order.fulfillment_status, cls: "badge-muted" };
+                                return (
+                                    <tr key={order.id}>
+                                        <td>
+                                            <span className="font-mono text-xs font-medium text-slate-700">
+                                                #{order.order_number ?? order.id}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-3">
-                                            <span className={`text-[10px] px-2 py-0.5 rounded-full ${statusColors[order.status]}`}>
-                                                {order.status}
+                                        <td>
+                                            <div>
+                                                <p className="font-medium text-slate-800 text-sm">{order.customer_name}</p>
+                                                <p className="text-xs text-slate-400">{order.customer_email}</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span className="font-semibold text-slate-800">
+                                                ₺{(order.total_amount ?? 0).toLocaleString("tr-TR")}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-3 text-xs text-muted-foreground">
-                                            {new Date(order.created_at).toLocaleString("tr-TR")}
+                                        <td><span className={`badge ${ps.cls}`}>{ps.label}</span></td>
+                                        <td><span className={`badge ${fs.cls}`}>{fs.label}</span></td>
+                                        <td className="text-xs text-slate-400">
+                                            {new Date(order.created_at).toLocaleDateString("tr-TR")}
                                         </td>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                );
+                            })}
+                        </tbody>
+                    </table>
                 </div>
             )}
         </div>

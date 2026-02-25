@@ -1,41 +1,43 @@
+import { Users, Shield, Mail, Lock } from "lucide-react";
+
+const features = [
+    { icon: Shield, title: "Rol Yönetimi", desc: "super_admin, admin, editor rolleri" },
+    { icon: Mail, title: "Davet Sistemi", desc: "E-posta ile güvenli davet" },
+    { icon: Lock, title: "Şifre Sıfırlama", desc: "Güvenli token tabanlı reset" },
+    { icon: Users, title: "Erişim Kontrolü", desc: "Sayfa bazlı yetkilendirme" },
+];
+
 export default function UsersPage() {
     return (
         <div>
-            <div className="mb-6">
-                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                    👥 Kullanıcılar
-                </h1>
-                <p className="text-sm text-muted-foreground mt-1">
-                    Admin ve editör hesaplarının yönetimi
-                </p>
+            <div className="page-header">
+                <h1 className="page-title">Kullanıcılar</h1>
+                <p className="page-subtitle">Admin ve editör hesaplarının yönetimi</p>
             </div>
 
-            <div className="bg-card border border-border rounded-xl p-16 text-center">
-                <div className="inline-flex w-20 h-20 rounded-2xl bg-accent/10 border border-accent/20 items-center justify-center mb-5">
-                    <span className="text-4xl">👥</span>
+            <div className="card p-12 text-center max-w-2xl mx-auto">
+                <div className="w-16 h-16 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mx-auto mb-5">
+                    <Users size={28} className="text-indigo-500" strokeWidth={1.5} />
                 </div>
-                <h2 className="text-lg font-semibold text-foreground mb-2">
-                    Kullanıcı Yönetimi
-                </h2>
-                <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
-                    CMS paneline erişecek admin, editör ve moderatör hesaplarını
-                    buradan oluşturup yönetebileceksiniz. Rol tabanlı yetkilendirme
-                    ile her kullanıcının erişim seviyesi kontrol altında olacak.
+                <h2 className="text-base font-semibold text-slate-800 mb-2">Kullanıcı Yönetimi</h2>
+                <p className="text-sm text-slate-500 mb-6 leading-relaxed">
+                    CMS paneline erişecek admin, editör ve moderatör hesaplarını buradan oluşturup yönetebileceksiniz.
                 </p>
-                <div className="flex flex-wrap justify-center gap-2">
-                    <span className="text-xs px-3 py-1.5 rounded-full bg-muted text-muted-foreground">
-                        🔑 Rol Yönetimi
-                    </span>
-                    <span className="text-xs px-3 py-1.5 rounded-full bg-muted text-muted-foreground">
-                        ✉️ Davet Sistemi
-                    </span>
-                    <span className="text-xs px-3 py-1.5 rounded-full bg-muted text-muted-foreground">
-                        🔒 Şifre Sıfırlama
-                    </span>
+                <div className="grid grid-cols-2 gap-3 text-left">
+                    {features.map((f) => {
+                        const Icon = f.icon;
+                        return (
+                            <div key={f.title} className="flex items-start gap-2.5 p-3 rounded-lg bg-slate-50 border border-slate-100">
+                                <Icon size={15} className="text-indigo-400 flex-shrink-0 mt-0.5" strokeWidth={1.75} />
+                                <div>
+                                    <p className="text-xs font-medium text-slate-700">{f.title}</p>
+                                    <p className="text-xs text-slate-400 mt-0.5">{f.desc}</p>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
-                <p className="text-xs text-muted-foreground mt-6 italic">
-                    Faz 2.5'te aktif edilecek
-                </p>
+                <p className="text-xs text-slate-400 mt-6 italic">Faz 2.5'te aktif edilecek</p>
             </div>
         </div>
     );

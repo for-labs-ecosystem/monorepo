@@ -1,43 +1,37 @@
-import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import DataTable from "../components/DataTable";
-import FormModal from "../components/FormModal";
 
 const columns = [
-    { key: "id", label: "ID" },
+    { key: "id", label: "ID", width: "60px" },
     { key: "title", label: "Başlık" },
-    { key: "slug", label: "Slug" },
-    { key: "author", label: "Yazar" },
-];
-
-const formFields = [
-    { key: "title", label: "Başlık", required: true },
-    { key: "slug", label: "Slug", required: true },
-    { key: "excerpt", label: "Özet", type: "textarea" as const },
-    { key: "content", label: "İçerik (HTML)", type: "textarea" as const },
-    { key: "author", label: "Yazar" },
-    { key: "cover_image_url", label: "Kapak Görseli URL" },
+    {
+        key: "slug", label: "Slug", render: (v: string) => (
+            <code className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded">{v}</code>
+        )
+    },
+    { key: "author", label: "Yazar", render: (v: string) => v || <span className="text-slate-300">—</span> },
+    {
+        key: "excerpt", label: "Özet", render: (v: string) => (
+            <span className="text-slate-500 text-xs line-clamp-1">{v || "—"}</span>
+        )
+    },
 ];
 
 export default function ArticlesPage() {
-    const [modal, setModal] = useState<{ mode: "add" | "edit"; data?: any } | null>(null);
-    const queryClient = useQueryClient();
+    const navigate = useNavigate();
     const { data, isLoading } = useQuery({ queryKey: ["articles"], queryFn: () => api.getArticles() });
-
-    const handleSubmit = async (formData: Record<string, any>) => {
-        if (modal?.mode === "edit" && modal.data?.id) {
-            await api.updateArticle(modal.data.id, formData);
-        } else {
-            await api.createArticle(formData);
-        }
-        queryClient.invalidateQueries({ queryKey: ["articles"] });
-    };
-
     return (
-        <>
-            <DataTable title="Makaleler" icon="📝" columns={columns} data={data?.data || []} isLoading={isLoading} onAdd={() => setModal({ mode: "add" })} onEdit={(row) => setModal({ mode: "edit", data: row })} addLabel="Yeni Makale" />
-            {modal && <FormModal title={modal.mode === "edit" ? "Makale Düzenle" : "Yeni Makale"} fields={formFields} initialData={modal.data} onSubmit={handleSubmit} onClose={() => setModal(null)} />}
-        </>
+        <DataTable
+            title="Makaleler"
+            description="Blog ve bilgi bankası içerikleri"
+            columns={columns}
+            data={data?.data || []}
+            isLoading={isLoading}
+            onAdd={() => navigate("/articles/new")}
+            onEdit={(row) => navigate(`/articles/${row.id}/edit`)}
+            addLabel="Yeni Makale"
+        />
     );
 }
