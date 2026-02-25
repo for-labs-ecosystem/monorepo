@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { tenantMiddleware } from "./middleware/tenant";
 import { authMiddleware } from "./middleware/auth";
+import authRoute from "./routes/auth";
 import productsRoute from "./routes/products";
 import articlesRoute from "./routes/articles";
 import categoriesRoute from "./routes/categories";
@@ -54,6 +55,9 @@ app.get("/health", (c) => {
     });
 });
 
+// ─── Auth routes (NO tenant middleware — admin-global) ───
+app.route("/api/auth", authRoute);
+
 // ─── Tenant-scoped API routes ───
 const api = new Hono<{ Bindings: Bindings }>();
 api.use("*", tenantMiddleware);
@@ -71,7 +75,7 @@ api.route("/projects", projectsRoute);
 api.route("/inquiries", inquiriesRoute);
 api.route("/checkout", checkoutRoute);
 
-// Mount all API routes under /api
+// Mount all tenant-scoped routes under /api
 app.route("/api", api);
 
 // ─── 404 handler ───
