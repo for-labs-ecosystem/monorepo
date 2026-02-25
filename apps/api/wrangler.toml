@@ -9,6 +9,7 @@ compatibility_flags = ["nodejs_compat"]
 binding = "DB"
 database_name = "forlabs-cms-db"
 database_id = "affd3b85-8f03-4f40-b1c9-a6749235daf0"
+migrations_dir = "../../packages/db/src/migrations"
 
 # R2 Bucket binding
 [[r2_buckets]]

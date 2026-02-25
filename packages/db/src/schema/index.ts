@@ -1,11 +1,8 @@
 // @forlabs/db — Schema barrel export
-// Tables will be defined and exported from here as we build Faz 1
-
-// export * from "./sites";
-// export * from "./products";
-// export * from "./site-overrides";
-// export * from "./categories";
-// export * from "./articles";
-// export * from "./media";
-// export * from "./orders";
-// export * from "./users";
+export { sites } from "./sites";
+export { categories } from "./categories";
+export { products, siteProductOverrides } from "./products";
+export { articles, siteArticleOverrides } from "./articles";
+export { media } from "./media";
+export { orders } from "./orders";
+export { users } from "./users";

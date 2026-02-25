@@ -1,2 +1,2 @@
-// @forlabs/db — Drizzle schema barrel export
+// @forlabs/db — Main entry
 export * from "./schema";
