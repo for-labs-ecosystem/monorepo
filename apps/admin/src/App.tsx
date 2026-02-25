@@ -13,6 +13,9 @@ import CategoriesPage from "./pages/CategoriesPage";
 import InquiriesPage from "./pages/InquiriesPage";
 import OrdersPage from "./pages/OrdersPage";
 import SitesPage from "./pages/SitesPage";
+import MediaPage from "./pages/MediaPage";
+import UsersPage from "./pages/UsersPage";
+import SettingsPage from "./pages/SettingsPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -61,7 +64,10 @@ export default function App() {
               <Route path="categories" element={<CategoriesPage />} />
               <Route path="inquiries" element={<InquiriesPage />} />
               <Route path="orders" element={<OrdersPage />} />
+              <Route path="media" element={<MediaPage />} />
               <Route path="sites" element={<SitesPage />} />
+              <Route path="users" element={<UsersPage />} />
+              <Route path="settings" element={<SettingsPage />} />
             </Route>
           </Routes>
         </AuthProvider>

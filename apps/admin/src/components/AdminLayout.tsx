@@ -1,17 +1,40 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
-const navItems = [
-    { to: "/", label: "Dashboard", icon: "📊" },
-    { to: "/products", label: "Ürünler", icon: "📦" },
-    { to: "/articles", label: "Makaleler", icon: "📝" },
-    { to: "/services", label: "Hizmetler", icon: "🔧" },
-    { to: "/pages", label: "Sayfalar", icon: "📄" },
-    { to: "/projects", label: "Projeler", icon: "🏗️" },
-    { to: "/categories", label: "Kategoriler", icon: "🏷️" },
-    { to: "/inquiries", label: "Talepler", icon: "💬" },
-    { to: "/orders", label: "Siparişler", icon: "🛒" },
-    { to: "/sites", label: "Siteler", icon: "🌐" },
+const navSections = [
+    {
+        label: null,
+        items: [
+            { to: "/", label: "Dashboard", icon: "📊" },
+        ],
+    },
+    {
+        label: "İÇERİK",
+        items: [
+            { to: "/products", label: "Ürünler", icon: "📦" },
+            { to: "/articles", label: "Makaleler", icon: "📝" },
+            { to: "/services", label: "Hizmetler", icon: "🔧" },
+            { to: "/pages", label: "Sayfalar", icon: "📄" },
+            { to: "/projects", label: "Projeler", icon: "🏗️" },
+            { to: "/categories", label: "Kategoriler", icon: "🏷️" },
+            { to: "/media", label: "Medya", icon: "🖼️" },
+        ],
+    },
+    {
+        label: "TİCARET",
+        items: [
+            { to: "/inquiries", label: "Talepler", icon: "💬" },
+            { to: "/orders", label: "Siparişler", icon: "🛒" },
+        ],
+    },
+    {
+        label: "SİSTEM",
+        items: [
+            { to: "/sites", label: "Siteler", icon: "🌐" },
+            { to: "/users", label: "Kullanıcılar", icon: "👥" },
+            { to: "/settings", label: "Ayarlar", icon: "⚙️" },
+        ],
+    },
 ];
 
 export default function AdminLayout() {
@@ -42,25 +65,34 @@ export default function AdminLayout() {
 
                 {/* Navigation */}
                 <nav className="flex-1 overflow-y-auto py-4 px-3">
-                    <ul className="space-y-1">
-                        {navItems.map((item) => (
-                            <li key={item.to}>
-                                <NavLink
-                                    to={item.to}
-                                    end={item.to === "/"}
-                                    className={({ isActive }) =>
-                                        `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${isActive
-                                            ? "bg-accent/15 text-accent font-medium"
-                                            : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-foreground"
-                                        }`
-                                    }
-                                >
-                                    <span className="text-base">{item.icon}</span>
-                                    <span>{item.label}</span>
-                                </NavLink>
-                            </li>
-                        ))}
-                    </ul>
+                    {navSections.map((section, si) => (
+                        <div key={si} className={si > 0 ? "mt-5" : ""}>
+                            {section.label && (
+                                <p className="px-3 mb-2 text-[10px] font-semibold tracking-widest text-muted-foreground/60 uppercase">
+                                    {section.label}
+                                </p>
+                            )}
+                            <ul className="space-y-1">
+                                {section.items.map((item) => (
+                                    <li key={item.to}>
+                                        <NavLink
+                                            to={item.to}
+                                            end={item.to === "/"}
+                                            className={({ isActive }) =>
+                                                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${isActive
+                                                    ? "bg-accent/15 text-accent font-medium"
+                                                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-foreground"
+                                                }`
+                                            }
+                                        >
+                                            <span className="text-base">{item.icon}</span>
+                                            <span>{item.label}</span>
+                                        </NavLink>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
                 </nav>
 
                 {/* User section */}
