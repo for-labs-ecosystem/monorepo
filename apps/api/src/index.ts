@@ -7,11 +7,18 @@ import productsRoute from "./routes/products";
 import articlesRoute from "./routes/articles";
 import categoriesRoute from "./routes/categories";
 import sitesRoute from "./routes/sites";
+import servicesRoute from "./routes/services";
+import pagesRoute from "./routes/pages";
+import projectsRoute from "./routes/projects";
+import inquiriesRoute from "./routes/inquiries";
+import checkoutRoute from "./routes/checkout";
 
 type Bindings = {
     DB: D1Database;
     MEDIA: R2Bucket;
     ENVIRONMENT: string;
+    IYZICO_API_KEY?: string;
+    IYZICO_SECRET_KEY?: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -26,6 +33,12 @@ app.use(
             "http://localhost:5174",
             "https://admin.for-labs.com",
             "https://for-labs.com",
+            "https://atagotr.com",
+            "https://gidakimya.com",
+            "https://labkurulum.com",
+            "https://gidatest.com",
+            "https://alerjen.net",
+            "https://hijyenkontrol.com",
         ],
         allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
         allowHeaders: ["Content-Type", "Authorization"],
@@ -45,11 +58,18 @@ app.get("/health", (c) => {
 const api = new Hono<{ Bindings: Bindings }>();
 api.use("*", tenantMiddleware);
 
-// Public routes (read-only, no auth needed)
+// Content routes (CRUD + Override)
 api.route("/products", productsRoute);
 api.route("/articles", articlesRoute);
 api.route("/categories", categoriesRoute);
 api.route("/sites", sitesRoute);
+api.route("/services", servicesRoute);
+api.route("/pages", pagesRoute);
+api.route("/projects", projectsRoute);
+
+// Forms & Commerce
+api.route("/inquiries", inquiriesRoute);
+api.route("/checkout", checkoutRoute);
 
 // Mount all API routes under /api
 app.route("/api", api);
