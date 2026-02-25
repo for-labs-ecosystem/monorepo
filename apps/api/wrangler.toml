@@ -1,0 +1,20 @@
+# Worker name follows the forlabs- prefix convention
+name = "forlabs-api-worker"
+main = "src/index.ts"
+compatibility_date = "2025-02-20"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 Database binding — ID will be filled after `wrangler d1 create`
+[[d1_databases]]
+binding = "DB"
+database_name = "forlabs-cms-db"
+database_id = "affd3b85-8f03-4f40-b1c9-a6749235daf0"
+
+# R2 Bucket binding
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "forlabs-media-bucket"
+
+# Environment variables (secrets go via `wrangler secret put`)
+[vars]
+ENVIRONMENT = "development"
