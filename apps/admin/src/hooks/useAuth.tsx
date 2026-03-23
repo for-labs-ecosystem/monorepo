@@ -10,14 +10,16 @@ import { api } from "../lib/api";
 interface User {
     id: number;
     email: string;
-    name: string;
+    name: string | null;
+    avatar_url: string | null;
     role: string;
 }
 
 interface AuthContextType {
     user: User | null;
     isLoading: boolean;
-    login: (email: string, password: string) => Promise<void>;
+    loginWithGoogle: () => Promise<void>;
+    handleGoogleCallback: (code: string) => Promise<void>;
     logout: () => void;
 }
 
@@ -28,23 +30,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const token = api.getToken();
-        if (token) {
-            api
-                .me()
-                .then((res) => setUser(res.data))
-                .catch(() => {
-                    api.setToken(null);
-                    setUser(null);
-                })
-                .finally(() => setIsLoading(false));
-        } else {
-            setIsLoading(false);
-        }
+        let cancelled = false;
+        const init = async () => {
+            const token = api.getToken();
+            if (!token) return;
+            try {
+                const res = await api.me();
+                if (!cancelled) setUser(res.data);
+            } catch {
+                if (!cancelled) { api.setToken(null); setUser(null); }
+            }
+        };
+        init().finally(() => { if (!cancelled) setIsLoading(false); });
+        return () => { cancelled = true; };
     }, []);
 
-    const login = async (email: string, password: string) => {
-        const res = await api.login(email, password);
+    const loginWithGoogle = async () => {
+        const res = await api.getGoogleAuthUrl();
+        window.location.href = res.data.url;
+    };
+
+    const handleGoogleCallback = async (code: string) => {
+        const redirectUri = `${window.location.origin}/login/callback`;
+        const res = await api.googleCallback(code, redirectUri);
         api.setToken(res.data.token);
         setUser(res.data.user);
     };
@@ -55,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+        <AuthContext.Provider value={{ user, isLoading, loginWithGoogle, handleGoogleCallback, logout }}>
             {children}
         </AuthContext.Provider>
     );

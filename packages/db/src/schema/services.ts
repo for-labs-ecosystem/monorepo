@@ -12,13 +12,24 @@ export const services = sqliteTable("services", {
     id: integer("id").primaryKey({ autoIncrement: true }),
     slug: text("slug").notNull().unique(),
     title: text("title").notNull(),
+    title_en: text("title_en"),
     description: text("description"),
+    description_en: text("description_en"),
     // Detailed content (HTML)
     content: text("content"),
+    content_en: text("content_en"),
     // Service specs/scope as JSON
     specs: text("specs"),
     price: real("price"),
     currency: text("currency").notNull().default("TRY"),
+    // ─── Tags & Arrays ───
+    tags: text("tags"),
+
+    // ─── SEO ───
+    meta_title: text("meta_title"),
+    meta_description: text("meta_description"),
+    canonical_url: text("canonical_url"),
+
     // "analysis" | "setup" | "audit" | "consulting" | "training"
     service_type: text("service_type"),
     category_id: integer("category_id").references(() => categories.id),
@@ -48,13 +59,25 @@ export const siteServiceOverrides = sqliteTable(
             .references(() => services.id),
         // ─── Overridable fields (all nullable) ───
         title: text("title"),
+        title_en: text("title_en"),
         description: text("description"),
+        description_en: text("description_en"),
         content: text("content"),
+        content_en: text("content_en"),
         specs: text("specs"),
         price: real("price"),
         currency: text("currency"),
         image_url: text("image_url"),
         gallery: text("gallery"),
+
+        // ─── Tags & Arrays (Overridable) ───
+        tags: text("tags"),
+
+        // ─── SEO (Overridable) ───
+        meta_title: text("meta_title"),
+        meta_description: text("meta_description"),
+        canonical_url: text("canonical_url"),
+
         // ─── Site-specific controls ───
         is_visible: integer("is_visible", { mode: "boolean" }).notNull().default(true),
         is_featured: integer("is_featured", { mode: "boolean" }).notNull().default(false),

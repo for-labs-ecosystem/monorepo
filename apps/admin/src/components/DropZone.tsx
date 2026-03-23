@@ -61,7 +61,7 @@ export default function DropZone({
         return (
             <div className="relative rounded-xl border-2 border-indigo-200 bg-indigo-50/40 overflow-hidden group">
                 <div className="flex items-center gap-3 p-4">
-                    <div className="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <div className="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center shrink-0 overflow-hidden">
                         {value.match(/\.(png|jpg|jpeg|webp|gif|svg)$/i) ? (
                             <img src={value} alt="" className="w-full h-full object-cover" />
                         ) : (

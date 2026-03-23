@@ -9,14 +9,15 @@
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {
-        "hono": "^4.7.0",
-        "drizzle-orm": "^0.39.0",
         "@forlabs/db": "*",
-        "@forlabs/shared": "*"
+        "@forlabs/shared": "*",
+        "drizzle-orm": "^0.39.0",
+        "google-auth-library": "^10.6.1",
+        "hono": "^4.7.0"
     },
     "devDependencies": {
-        "wrangler": "^4.0.0",
         "@cloudflare/workers-types": "^4.20250214.0",
-        "typescript": "^5.7.0"
+        "typescript": "^5.7.0",
+        "wrangler": "^4.0.0"
     }
 }

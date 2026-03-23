@@ -3,23 +3,22 @@ import { sql } from "drizzle-orm";
 
 /**
  * Admin users for the CMS panel.
- * Passwords are hashed (bcrypt or argon2 via Web Crypto API).
+ * Authentication is Google OAuth only — NO passwords stored.
+ * Users must be pre-authorized (email added to table) before they can log in.
  */
 export const users = sqliteTable("users", {
     id: integer("id").primaryKey({ autoIncrement: true }),
     email: text("email").notNull().unique(),
-    password_hash: text("password_hash").notNull(),
-    name: text("name").notNull(),
+    name: text("name"),
+    avatar_url: text("avatar_url"),
     role: text("role", {
         enum: ["super_admin", "admin", "editor"],
     })
         .notNull()
         .default("editor"),
     is_active: integer("is_active", { mode: "boolean" }).notNull().default(true),
+    last_login: text("last_login"),
     created_at: text("created_at")
-        .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`),
-    updated_at: text("updated_at")
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`),
 });

@@ -16,6 +16,23 @@ migrations_dir = "../../packages/db/src/migrations"
 binding = "MEDIA"
 bucket_name = "forlabs-media-bucket"
 
-# Environment variables (secrets go via `wrangler secret put`)
+# ─── Secrets (set via `wrangler secret put`) ───
+#   wrangler secret put GOOGLE_CLIENT_ID
+#   wrangler secret put GOOGLE_CLIENT_SECRET
+#   wrangler secret put JWT_SECRET
+#   wrangler secret put RESEND_API_KEY
+#   wrangler secret put IYZICO_API_KEY
+#   wrangler secret put IYZICO_SECRET_KEY
+
+# ─── Production vars ───
 [vars]
-ENVIRONMENT = "development"
+ENVIRONMENT = "production"
+GOOGLE_REDIRECT_URI = "https://admin.for-labs.com/login/callback"
+
+# Local dev overrides go in .dev.vars (gitignored):
+#   ENVIRONMENT=development
+#   GOOGLE_REDIRECT_URI=http://localhost:5173/login/callback
+#   GOOGLE_CLIENT_ID=...
+#   GOOGLE_CLIENT_SECRET=...
+#   JWT_SECRET=...
+#   etc.

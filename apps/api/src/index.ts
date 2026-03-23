@@ -13,6 +13,15 @@ import pagesRoute from "./routes/pages";
 import projectsRoute from "./routes/projects";
 import inquiriesRoute from "./routes/inquiries";
 import checkoutRoute from "./routes/checkout";
+import mediaRoute from "./routes/media";
+import navigationsRoute from "./routes/navigations";
+import ordersRoute from "./routes/orders";
+import usersRoute from "./routes/users";
+import settingsRoute from "./routes/settings";
+import matchRoute from "./routes/match";
+import membersRoute from "./routes/members";
+import memberAuthRoute from "./routes/auth-members";
+import wizardStepsRoute from "./routes/wizard-steps";
 
 type Bindings = {
     DB: D1Database;
@@ -20,6 +29,11 @@ type Bindings = {
     ENVIRONMENT: string;
     IYZICO_API_KEY?: string;
     IYZICO_SECRET_KEY?: string;
+    GOOGLE_CLIENT_ID?: string;
+    GOOGLE_CLIENT_SECRET?: string;
+    GOOGLE_REDIRECT_URI?: string;
+    JWT_SECRET?: string;
+    RESEND_API_KEY?: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -32,6 +46,7 @@ app.use(
         origin: [
             "http://localhost:5173",
             "http://localhost:5174",
+            "http://localhost:5175",
             "https://admin.for-labs.com",
             "https://for-labs.com",
             "https://atagotr.com",
@@ -58,6 +73,28 @@ app.get("/health", (c) => {
 // ─── Auth routes (NO tenant middleware — admin-global) ───
 app.route("/api/auth", authRoute);
 
+// ─── Users management (NO tenant middleware — admin-global, super_admin only) ───
+app.route("/api/users", usersRoute);
+
+// ─── Settings (NO tenant middleware — global singleton config) ───
+app.route("/api/settings", settingsRoute);
+
+// ─── R2 media serve (NO tenant middleware — public asset serving) ───
+app.get("/api/media/serve/*", async (c) => {
+    const key = c.req.path.replace("/api/media/serve/", "");
+    if (!key) return c.json({ error: "No key" }, 400);
+
+    const object = await c.env.MEDIA.get(key);
+    if (!object) return c.json({ error: "Not found" }, 404);
+
+    const headers = new Headers();
+    headers.set("Content-Type", object.httpMetadata?.contentType || "application/octet-stream");
+    headers.set("Cache-Control", "public, max-age=31536000, immutable");
+    headers.set("Content-Disposition", "inline");
+
+    return new Response(object.body, { headers });
+});
+
 // ─── Tenant-scoped API routes ───
 const api = new Hono<{ Bindings: Bindings }>();
 api.use("*", tenantMiddleware);
@@ -70,10 +107,19 @@ api.route("/sites", sitesRoute);
 api.route("/services", servicesRoute);
 api.route("/pages", pagesRoute);
 api.route("/projects", projectsRoute);
+api.route("/navigations", navigationsRoute);
+
+// Intelligence Platform
+api.route("/match", matchRoute);
+api.route("/wizard-steps", wizardStepsRoute);
 
 // Forms & Commerce
 api.route("/inquiries", inquiriesRoute);
 api.route("/checkout", checkoutRoute);
+api.route("/orders", ordersRoute);
+api.route("/members", membersRoute);
+api.route("/member-auth", memberAuthRoute);
+api.route("/media", mediaRoute);
 
 // Mount all tenant-scoped routes under /api
 app.route("/api", api);

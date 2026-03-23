@@ -1,9 +1,21 @@
 import { Hono } from "hono";
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, inArray } from "drizzle-orm";
 import { orders, products, sites } from "@forlabs/db/schema";
 import { createDb } from "../lib/db";
 
-const checkoutRoute = new Hono();
+type Bindings = {
+    DB: D1Database;
+    IYZICO_API_KEY?: string;
+    IYZICO_SECRET_KEY?: string;
+};
+
+type Variables = {
+    siteId: number;
+    site: any;
+    user?: any;
+};
+
+const checkoutRoute = new Hono<{ Bindings: Bindings, Variables: Variables }>();
 
 /**
  * POST /api/checkout/initialize
@@ -32,6 +44,26 @@ checkoutRoute.post("/initialize", async (c) => {
         return c.json({ error: "E-commerce is not enabled for this site" }, 403);
     }
 
+    const ecommerceConfig = site.ecommerce_config ? JSON.parse(site.ecommerce_config) : {};
+    const taxRate = Number(ecommerceConfig.vat_rate || 20) / 100;
+    const currency = ecommerceConfig.currency || "TRY";
+    const iyzicoApiKey = ecommerceConfig.iyzico_api_key;
+    const iyzicoSecretKey = ecommerceConfig.iyzico_secret_key;
+    const iyzicoBaseUrl = (ecommerceConfig.iyzico_base_url || "https://sandbox-api.iyzipay.com").replace(/\/$/, "");
+
+    // Shipping rules
+    const flatShippingCost = Number(ecommerceConfig.flat_shipping_cost) || 0;
+    const freeShippingThreshold = Number(ecommerceConfig.free_shipping_threshold) || 0;
+    // By default guest checkout is true, if explicitly false, enforce authentication
+    const allowGuestCheckout = ecommerceConfig.allow_guest_checkout !== false;
+
+    // In a fully developed auth flow, c.get("user") would exist if logged in. 
+    // For now we enforce the rule explicitly.
+    if (!allowGuestCheckout && !c.get("user")) {
+        // Return 401 instead of 403 so frontend knows to prompt login
+        return c.json({ error: "Bu sitede misafir alışverişi kapalıdır. Lütfen giriş yapın." }, 401);
+    }
+
     const body = await c.req.json();
 
     // Validate required fields
@@ -53,12 +85,17 @@ checkoutRoute.post("/initialize", async (c) => {
 
     let subtotal = 0;
 
+    // Batch fetch all products in one query instead of N+1
+    const productIds = body.items.map((item: any) => Number(item.product_id));
+    const dbProducts = await db
+        .select()
+        .from(products)
+        .where(inArray(products.id, productIds));
+
+    const productMap = new Map(dbProducts.map(p => [p.id, p]));
+
     for (const item of body.items) {
-        const product = await db
-            .select()
-            .from(products)
-            .where(eq(products.id, item.product_id))
-            .get();
+        const product = productMap.get(Number(item.product_id));
 
         if (!product) {
             return c.json(
@@ -87,8 +124,24 @@ checkoutRoute.post("/initialize", async (c) => {
         subtotal += lineTotal;
     }
 
-    // Calculate tax (KDV 20%)
-    const taxRate = 0.20;
+    // ─── Calculate Shipping ───
+    let shippingCost = 0;
+    if (flatShippingCost > 0) {
+        if (freeShippingThreshold === 0 || subtotal < freeShippingThreshold) {
+            shippingCost = flatShippingCost;
+
+            // Add shipping as a line item so Iyzico accepts it and user gets a receipt
+            orderItems.push({
+                product_id: 0, // Special ID for shipping
+                title: "Kargo Ücreti",
+                qty: 1,
+                unit_price: shippingCost,
+            });
+            subtotal += shippingCost;
+        }
+    }
+
+    // Calculate tax
     const tax = Math.round(subtotal * taxRate * 100) / 100;
     const total = Math.round((subtotal + tax) * 100) / 100;
 
@@ -104,12 +157,17 @@ checkoutRoute.post("/initialize", async (c) => {
             customer_name: body.customer_name,
             customer_email: body.customer_email,
             customer_phone: body.customer_phone || null,
+            customer_type: body.customer_type || "individual",
+            company_name: body.company_name || null,
+            tax_office: body.tax_office || null,
+            tax_number: body.tax_number || null,
             shipping_address: body.shipping_address || null,
+            billing_address: body.billing_address || null,
             items: JSON.stringify(orderItems),
             subtotal,
             tax,
             total,
-            currency: "TRY",
+            currency: currency,
             payment_status: "pending",
             status: "pending",
         })
@@ -117,12 +175,6 @@ checkoutRoute.post("/initialize", async (c) => {
         .get();
 
     // ─── Iyzico Hosted Checkout Form Request ───
-    // In production, this calls the Iyzico API:
-    //   POST https://api.iyzipay.com/payment/iyzipos/initialize3ds/ecom
-    // For now, return the order details needed for frontend integration.
-
-    const iyzicoApiKey = (c.env as any).IYZICO_API_KEY;
-    const iyzicoSecretKey = (c.env as any).IYZICO_SECRET_KEY;
 
     if (!iyzicoApiKey || !iyzicoSecretKey) {
         // Development mode: return order without Iyzico token
@@ -151,10 +203,10 @@ checkoutRoute.post("/initialize", async (c) => {
         conversationId: order.order_number,
         price: subtotal.toFixed(2),
         paidPrice: total.toFixed(2),
-        currency: "TRY",
+        currency: currency,
         basketId: order.order_number,
         paymentGroup: "PRODUCT",
-        callbackUrl: `${c.req.url.replace("/initialize", "/webhook")}`,
+        callbackUrl: `${c.req.url.replace("/initialize", "/webhook")}?frontend=${encodeURIComponent(c.req.header("origin") || "https://for-labs.com")}`,
         enabledInstallments: [1, 2, 3, 6],
         buyer: {
             id: `BUYER-${order.id}`,
@@ -180,10 +232,10 @@ checkoutRoute.post("/initialize", async (c) => {
             address: body.shipping_address || "Adres belirtilmedi",
         },
         basketItems: orderItems.map((item, index) => ({
-            id: `ITEM-${item.product_id}`,
+            id: item.product_id === 0 ? "SHIPPING" : `ITEM-${item.product_id}`,
             name: item.title,
-            category1: "Lab Equipment",
-            itemType: "PHYSICAL",
+            category1: item.product_id === 0 ? "Shipping" : "Product",
+            itemType: "PHYSICAL", // Iyzico requires Physical for physical goods/shipping
             price: (item.unit_price * item.qty).toFixed(2),
         })),
     };
@@ -211,7 +263,7 @@ checkoutRoute.post("/initialize", async (c) => {
 
     try {
         const iyzicoResponse = await fetch(
-            "https://api.iyzipay.com/payment/pay-with-iyzico/initialize",
+            `${iyzicoBaseUrl}/payment/pay-with-iyzico/initialize`,
             {
                 method: "POST",
                 headers: {
@@ -274,7 +326,14 @@ checkoutRoute.post("/initialize", async (c) => {
  */
 checkoutRoute.post("/webhook", async (c) => {
     const db = createDb(c.env.DB);
-    const body = await c.req.json();
+    let body: any = {};
+    const contentType = c.req.header("content-type") || "";
+    if (contentType.includes("application/x-www-form-urlencoded")) {
+        body = await c.req.parseBody();
+    } else {
+        body = await c.req.json().catch(() => ({}));
+    }
+    const frontendUrl = c.req.query("frontend") || "https://for-labs.com";
 
     const token = body.token;
     if (!token) {
@@ -292,9 +351,14 @@ checkoutRoute.post("/webhook", async (c) => {
         return c.json({ error: "Order not found for this token" }, 404);
     }
 
+    // Fetch site for dynamic e-commerce config
+    const site = await db.select().from(sites).where(eq(sites.id, order.site_id)).get();
+    const ecommerceConfig = site?.ecommerce_config ? JSON.parse(site.ecommerce_config) : {};
+
     // ─── Verify payment with Iyzico Retrieve API ───
-    const iyzicoApiKey = (c.env as any).IYZICO_API_KEY;
-    const iyzicoSecretKey = (c.env as any).IYZICO_SECRET_KEY;
+    const iyzicoApiKey = ecommerceConfig.iyzico_api_key;
+    const iyzicoSecretKey = ecommerceConfig.iyzico_secret_key;
+    const iyzicoBaseUrl = (ecommerceConfig.iyzico_base_url || "https://sandbox-api.iyzipay.com").replace(/\/$/, "");
 
     if (iyzicoApiKey && iyzicoSecretKey) {
         try {
@@ -324,7 +388,7 @@ checkoutRoute.post("/webhook", async (c) => {
             );
 
             const iyzicoResponse = await fetch(
-                "https://api.iyzipay.com/payment/pay-with-iyzico/retrieve",
+                `${iyzicoBaseUrl}/payment/pay-with-iyzico/retrieve`,
                 {
                     method: "POST",
                     headers: {
@@ -349,7 +413,7 @@ checkoutRoute.post("/webhook", async (c) => {
                     })
                     .where(eq(orders.id, order.id));
 
-                return c.json({ status: "ok", order_number: order.order_number });
+                return c.redirect(`${frontendUrl}/siparis-basarili?order_number=${order.order_number}`);
             } else {
                 await db
                     .update(orders)
@@ -359,11 +423,11 @@ checkoutRoute.post("/webhook", async (c) => {
                     })
                     .where(eq(orders.id, order.id));
 
-                return c.json({ status: "failed", order_number: order.order_number });
+                return c.redirect(`${frontendUrl}/odeme?error=payment_failed`);
             }
         } catch (err) {
             console.error("Iyzico retrieve failed:", err);
-            return c.json({ error: "Verification failed" }, 500);
+            return c.redirect(`${frontendUrl}/odeme?error=verification_failed`);
         }
     }
 
@@ -377,7 +441,7 @@ checkoutRoute.post("/webhook", async (c) => {
         })
         .where(eq(orders.id, order.id));
 
-    return c.json({ status: "ok", order_number: order.order_number });
+    return c.redirect(`${frontendUrl}/siparis-basarili?order_number=${order.order_number}`);
 });
 
 /**
@@ -415,4 +479,67 @@ checkoutRoute.get("/orders/:orderNumber", async (c) => {
     return c.json({ data: order });
 });
 
+/**
+ * POST /api/checkout/test-iyzico
+ * Admin: Test Iyzico connection with provided credentials.
+ */
+checkoutRoute.post("/test-iyzico", async (c) => {
+    const body = await c.req.json();
+    const iyzicoApiKey = body.iyzico_api_key;
+    const iyzicoSecretKey = body.iyzico_secret_key;
+    const iyzicoBaseUrl = (body.iyzico_base_url || "https://sandbox-api.iyzipay.com").replace(/\/$/, "");
+
+    if (!iyzicoApiKey || !iyzicoSecretKey) {
+        return c.json({ status: "failed", message: "API Key ve Secret Key zorunludur." }, 400);
+    }
+
+    try {
+        // We test using the BinNumber endpoint
+        const payload = {
+            locale: "tr",
+            conversationId: "TEST-" + Date.now(),
+            binNumber: "554960", // Meaningless valid length bin prefix
+        };
+
+        const randomString = Math.random().toString(36).substring(2, 10);
+        const hashStr = `${iyzicoApiKey}${randomString}${JSON.stringify(payload)}`;
+
+        const encoder = new TextEncoder();
+        const key = await crypto.subtle.importKey(
+            "raw",
+            encoder.encode(iyzicoSecretKey),
+            { name: "HMAC", hash: "SHA-256" },
+            false,
+            ["sign"]
+        );
+        const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(hashStr));
+        const hashBase64 = btoa(String.fromCharCode(...new Uint8Array(signature)));
+        const authorizationHeader = `IYZWS ${iyzicoApiKey}:${hashBase64}`;
+
+        const response = await fetch(`${iyzicoBaseUrl}/payment/bin/check`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: authorizationHeader,
+                "x-iyzi-rnd": randomString,
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const result = (await response.json()) as any;
+
+        if (result.status === "success" || result.errorCode === "10051") {
+            // Even if bin doesn't exist, if we get a standard validation error instead of auth error, keys are correct.
+            // But usually bin check returns success with empty details if bin is basically valid length.
+            return c.json({ status: "ok", message: "Bağlantı başarılı! Iyzico API anahtarlarınız doğru çalışıyor." });
+        } else {
+            return c.json(
+                { status: "failed", message: result.errorMessage || "API anahtarları geçersiz." },
+                400
+            );
+        }
+    } catch (err) {
+        return c.json({ status: "error", message: "Iyzico sunucusuna ulaşılamadı. Base URL'i kontrol edin." }, 500);
+    }
+});
 export default checkoutRoute;

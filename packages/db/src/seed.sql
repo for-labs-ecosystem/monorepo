@@ -90,6 +90,6 @@ INSERT INTO site_article_overrides (site_id, article_id, title, is_featured, sor
   (6, 2, 'Alerjen.net - Kapsamlı Gıda Alerjenleri Rehberi', 1, 1);
 
 -- ─── ADMIN USER (password: "admin123" — will be changed in production) ───
--- Hash is a placeholder; real bcrypt/argon2 hash will be set via API
+-- Hash is SHA-256 of "admin123" — change in production!
 INSERT INTO users (email, password_hash, name, role) VALUES
-  ('admin@for-labs.com', '$placeholder_hash_change_in_faz2$', 'Sistem Admin', 'super_admin');
+  ('admin@for-labs.com', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'Sistem Admin', 'super_admin');

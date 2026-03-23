@@ -13,7 +13,7 @@ export function LangTabs({
     onChange: (l: Lang) => void;
 }) {
     return (
-        <div className="tab-list">
+        <div className="tab-list mb-6">
             {(["tr", "en"] as Lang[]).map((l) => (
                 <button
                     key={l}
@@ -41,12 +41,12 @@ export function FormField({
     children: React.ReactNode;
 }) {
     return (
-        <div className="space-y-1">
-            <label className="label">
-                {label}
-                {required && <span className="text-red-400 ml-1">*</span>}
+        <div className="space-y-2 overflow-visible">
+            <label className="label flex items-center gap-1.5 mb-1">
+                <span className="text-xs font-semibold text-slate-700 tracking-tight">{label}</span>
+                {required && <span className="text-rose-500 text-sm">*</span>}
             </label>
-            {hint && <p className="label-hint">{hint}</p>}
+            {hint && <p className="text-xs text-slate-500 leading-relaxed -mt-0.5 mb-2">{hint}</p>}
             {children}
         </div>
     );
@@ -61,8 +61,8 @@ interface FormPageProps {
     onDelete?: () => Promise<void>;
     isEdit?: boolean;
     saving?: boolean;
-    children: React.ReactNode; // main form area
-    sidebar?: React.ReactNode; // right panel
+    children: React.ReactNode;
+    sidebar?: React.ReactNode;
 }
 
 export default function FormPage({
@@ -81,75 +81,75 @@ export default function FormPage({
 
     const handleDelete = async () => {
         if (!onDelete) return;
-        if (!window.confirm("Bu kaydı silmek istediğinizden emin misiniz?")) return;
         setDeleting(true);
         try {
             await onDelete();
-            navigate(backHref);
         } finally {
             setDeleting(false);
         }
     };
 
     return (
-        <div>
-            {/* ── Breadcrumb + actions ── */}
-            <div className="page-header flex items-center justify-between">
-                <div className="flex items-center gap-3">
+        <div className="max-w-350 mx-auto pb-20">
+            {/* ── Header ── */}
+            <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
                     <button
                         type="button"
                         onClick={() => navigate(backHref)}
-                        className="btn btn-ghost btn-sm p-1.5"
+                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-slate-900 hover:border-slate-300 hover:shadow-sm transition-all group"
                     >
-                        <ChevronLeft size={18} />
+                        <ChevronLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
                     </button>
                     <div>
-                        <h1 className="page-title">{title}</h1>
-                        {subtitle && <p className="page-subtitle">{subtitle}</p>}
+                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">{title}</h1>
+                        {subtitle && <p className="text-sm font-medium text-slate-400 mt-0.5">{subtitle}</p>}
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                     {isEdit && onDelete && (
                         <button
                             type="button"
                             onClick={handleDelete}
-                            disabled={deleting}
-                            className="btn btn-danger btn-sm"
+                            disabled={deleting || saving}
+                            className="btn bg-rose-50 text-rose-500 border border-rose-100 hover:bg-rose-500 hover:text-white transition-all h-10 px-4"
                         >
-                            {deleting ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
-                            Sil
+                            {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                            <span className="font-bold text-xs uppercase tracking-wider">Kayıdı Sil</span>
                         </button>
                     )}
                     <button
                         type="button"
                         onClick={() => navigate(backHref)}
-                        className="btn btn-secondary btn-sm"
+                        className="btn bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 h-10 px-4"
                     >
-                        İptal
+                        <span className="font-bold text-xs uppercase tracking-wider">İptal</span>
                     </button>
                     <button
                         type="button"
                         onClick={onSave}
                         disabled={saving}
-                        className="btn btn-primary btn-sm"
+                        className="btn btn-primary h-10 px-6 shadow-lg shadow-indigo-100"
                     >
-                        {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
-                        {saving ? "Kaydediliyor..." : isEdit ? "Güncelle" : "Yayınla"}
+                        {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                        <span className="font-bold text-xs uppercase tracking-wider">
+                            {saving ? "Kaydediliyor..." : isEdit ? "Değişiklikleri Kaydet" : "Yeni Kayıt Oluştur"}
+                        </span>
                     </button>
                 </div>
             </div>
 
-            {/* ── Two-column layout ── */}
-            <div className="flex gap-5">
+            {/* ── Grid ── */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Left — main form (grows) */}
-                <div className="flex-1 min-w-0 space-y-5">
+                <div className="lg:col-span-8 space-y-8">
                     {children}
                 </div>
 
                 {/* Right — sidebar (fixed width) */}
                 {sidebar && (
-                    <div className="w-72 flex-shrink-0 space-y-4">
+                    <div className="lg:col-span-4 space-y-6">
                         {sidebar}
                     </div>
                 )}
@@ -161,17 +161,26 @@ export default function FormPage({
 /* ─── Sidebar Card helper ─── */
 export function SidebarCard({
     title,
+    icon,
     children,
+    overflow = "hidden",
 }: {
     title: string;
+    icon?: React.ReactNode;
     children: React.ReactNode;
+    overflow?: "hidden" | "visible";
 }) {
     return (
-        <div className="card p-4">
-            <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-                {title}
-            </h3>
-            {children}
+        <div className={`bg-white border border-slate-200/60 rounded-xl shadow-sm ${overflow === "visible" ? "overflow-visible" : "overflow-hidden"}`}>
+            <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2.5">
+                {icon && <span className="text-slate-500">{icon}</span>}
+                <h3 className="text-xs font-semibold text-slate-700 tracking-tight">
+                    {title}
+                </h3>
+            </div>
+            <div className="p-4">
+                {children}
+            </div>
         </div>
     );
 }
@@ -180,23 +189,36 @@ export function SidebarCard({
 export function FormSection({
     title,
     description,
+    icon,
+    columns = 1,
     children,
 }: {
     title: string;
     description?: string;
+    icon?: React.ReactNode;
+    columns?: 1 | 2;
     children: React.ReactNode;
 }) {
     return (
-        <div className="card p-6">
+        <div className="bg-white border border-slate-200/60 rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-visible">
             {(title || description) && (
-                <div className="mb-5 pb-4 border-b border-slate-100">
-                    <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
-                    {description && (
-                        <p className="text-xs text-slate-500 mt-0.5">{description}</p>
+                <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-4">
+                    {icon && (
+                        <div className="w-11 h-11 rounded-lg bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center text-slate-600 shrink-0 shadow-sm ring-1 ring-slate-200/50">
+                            {icon}
+                        </div>
                     )}
+                    <div className="flex-1 min-w-0">
+                        <h2 className="text-base font-semibold text-slate-900 tracking-tight">{title}</h2>
+                        {description && (
+                            <p className="text-sm text-slate-500 mt-1 leading-relaxed">{description}</p>
+                        )}
+                    </div>
                 </div>
             )}
-            <div className="space-y-5">{children}</div>
+            <div className={`px-6 pb-6 pt-5 ${columns === 2 ? 'grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5' : 'space-y-5'}`}>
+                {children}
+            </div>
         </div>
     );
 }

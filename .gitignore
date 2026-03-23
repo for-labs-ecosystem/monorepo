@@ -21,8 +21,5 @@ Thumbs.db
 *.swp
 *.swo
 
-# Drizzle
-packages/db/src/migrations/*.sql
-
 # Cloudflare
 .mf/
