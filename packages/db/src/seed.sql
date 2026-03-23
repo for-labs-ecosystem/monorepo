@@ -89,7 +89,6 @@ INSERT INTO site_article_overrides (site_id, article_id, title, is_featured, sor
   -- alerjen.net (site_id=6) features and renames the allergen article
   (6, 2, 'Alerjen.net - Kapsamlı Gıda Alerjenleri Rehberi', 1, 1);
 
--- ─── ADMIN USER (password: "admin123" — will be changed in production) ───
--- Hash is SHA-256 of "admin123" — change in production!
-INSERT INTO users (email, password_hash, name, role) VALUES
-  ('admin@for-labs.com', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'Sistem Admin', 'super_admin');
+-- ─── ADMIN USER (Google OAuth only — no password) ───
+INSERT INTO users (email, name, role) VALUES
+  ('social.protekanalitik@gmail.com', 'Sistem Admin', 'super_admin');

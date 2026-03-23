@@ -82,7 +82,7 @@ productsRoute.get("/", async (c) => {
                 ? undefined
                 : and(
                     eq(products.is_active, true),
-                    eq(siteProductOverrides.is_visible, true)
+                    sql`COALESCE(${siteProductOverrides.is_visible}, 1) = 1`
                 )
         )
         .orderBy(sql`COALESCE(${siteProductOverrides.sort_order}, ${products.sort_order}, 0)`);

@@ -51,7 +51,10 @@ servicesRoute.get("/", async (c) => {
         .where(
             c.req.query("admin") === "true"
                 ? undefined
-                : eq(siteServiceOverrides.is_visible, true)
+                : and(
+                    eq(services.is_active, true),
+                    sql`COALESCE(${siteServiceOverrides.is_visible}, 1) = 1`
+                )
         )
         .orderBy(sql`COALESCE(${siteServiceOverrides.sort_order}, 0)`);
 

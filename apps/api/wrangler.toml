@@ -27,7 +27,7 @@ bucket_name = "forlabs-media-bucket"
 # ─── Production vars ───
 [vars]
 ENVIRONMENT = "production"
-GOOGLE_REDIRECT_URI = "https://admin.for-labs.com/login/callback"
+GOOGLE_REDIRECT_URI = "https://forlabs-admin.pages.dev/login/callback"
 
 # Local dev overrides go in .dev.vars (gitignored):
 #   ENVIRONMENT=development

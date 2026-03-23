@@ -84,15 +84,19 @@ categoriesRoute.get("/", async (c) => {
     const publishedProducts = await db
         .select({ category_id: products.category_id })
         .from(products)
-        .innerJoin(
+        .leftJoin(
             siteProductOverrides,
             and(
                 eq(siteProductOverrides.product_id, products.id),
-                eq(siteProductOverrides.site_id, siteId),
-                eq(siteProductOverrides.is_visible, true)
+                eq(siteProductOverrides.site_id, siteId)
             )
         )
-        .where(eq(products.is_active, true));
+        .where(
+            and(
+                eq(products.is_active, true),
+                sql`COALESCE(${siteProductOverrides.is_visible}, 1) = 1`
+            )
+        );
 
     const leafCategoryIds = new Set(
         publishedProducts
