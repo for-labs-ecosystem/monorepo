@@ -28,6 +28,21 @@ const API_BASE = import.meta.env.VITE_API_URL
     ? `${import.meta.env.VITE_API_URL}/api`
     : "/api";
 
+/**
+ * Resolve a media URL to an absolute URL.
+ * Media URLs are stored as relative paths like `/api/media/serve/...`
+ * In production, the API origin differs from the admin origin,
+ * so we need to prefix with the API origin.
+ */
+export function resolveMediaUrl(url: string | null | undefined): string {
+    if (!url) return "";
+    if (url.startsWith("http://") || url.startsWith("https://")) return url;
+    if (url.startsWith("/api/") && import.meta.env.VITE_API_URL) {
+        return `${import.meta.env.VITE_API_URL}${url}`;
+    }
+    return url;
+}
+
 interface FetchOptions extends RequestInit {
     params?: Record<string, string | undefined>;
 }

@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "../../lib/api";
+import { api, resolveMediaUrl } from "../../lib/api";
 import {
     Upload,
     Search,
@@ -315,7 +315,7 @@ export default function MediaPicker({
                                         <div className="aspect-square bg-slate-50 flex items-center justify-center overflow-hidden relative">
                                             {isImage(item.mime_type) ? (
                                                 <img
-                                                    src={item.url}
+                                                    src={resolveMediaUrl(item.url)}
                                                     alt={
                                                         item.alt_text ||
                                                         item.filename
@@ -385,7 +385,7 @@ export default function MediaPicker({
                                         <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden flex items-center justify-center shrink-0">
                                             {isImage(item.mime_type) ? (
                                                 <img
-                                                    src={item.url}
+                                                    src={resolveMediaUrl(item.url)}
                                                     alt=""
                                                     className="w-full h-full object-cover"
                                                     loading="lazy"

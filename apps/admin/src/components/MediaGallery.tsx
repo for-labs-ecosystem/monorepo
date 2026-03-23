@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { api } from "../lib/api";
+import { api, resolveMediaUrl } from "../lib/api";
 import { Upload, X, Loader2, Link2, Star, ImageIcon } from "lucide-react";
 import MediaPicker from "./media/MediaPicker";
 
@@ -171,7 +171,7 @@ export default function MediaGallery({
                         >
                             <div className={`${aspectClasses[aspectRatio]} relative`}>
                                 <img
-                                    src={img.url}
+                                    src={resolveMediaUrl(img.url)}
                                     alt=""
                                     className="absolute inset-0 w-full h-full object-cover"
                                 />

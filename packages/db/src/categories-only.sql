@@ -1,0 +1,21 @@
+-- Categories only - UTF-8 encoded
+INSERT OR IGNORE INTO categories (id, slug, name, name_en, description, description_en, type, sort_order) VALUES
+(10, 'analiz-cihazlari', 'Analiz Cihazlari', 'Analytical Instruments', 'Hassas analiz ve olcum cihazlari', 'Precision analytical and measurement instruments', 'product', 10),
+(11, 'ph-metreler', 'pH Metreler', 'pH Meters', 'pH olcum cihazlari ve aksesuarlari', 'pH measurement devices and accessories', 'product', 11),
+(12, 'refraktometreler', 'Refraktometreler', 'Refractometers', 'Kirilma indeksi olcum cihazlari', 'Refractive index measurement devices', 'product', 12),
+(13, 'termostatli-banyolar', 'Termostatli Banyolar', 'Thermostatic Baths', 'Sicaklik kontrolu ve inkubasyon', 'Temperature control and incubation', 'product', 13),
+(14, 'santrifujlar', 'Santrifujler', 'Centrifuges', 'Numune ayirma ve sedimentasyon', 'Sample separation and sedimentation', 'product', 14),
+(20, 'reaktifler', 'Reaktifler', 'Reagents', 'Analitik ve laboratuvar reaktifleri', 'Analytical and laboratory reagents', 'product', 20),
+(21, 'cozeltuler', 'Cozeltuler', 'Solutions', 'Hazir ve konsantre cozeltuler', 'Ready and concentrated solutions', 'product', 21),
+(22, 'tamponlar', 'Tampon Cozeltuler', 'Buffer Solutions', 'pH stabilizasyon tamponlari', 'pH stabilization buffers', 'product', 22),
+(23, 'asit-baz', 'Asit ve Bazlar', 'Acids & Bases', 'Laboratuvar asitleri ve bazlari', 'Laboratory acids and bases', 'product', 23),
+(30, 'pipetler', 'Pipetler', 'Pipettes', 'Hassas sivu transfer pipetleri', 'Precision liquid transfer pipettes', 'product', 30),
+(31, 'kulturbotu', 'Kultur Botlari', 'Culture Bottles', 'Mikrobiyoloji kultur kaplari', 'Microbiology culture containers', 'product', 31),
+(32, 'filtreler', 'Filtreler', 'Filters', 'Filtrasyon ve filtre kaatlari', 'Filtration and filter papers', 'product', 32),
+(50, 'analiz-hizmetleri', 'Analiz Hizmetleri', 'Analysis Services', 'Profesyonel laboratuvar analizleri', 'Professional laboratory analysis', 'service', 50),
+(51, 'kalibrasyon', 'Kalibrasyon Hizmetleri', 'Calibration Services', 'Cihaz kalibrasyon ve dogrulama', 'Instrument calibration and verification', 'service', 51),
+(52, 'egitim', 'Egitim Hizmetleri', 'Training Services', 'Laboratuvar egitimleri ve seminerler', 'Laboratory training and seminars', 'service', 52),
+(53, 'danismanlik', 'Danismanlik', 'Consulting Services', 'Laboratuvar kurulum danismanligi', 'Laboratory setup consulting', 'service', 53),
+(60, 'gida-laboratuvarlari', 'Gida Laboratuvarlari', 'Food Laboratories', 'Gida analiz laboratuvari projeleri', 'Food analysis laboratory projects', 'project', 60),
+(61, 'ilac-laboratuvarlari', 'Ilac Laboratuvarlari', 'Pharma Laboratories', 'Ilac QA/QC laboratuvari projeleri', 'Pharma QA/QC laboratory projects', 'project', 61),
+(62, 'su-analiz-laboratuvarlari', 'Su Analiz Laboratuvarlari', 'Water Analysis Labs', 'Su kalitesi ve cevre laboratuvarlari', 'Water quality and environmental labs', 'project', 62);

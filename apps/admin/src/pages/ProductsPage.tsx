@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { api } from "../lib/api";
+import { api, resolveMediaUrl } from "../lib/api";
 import DataTable, { SiteLabels, Toggle } from "../components/DataTable";
 import { Star, Package, Info } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -71,7 +71,17 @@ export default function ProductsPage() {
                 <div className="flex items-center gap-4">
                     <div className="relative w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100/80 overflow-hidden shrink-0 flex items-center justify-center transition-all group-hover:bg-white group-hover:shadow-sm">
                         {row.image_url ? (
-                            <img src={row.image_url} alt="" className="w-full h-full object-cover" />
+                            <img 
+                                src={resolveMediaUrl(row.image_url)} 
+                                alt="" 
+                                className="absolute inset-0 w-full h-full object-contain p-1" 
+                                onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                    e.currentTarget.parentElement?.classList.add('flex');
+                                    e.currentTarget.parentElement?.classList.add('items-center');
+                                    e.currentTarget.parentElement?.classList.add('justify-center');
+                                }}
+                            />
                         ) : (
                             <Package size={22} strokeWidth={1.5} className="text-slate-300" />
                         )}

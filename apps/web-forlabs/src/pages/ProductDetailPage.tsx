@@ -228,7 +228,7 @@ export default function ProductDetailPage() {
     const { addItem, isInCart, updateQuantity, items } = useCart()
     const { member, toggleFavoriteProduct } = useMemberAuth()
 
-    const [tab, setTab] = useState<'description' | 'specs' | 'features'>('description')
+    const [tab, setTab] = useState<'description' | 'specs' | 'features'>('specs')
     const [quantity, setQuantity] = useState(1)
 
     const product = productData?.data as Product | undefined

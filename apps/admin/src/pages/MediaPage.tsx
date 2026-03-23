@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "../lib/api";
+import { api, resolveMediaUrl } from "../lib/api";
 import {
     Upload,
     Trash2,
@@ -200,7 +200,7 @@ export default function MediaPage() {
     );
 
     const handleCopyUrl = (item: MediaItem) => {
-        navigator.clipboard.writeText(item.url);
+        navigator.clipboard.writeText(resolveMediaUrl(item.url));
         setCopiedId(item.id);
         setTimeout(() => setCopiedId(null), 2000);
     };
@@ -517,7 +517,7 @@ export default function MediaPage() {
                                         onClick={() => openDrawer(item)}
                                     >
                                         {isImage(item.mime_type) ? (
-                                            <img src={item.url} alt={item.alt_text || item.filename} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                                            <img src={resolveMediaUrl(item.url)} alt={item.alt_text || item.filename} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
                                         ) : isVideo(item.mime_type) ? (
                                             <div className="flex flex-col items-center gap-2">
                                                 <Film size={32} className="text-violet-400" strokeWidth={1.5} />
@@ -558,7 +558,7 @@ export default function MediaPage() {
                                                 {copiedId === item.id ? <Check size={13} className="text-emerald-600" /> : <Copy size={13} className="text-slate-600" />}
                                             </button>
                                             <a
-                                                href={item.url}
+                                                href={resolveMediaUrl(item.url)}
                                                 download={item.filename}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
@@ -634,7 +634,7 @@ export default function MediaPage() {
                                     <td className="px-4 py-2.5">
                                         <div className="w-9 h-9 rounded-lg bg-slate-100 overflow-hidden flex items-center justify-center shrink-0">
                                             {isImage(item.mime_type) ? (
-                                                <img src={item.url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                                                <img src={resolveMediaUrl(item.url)} alt="" className="w-full h-full object-cover" loading="lazy" />
                                             ) : (
                                                 <FileIcon size={16} className="text-slate-400" />
                                             )}
@@ -655,7 +655,7 @@ export default function MediaPage() {
                                             <button onClick={() => handleCopyUrl(item)} className="p-1.5 text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="URL Kopyala">
                                                 {copiedId === item.id ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
                                             </button>
-                                            <a href={item.url} target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="İndir">
+                                            <a href={resolveMediaUrl(item.url)} target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="İndir">
                                                 <Download size={14} />
                                             </a>
                                             <button onClick={() => openDrawer(item)} className="p-1.5 text-slate-300 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-all" title="Düzenle">
@@ -685,13 +685,13 @@ export default function MediaPage() {
                         <div className="flex-1 flex items-center justify-center bg-slate-900/80 p-8 min-w-0">
                             {isImage(drawerItem.mime_type) ? (
                                 <img
-                                    src={drawerItem.url}
+                                    src={resolveMediaUrl(drawerItem.url)}
                                     alt={drawerItem.alt_text || drawerItem.filename}
                                     className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
                                 />
                             ) : isVideo(drawerItem.mime_type) ? (
                                 <video
-                                    src={drawerItem.url}
+                                    src={resolveMediaUrl(drawerItem.url)}
                                     controls
                                     className="max-w-full max-h-full rounded-lg shadow-2xl"
                                 />
@@ -820,7 +820,7 @@ export default function MediaPage() {
                                         <input
                                             type="text"
                                             readOnly
-                                            value={drawerItem.url}
+                                            value={resolveMediaUrl(drawerItem.url)}
                                             className="flex-1 px-3 py-2 text-xs font-mono border border-slate-200 rounded-lg bg-slate-50 text-slate-500 truncate"
                                         />
                                         <button
