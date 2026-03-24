@@ -45,6 +45,8 @@ interface AuthContextValue {
     token: string | null
     isLoading: boolean
     login: (email: string, password: string) => Promise<void>
+    loginWithGoogle: () => void
+    loginWithToken: (token: string) => Promise<void>
     register: (data: { email: string; password: string; full_name: string; phone?: string; company_name?: string }) => Promise<void>
     logout: () => void
     updateProfile: (data: Partial<MemberProfile>) => Promise<void>
@@ -139,6 +141,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await fetchProfile(token)
     }, [token, fetchProfile])
 
+    const loginWithGoogle = useCallback(() => {
+        const { apiUrl, siteId } = getEcosystemConfig()
+        const returnUrl = `${window.location.origin}/auth/callback`
+        const state = `${siteId}:${returnUrl}`
+        window.location.href = `${apiUrl}/api/member-auth/google?site_id=${siteId}&state=${encodeURIComponent(state)}`
+    }, [])
+
+    const loginWithToken = useCallback(async (t: string) => {
+        localStorage.setItem(TOKEN_KEY, t)
+        setToken(t)
+        await fetchProfile(t)
+    }, [fetchProfile])
+
     const toggleFavoriteProduct = useCallback(async (productId: number) => {
         if (!member) return
 
@@ -155,7 +170,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, [member, updateProfile])
 
     return (
-        <AuthContext.Provider value={{ member, token, isLoading, login, register, logout, updateProfile, refreshProfile, toggleFavoriteProduct }}>
+        <AuthContext.Provider value={{ member, token, isLoading, login, loginWithGoogle, loginWithToken, register, logout, updateProfile, refreshProfile, toggleFavoriteProduct }}>
             {children}
         </AuthContext.Provider>
     )

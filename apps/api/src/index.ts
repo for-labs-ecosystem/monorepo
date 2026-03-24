@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { tenantMiddleware } from "./middleware/tenant";
+import { moduleGuard } from "./middleware/moduleGuard";
 import { authMiddleware } from "./middleware/auth";
 import authRoute from "./routes/auth";
 import productsRoute from "./routes/products";
@@ -104,7 +105,18 @@ app.get("/api/media/serve/*", async (c) => {
 const api = new Hono<{ Bindings: Bindings }>();
 api.use("*", tenantMiddleware);
 
-// Content routes (CRUD + Override)
+// Content routes (CRUD + Override) — module guard enforces site's enabled_modules
+// Note: two use() calls per module — one for root list, one for sub-paths
+api.use("/products", moduleGuard("products"));
+api.use("/products/*", moduleGuard("products"));
+api.use("/articles", moduleGuard("articles"));
+api.use("/articles/*", moduleGuard("articles"));
+api.use("/services", moduleGuard("services"));
+api.use("/services/*", moduleGuard("services"));
+api.use("/pages", moduleGuard("pages"));
+api.use("/pages/*", moduleGuard("pages"));
+api.use("/projects", moduleGuard("projects"));
+api.use("/projects/*", moduleGuard("projects"));
 api.route("/products", productsRoute);
 api.route("/articles", articlesRoute);
 api.route("/categories", categoriesRoute);

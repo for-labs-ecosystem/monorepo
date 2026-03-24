@@ -731,4 +731,138 @@ memberAuthRoute.patch("/inquiries/:id/read", async (c) => {
     return c.json({ success: true });
 });
 
+/**
+ * GET /api/member-auth/google?site_id=N&redirect_uri=...
+ * Public: redirect to Google OAuth consent screen.
+ */
+memberAuthRoute.get("/google", async (c) => {
+    const clientId = (c.env as any).GOOGLE_CLIENT_ID;
+    if (!clientId) {
+        return c.json({ error: "Google OAuth yapılandırılmamış." }, 500);
+    }
+
+    const siteId = c.req.query("site_id") || "1";
+    const redirectUri = (c.env as any).GOOGLE_MEMBER_REDIRECT_URI || (c.env as any).GOOGLE_REDIRECT_URI;
+
+    const params = new URLSearchParams({
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        response_type: "code",
+        scope: "openid email profile",
+        state: siteId,
+        access_type: "offline",
+        prompt: "select_account",
+    });
+
+    return c.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`);
+});
+
+/**
+ * GET /api/member-auth/google/callback?code=...&state=site_id
+ * Public: exchange code for tokens, upsert member, issue JWT, redirect to frontend.
+ */
+memberAuthRoute.get("/google/callback", async (c) => {
+    const code = c.req.query("code");
+    const rawState = decodeURIComponent(c.req.query("state") || "1");
+
+    // state format: "siteId:returnUrl" or legacy "siteId"
+    const colonIdx = rawState.indexOf(":");
+    const siteId = colonIdx > -1 ? Number(rawState.slice(0, colonIdx)) : Number(rawState);
+    const returnBase = colonIdx > -1 ? rawState.slice(colonIdx + 1) : null;
+
+    const clientId = (c.env as any).GOOGLE_CLIENT_ID;
+    const clientSecret = (c.env as any).GOOGLE_CLIENT_SECRET;
+    const redirectUri = (c.env as any).GOOGLE_MEMBER_REDIRECT_URI || (c.env as any).GOOGLE_REDIRECT_URI;
+    const defaultFrontendUrl = (c.env as any).MEMBER_FRONTEND_URL || "https://forlabs-web.pages.dev";
+    const frontendUrl = returnBase || defaultFrontendUrl;
+
+    // callbackUrl is the exact page that will receive token or error (e.g. https://forlabs-atagotr.pages.dev/auth/callback)
+    const callbackUrl = frontendUrl;
+
+    if (!code) {
+        return c.redirect(`${callbackUrl}?error=oauth_cancelled`);
+    }
+
+    if (!clientId || !clientSecret) {
+        return c.redirect(`${callbackUrl}?error=oauth_config`);
+    }
+
+    try {
+        // Exchange code for tokens
+        const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+                code,
+                client_id: clientId,
+                client_secret: clientSecret,
+                redirect_uri: redirectUri,
+                grant_type: "authorization_code",
+            }),
+        });
+
+        const tokenData = await tokenRes.json() as any;
+        if (!tokenRes.ok || !tokenData.access_token) {
+            return c.redirect(`${callbackUrl}?error=oauth_token`);
+        }
+
+        // Get user info from Google
+        const userRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+            headers: { Authorization: `Bearer ${tokenData.access_token}` },
+        });
+
+        const googleUser = await userRes.json() as any;
+        if (!googleUser.email) {
+            return c.redirect(`${callbackUrl}?error=oauth_userinfo`);
+        }
+
+        const db = createDb(c.env.DB);
+        const jwtSecret = (c.env as any).JWT_SECRET || JWT_DEFAULT_SECRET;
+
+        // Upsert member
+        let member = await db
+            .select()
+            .from(members)
+            .where(eq(members.email, googleUser.email.toLowerCase()))
+            .get();
+
+        if (!member) {
+            const id = generateId();
+            member = await db
+                .insert(members)
+                .values({
+                    id,
+                    site_id: siteId,
+                    full_name: googleUser.name || googleUser.email,
+                    email: googleUser.email.toLowerCase(),
+                    password_hash: null,
+                    phone: null,
+                    company_name: null,
+                    is_active: 1,
+                    addresses: null,
+                    cart_data: null,
+                    favorite_products: null,
+                    favorite_articles: null,
+                })
+                .returning()
+                .get();
+        }
+
+        if (!member.is_active) {
+            return c.redirect(`${callbackUrl}?error=account_disabled`);
+        }
+
+        const token = await signJwt(
+            { sub: member.id, email: member.email, type: "member" },
+            jwtSecret,
+            60 * 60 * 24 * 7
+        );
+
+        return c.redirect(`${callbackUrl}?token=${token}`);
+    } catch (err) {
+        console.error("Google OAuth error:", err);
+        return c.redirect(`${callbackUrl}?error=oauth_error`);
+    }
+});
+
 export default memberAuthRoute;

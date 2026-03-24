@@ -112,6 +112,7 @@ sitesRoute.put("/:idOrSlug", async (c) => {
     if (body.name !== undefined) updateData.name = body.name;
     if (body.name_en !== undefined) updateData.name_en = body.name_en || null;
     if (body.domain !== undefined) updateData.domain = body.domain;
+    // slug is immutable after creation — never update it
     if (body.description !== undefined) updateData.description = body.description || null;
     if (body.description_en !== undefined) updateData.description_en = body.description_en || null;
     if (body.logo_url !== undefined) updateData.logo_url = body.logo_url || null;

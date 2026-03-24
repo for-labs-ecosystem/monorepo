@@ -6,7 +6,7 @@ import { useMemberAuth } from '@/lib/auth'
 
 export default function LoginPage() {
     const { lang } = useLanguage()
-    const { login } = useMemberAuth()
+    const { login, loginWithGoogle } = useMemberAuth()
     const navigate = useNavigate()
 
     const [email, setEmail] = useState('')
@@ -54,9 +54,10 @@ export default function LoginPage() {
                     </p>
                 </div>
 
-                {/* Google Button (UI only for now) */}
+                {/* Google Button */}
                 <button
                     type="button"
+                    onClick={loginWithGoogle}
                     className="w-full flex items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:border-slate-300 hover:shadow-md"
                 >
                     <svg className="h-5 w-5" viewBox="0 0 24 24">

@@ -20,6 +20,7 @@ const OrderSuccessPage = lazy(() => import('@/pages/OrderSuccessPage'))
 const KvkkPage = lazy(() => import('@/pages/KvkkPage'))
 const TermsPage = lazy(() => import('@/pages/TermsPage'))
 const PrivacyPage = lazy(() => import('@/pages/PrivacyPage'))
+const AuthCallbackPage = lazy(() => import('@/pages/AuthCallbackPage'))
 
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
     return (
@@ -110,6 +111,10 @@ const routes: RouteObject[] = [
             {
                 path: 'gizlilik-politikasi',
                 element: <SuspenseWrapper><PrivacyPage /></SuspenseWrapper>,
+            },
+            {
+                path: 'auth/callback',
+                element: <SuspenseWrapper><AuthCallbackPage /></SuspenseWrapper>,
             },
         ],
     },
