@@ -55,6 +55,7 @@ export interface Product {
     compare_price: number | null;
     currency: string;
     unit: string | null;
+    stock_quantity: number | null;
     brand: string | null;
     model_number: string | null;
     sku: string | null;

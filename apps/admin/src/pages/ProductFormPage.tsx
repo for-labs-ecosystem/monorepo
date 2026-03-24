@@ -182,6 +182,7 @@ export default function ProductFormPage() {
         compare_price: "",
         currency: "TRY",
         unit: "Adet",
+        stock_quantity: "",
         sku: "",
         brand: "",
         model_number: "",
@@ -293,6 +294,7 @@ export default function ProductFormPage() {
             compare_price: d.compare_price?.toString() ?? "",
             currency: d.currency ?? "TRY",
             unit: d.unit ?? "Adet",
+            stock_quantity: d.stock_quantity?.toString() ?? "",
             sku: d.sku ?? "",
             brand: d.brand ?? "",
             model_number: d.model_number ?? "",
@@ -359,6 +361,7 @@ export default function ProductFormPage() {
                 compare_price: form.compare_price ? parseFloat(form.compare_price) : null,
                 currency: form.currency || "TRY",
                 unit: form.unit || null,
+                stock_quantity: form.stock_quantity ? parseInt(form.stock_quantity) : 0,
                 sku: form.sku || null,
                 brand: form.brand || null,
                 model_number: form.model_number || null,
@@ -398,6 +401,7 @@ export default function ProductFormPage() {
                     is_visible: sv.isVisible,
                     is_featured: !!sv.is_featured,
                     sort_order: parseInt(form.sort_order) || 0,
+                    stock_quantity: form.stock_quantity ? parseInt(form.stock_quantity) : null,
                     meta_title: sv.meta_title || null,
                     meta_description: sv.meta_description || null,
                     canonical_url: sv.canonical_url || null,
@@ -590,8 +594,55 @@ export default function ProductFormPage() {
                 <FormField label="Kampanya Etiketi">
                     <input type="text" className="input !h-10 text-rose-500 font-bold bg-rose-50/30 border-rose-100" value={form.campaign_label} onChange={set("campaign_label")} placeholder="Örn: Stokta, Yeni Ürün" />
                 </FormField>
-                <FormField label="Sıralama Ağırlığı" hint="Büyük sayı üstte görünür">
-                    <input type="number" className="input !h-10" value={form.sort_order} onChange={set("sort_order")} />
+                <FormField label="Sıralama Önceliği" hint="Ürünün listeleme sırası">
+                    <div className="flex gap-2">
+                        <select 
+                            className="input !h-10 flex-1" 
+                            value={form.sort_order} 
+                            onChange={(e) => setForm(f => ({ ...f, sort_order: e.target.value }))}
+                        >
+                            <option value="0">Varsayılan (0)</option>
+                            <option value="10">Öne Çıkan (10)</option>
+                            <option value="20">Çok Satan (20)</option>
+                            <option value="30">Yeni Ürün (30)</option>
+                            <option value="40">İndirimli (40)</option>
+                            <option value="50">Manuel Sıralama (50)</option>
+                            <option value="100">En Üst (100)</option>
+                        </select>
+                        <input 
+                            type="number" 
+                            className="input !h-10 w-24" 
+                            value={form.sort_order} 
+                            onChange={set("sort_order")} 
+                            placeholder="0"
+                        />
+                    </div>
+                </FormField>
+                <FormField label="Stok Adedi" hint="Mevcut stok miktarı">
+                    <div className="flex gap-2">
+                        <input 
+                            type="number" 
+                            className="input !h-10 flex-1" 
+                            value={form.stock_quantity || ""} 
+                            onChange={(e) => setForm(f => ({ ...f, stock_quantity: e.target.value }))}
+                            placeholder="0"
+                            min="0"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setForm(f => ({ ...f, stock_quantity: "999" }))}
+                            className="px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm font-medium text-slate-600 transition-colors"
+                        >
+                            Stokta Var
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setForm(f => ({ ...f, stock_quantity: "0" }))}
+                            className="px-3 py-2 bg-rose-100 hover:bg-rose-200 rounded-lg text-sm font-medium text-rose-600 transition-colors"
+                        >
+                            Stokta Yok
+                        </button>
+                    </div>
                 </FormField>
             </FormSection>
 

@@ -232,6 +232,13 @@
       "when": 1773055841483,
       "tag": "0032_white_jigsaw",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "6",
+      "when": 1774312795064,
+      "tag": "0033_glamorous_vulcan",
+      "breakpoints": true
     }
   ]
 }

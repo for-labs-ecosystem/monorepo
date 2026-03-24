@@ -92,6 +92,17 @@ export default function ProductsPage() {
                             {row.is_featured && (
                                 <Star size={14} className="text-amber-400 fill-amber-400 ml-0.5" />
                             )}
+                            {row.stock_quantity !== null && (
+                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md border ${
+                                    row.stock_quantity === 0 
+                                        ? 'bg-rose-50 text-rose-600 border-rose-200' 
+                                        : row.stock_quantity < 5
+                                        ? 'bg-amber-50 text-amber-600 border-amber-200'
+                                        : 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                                }`}>
+                                    {row.stock_quantity === 0 ? 'Stokta Yok' : row.stock_quantity < 5 ? `Son ${row.stock_quantity}` : `Stok: ${row.stock_quantity}`}
+                                </span>
+                            )}
                         </div>
                         <div className="flex items-center gap-2 mt-1.5">
                             {row.brand && (

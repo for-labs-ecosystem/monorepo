@@ -27,6 +27,7 @@ export const products = sqliteTable("products", {
     compare_price: real("compare_price"),
     currency: text("currency").notNull().default("TRY"),
     unit: text("unit"),              // Adet, Kg, Lt, Kutu...
+    stock_quantity: integer("stock_quantity").default(0),  // Stok adedi
 
     // ─── Catalog details ───
     brand: text("brand"),
@@ -106,6 +107,7 @@ export const siteProductOverrides = sqliteTable(
         price: real("price"),
         compare_price: real("compare_price"),
         currency: text("currency"),
+        stock_quantity: integer("stock_quantity"),  // Site-specific stock
         image_url: text("image_url"),
         gallery: text("gallery"),
         campaign_label: text("campaign_label"),
