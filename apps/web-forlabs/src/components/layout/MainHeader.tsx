@@ -39,11 +39,12 @@ export function MainHeader() {
     queryFn: () => getNavigations({ site_id: SITE_ID, location: 'header' }),
     staleTime: 5 * 60 * 1000,
   })
-  const { roots: dynamicLinks, childrenMap } = useMemo(() => {
+  const { roots: dynamicLinks, childrenMap, urlToDbItem } = useMemo(() => {
     const items = (navRes?.data ?? []) as NavItem[]
     const headerItems = items.filter((n) => n.location === 'header')
+    const staticUrls = new Set(NAV_LINKS.map((l) => l.href))
     const roots = headerItems
-      .filter((n) => !n.parent_id)
+      .filter((n) => !n.parent_id && !staticUrls.has(n.url))
       .sort((a, b) => a.sort_order - b.sort_order)
     const map = new Map<number, NavItem[]>()
     for (const item of headerItems) {
@@ -53,11 +54,14 @@ export function MainHeader() {
         map.set(item.parent_id, list)
       }
     }
-    // Sort children by sort_order
     for (const [key, list] of map) {
       map.set(key, list.sort((a, b) => a.sort_order - b.sort_order))
     }
-    return { roots, childrenMap: map }
+    const urlMap = new Map<string, NavItem>()
+    for (const item of headerItems) {
+      if (!item.parent_id) urlMap.set(item.url, item)
+    }
+    return { roots, childrenMap: map, urlToDbItem: urlMap }
   }, [navRes])
 
   const [openDropdown, setOpenDropdown] = useState<number | null>(null)
@@ -105,6 +109,8 @@ export function MainHeader() {
         <nav className="hidden items-center gap-1 lg:flex translate-x-4">
           {NAV_LINKS.map((link) => {
             const isProducts = link.href === '/urunler'
+            const dbItem = urlToDbItem.get(link.href)
+            const children = dbItem ? childrenMap.get(dbItem.id) : undefined
 
             if (isProducts) {
               return (
@@ -119,6 +125,40 @@ export function MainHeader() {
                   </div>
                   <span>{t(link.labelKey, lang)}</span>
                 </Link>
+              )
+            }
+
+            if (children && children.length > 0 && dbItem) {
+              return (
+                <div
+                  key={link.href}
+                  className="relative"
+                  onMouseEnter={() => setOpenDropdown(dbItem.id)}
+                  onMouseLeave={() => setOpenDropdown(null)}
+                >
+                  <Link
+                    to={link.href}
+                    className="group relative flex items-center gap-1 px-4 py-5 text-[13px] font-medium text-slate-500 transition-colors hover:text-slate-900"
+                  >
+                    {t(link.labelKey, lang)}
+                    <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${openDropdown === dbItem.id ? 'rotate-180' : ''}`} />
+                    <span className="absolute bottom-3.5 left-4 right-4 h-[1.5px] origin-left scale-x-0 rounded-full bg-[#0055FF] transition-transform duration-300 ease-out group-hover:scale-x-100" />
+                  </Link>
+                  {openDropdown === dbItem.id && (
+                    <div className="absolute left-0 top-full z-50 min-w-48 rounded-xl border border-slate-100 bg-white py-2 shadow-lg shadow-slate-200/50">
+                      {children.map((child) => (
+                        <Link
+                          key={`nav-child-${child.id}`}
+                          to={child.url}
+                          className="block px-4 py-2.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
+                          onClick={() => setOpenDropdown(null)}
+                        >
+                          {child.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
               )
             }
 
@@ -226,16 +266,31 @@ export function MainHeader() {
       {mobileOpen && (
         <div className="border-t border-slate-100 bg-white/95 backdrop-blur-xl lg:hidden">
           <nav className="mx-auto max-w-350 px-6 py-4">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="block border-b border-slate-100 py-3.5 text-[13px] font-medium text-slate-700 last:border-0"
-              >
-                {t(link.labelKey, lang)}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const dbItem = urlToDbItem.get(link.href)
+              const children = dbItem ? childrenMap.get(dbItem.id) : undefined
+              return (
+                <div key={link.href}>
+                  <Link
+                    to={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="block border-b border-slate-100 py-3.5 text-[13px] font-medium text-slate-700"
+                  >
+                    {t(link.labelKey, lang)}
+                  </Link>
+                  {children && children.map((child) => (
+                    <Link
+                      key={`m-child-${child.id}`}
+                      to={child.url}
+                      onClick={() => setMobileOpen(false)}
+                      className="block border-b border-slate-100 py-3 pl-6 text-[12px] font-medium text-slate-500 last:border-0"
+                    >
+                      {child.name}
+                    </Link>
+                  ))}
+                </div>
+              )
+            })}
             {dynamicLinks.map((nav) => {
               const children = childrenMap.get(nav.id)
               return (

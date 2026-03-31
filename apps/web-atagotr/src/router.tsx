@@ -21,6 +21,7 @@ const KvkkPage = lazy(() => import('@/pages/KvkkPage'))
 const TermsPage = lazy(() => import('@/pages/TermsPage'))
 const PrivacyPage = lazy(() => import('@/pages/PrivacyPage'))
 const AuthCallbackPage = lazy(() => import('@/pages/AuthCallbackPage'))
+const DynamicPage = lazy(() => import('@/pages/DynamicPage'))
 
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
     return (
@@ -115,6 +116,10 @@ const routes: RouteObject[] = [
             {
                 path: 'auth/callback',
                 element: <SuspenseWrapper><AuthCallbackPage /></SuspenseWrapper>,
+            },
+            {
+                path: ':slug',
+                element: <SuspenseWrapper><DynamicPage /></SuspenseWrapper>,
             },
         ],
     },

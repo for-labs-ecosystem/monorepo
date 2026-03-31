@@ -3,7 +3,17 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import DataTable from "../components/DataTable";
-import { FileCode, Globe, CheckCircle2 } from "lucide-react";
+import { FileCode, Globe, CheckCircle2, ExternalLink } from "lucide-react";
+
+const SITE_URLS: Record<string, string> = {
+    forlabs: "https://forlabs-web.pages.dev",
+    atagotr: "https://forlabs-atagotr.pages.dev",
+};
+
+function getSiteUrl(siteSlug: string, pageSlug: string): string {
+    const base = SITE_URLS[siteSlug] || `https://${siteSlug}.com`;
+    return `${base}/${pageSlug}`;
+}
 
 export default function PagesPage() {
     const navigate = useNavigate();
@@ -67,6 +77,28 @@ export default function PagesPage() {
                         Taslak
                     </div>
                 ),
+        },
+        {
+            key: "slug",
+            label: "",
+            width: "40px",
+            render: (_v: any, row: any) => {
+                const site = row.sites?.[0];
+                if (!site) return null;
+                const url = getSiteUrl(site.slug || site.domain, row.slug);
+                return (
+                    <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                        title="Sayfayı yeni sekmede aç"
+                    >
+                        <ExternalLink size={14} />
+                    </a>
+                );
+            },
         },
     ];
 

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { ShoppingCart, User, Search, Menu, X, LogOut, ArrowRight, Heart } from 'lucide-react'
+import { ShoppingCart, User, Search, Menu, X, LogOut, ArrowRight, Heart, ChevronDown } from 'lucide-react'
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useCart, useMemberAuth, parseFavoriteIds, getNavigations } from '@forlabs/core'
@@ -46,12 +46,33 @@ export default function Header() {
         queryFn: () => getNavigations({ site_id: SITE_ID, location: 'header' }),
         staleTime: 5 * 60 * 1000,
     })
-    const dynamicLinks = useMemo(() => {
+    const STATIC_URLS = useMemo(() => new Set(['/urunler', '/hizmetler', '/bilgi-bankasi', '/hakkimizda', '/destek']), [])
+
+    const { roots: dynamicLinks, childrenMap, urlToDbItem } = useMemo(() => {
         const items = (navRes?.data ?? []) as NavItem[]
-        return items
-            .filter((n) => n.location === 'header' && !n.parent_id)
+        const headerItems = items.filter((n) => n.location === 'header')
+        const roots = headerItems
+            .filter((n) => !n.parent_id && !STATIC_URLS.has(n.url))
             .sort((a, b) => a.sort_order - b.sort_order)
-    }, [navRes])
+        const map = new Map<number, NavItem[]>()
+        for (const item of headerItems) {
+            if (item.parent_id) {
+                const list = map.get(item.parent_id) || []
+                list.push(item)
+                map.set(item.parent_id, list)
+            }
+        }
+        for (const [key, list] of map) {
+            map.set(key, list.sort((a, b) => a.sort_order - b.sort_order))
+        }
+        const urlMap = new Map<string, NavItem>()
+        for (const item of headerItems) {
+            if (!item.parent_id) urlMap.set(item.url, item)
+        }
+        return { roots, childrenMap: map, urlToDbItem: urlMap }
+    }, [navRes, STATIC_URLS])
+
+    const [openDropdown, setOpenDropdown] = useState<number | null>(null)
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 40)
@@ -165,37 +186,98 @@ export default function Header() {
                                     KEŞFET
                                 </span>
                             </Link>
-                            <Link
-                                to="/hizmetler"
-                                className="group relative inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-slate-700 transition-all duration-300 hover:bg-slate-100/80 hover:text-[#0052cc]"
-                            >
-                                <span className="relative">Hizmetler</span>
-                                <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-linear-to-r from-[#0052cc] to-[#5b9cff] transition-transform duration-300 group-hover:scale-x-100" />
-                            </Link>
-                            <Link
-                                to="/bilgi-bankasi"
-                                className="group relative inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-slate-700 transition-all duration-300 hover:bg-slate-100/80 hover:text-[#0052cc]"
-                            >
-                                <span className="relative">Bilgi Bankası</span>
-                                <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-linear-to-r from-[#0052cc] to-[#5b9cff] transition-transform duration-300 group-hover:scale-x-100" />
-                            </Link>
-                            <Link
-                                to="/hakkimizda"
-                                className="group relative inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-slate-700 transition-all duration-300 hover:bg-slate-100/80 hover:text-[#0052cc]"
-                            >
-                                <span className="relative">Hakkımızda</span>
-                                <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-linear-to-r from-[#0052cc] to-[#5b9cff] transition-transform duration-300 group-hover:scale-x-100" />
-                            </Link>
-                            {dynamicLinks.map((nav) => (
-                                <Link
-                                    key={`cms-${nav.id}`}
-                                    to={nav.url}
-                                    className="group relative inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-slate-700 transition-all duration-300 hover:bg-slate-100/80 hover:text-[#0052cc]"
-                                >
-                                    <span className="relative">{nav.name}</span>
-                                    <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-linear-to-r from-[#0052cc] to-[#5b9cff] transition-transform duration-300 group-hover:scale-x-100" />
-                                </Link>
-                            ))}
+                            {[{ label: 'Hizmetler', href: '/hizmetler' }, { label: 'Bilgi Bankası', href: '/bilgi-bankasi' }, { label: 'Hakkımızda', href: '/hakkimizda' }].map((link) => {
+                                const dbItem = urlToDbItem.get(link.href)
+                                const children = dbItem ? childrenMap.get(dbItem.id) : undefined
+                                if (children && children.length > 0 && dbItem) {
+                                    return (
+                                        <div
+                                            key={link.href}
+                                            className="relative"
+                                            onMouseEnter={() => setOpenDropdown(dbItem.id)}
+                                            onMouseLeave={() => setOpenDropdown(null)}
+                                        >
+                                            <Link
+                                                to={link.href}
+                                                className="group relative inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-slate-700 transition-all duration-300 hover:bg-slate-100/80 hover:text-[#0052cc]"
+                                            >
+                                                <span className="relative">{link.label}</span>
+                                                <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${openDropdown === dbItem.id ? 'rotate-180' : ''}`} />
+                                                <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-linear-to-r from-[#0052cc] to-[#5b9cff] transition-transform duration-300 group-hover:scale-x-100" />
+                                            </Link>
+                                            {openDropdown === dbItem.id && (
+                                                <div className="absolute left-0 top-full z-50 min-w-48 rounded-xl border border-slate-100 bg-white py-2 shadow-lg shadow-slate-200/50">
+                                                    {children.map((child) => (
+                                                        <Link
+                                                            key={`child-${child.id}`}
+                                                            to={child.url}
+                                                            className="block px-4 py-2.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
+                                                            onClick={() => setOpenDropdown(null)}
+                                                        >
+                                                            {child.name}
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )
+                                }
+                                return (
+                                    <Link
+                                        key={link.href}
+                                        to={link.href}
+                                        className="group relative inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-slate-700 transition-all duration-300 hover:bg-slate-100/80 hover:text-[#0052cc]"
+                                    >
+                                        <span className="relative">{link.label}</span>
+                                        <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-linear-to-r from-[#0052cc] to-[#5b9cff] transition-transform duration-300 group-hover:scale-x-100" />
+                                    </Link>
+                                )
+                            })}
+                            {dynamicLinks.map((nav) => {
+                                const children = childrenMap.get(nav.id)
+                                if (children && children.length > 0) {
+                                    return (
+                                        <div
+                                            key={`cms-${nav.id}`}
+                                            className="relative"
+                                            onMouseEnter={() => setOpenDropdown(nav.id)}
+                                            onMouseLeave={() => setOpenDropdown(null)}
+                                        >
+                                            <Link
+                                                to={nav.url}
+                                                className="group relative inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-slate-700 transition-all duration-300 hover:bg-slate-100/80 hover:text-[#0052cc]"
+                                            >
+                                                <span className="relative">{nav.name}</span>
+                                                <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${openDropdown === nav.id ? 'rotate-180' : ''}`} />
+                                            </Link>
+                                            {openDropdown === nav.id && (
+                                                <div className="absolute left-0 top-full z-50 min-w-48 rounded-xl border border-slate-100 bg-white py-2 shadow-lg shadow-slate-200/50">
+                                                    {children.map((child) => (
+                                                        <Link
+                                                            key={`cms-child-${child.id}`}
+                                                            to={child.url}
+                                                            className="block px-4 py-2.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
+                                                            onClick={() => setOpenDropdown(null)}
+                                                        >
+                                                            {child.name}
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )
+                                }
+                                return (
+                                    <Link
+                                        key={`cms-${nav.id}`}
+                                        to={nav.url}
+                                        className="group relative inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-slate-700 transition-all duration-300 hover:bg-slate-100/80 hover:text-[#0052cc]"
+                                    >
+                                        <span className="relative">{nav.name}</span>
+                                        <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-linear-to-r from-[#0052cc] to-[#5b9cff] transition-transform duration-300 group-hover:scale-x-100" />
+                                    </Link>
+                                )
+                            })}
                             <Link
                                 to="/destek"
                                 className="group inline-flex items-center gap-2 rounded-full border border-emerald-200/80 bg-white px-3.5 py-2 text-sm font-semibold tracking-[-0.01em] text-slate-700 shadow-[0_8px_22px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-300 hover:bg-emerald-50 hover:font-black hover:text-emerald-700 hover:shadow-[0_12px_28px_rgba(16,185,129,0.16)]"
@@ -400,12 +482,29 @@ export default function Header() {
                                     KEŞFET
                                 </span>
                             </Link>
-                            <Link to="/hizmetler" className="block text-sm font-semibold text-slate-700 py-2.5 px-3 rounded-xl hover:bg-slate-50" onClick={() => setMobileOpen(false)}>Hizmetler</Link>
-                            <Link to="/bilgi-bankasi" className="block text-sm font-semibold text-slate-700 py-2.5 px-3 rounded-xl hover:bg-slate-50" onClick={() => setMobileOpen(false)}>Bilgi Bankası</Link>
-                            <Link to="/hakkimizda" className="block text-sm font-semibold text-slate-700 py-2.5 px-3 rounded-xl hover:bg-slate-50" onClick={() => setMobileOpen(false)}>Hakkımızda</Link>
-                            {dynamicLinks.map((nav) => (
-                                <Link key={`cms-m-${nav.id}`} to={nav.url} className="block text-sm font-semibold text-slate-700 py-2.5 px-3 rounded-xl hover:bg-slate-50" onClick={() => setMobileOpen(false)}>{nav.name}</Link>
-                            ))}
+                            {[{ label: 'Hizmetler', href: '/hizmetler' }, { label: 'Bilgi Bankası', href: '/bilgi-bankasi' }, { label: 'Hakkımızda', href: '/hakkimizda' }].map((link) => {
+                                const dbItem = urlToDbItem.get(link.href)
+                                const children = dbItem ? childrenMap.get(dbItem.id) : undefined
+                                return (
+                                    <div key={link.href}>
+                                        <Link to={link.href} className="block text-sm font-semibold text-slate-700 py-2.5 px-3 rounded-xl hover:bg-slate-50" onClick={() => setMobileOpen(false)}>{link.label}</Link>
+                                        {children && children.map((child) => (
+                                            <Link key={`m-child-${child.id}`} to={child.url} className="block text-sm text-slate-500 py-2 pl-7 pr-3 rounded-xl hover:bg-slate-50" onClick={() => setMobileOpen(false)}>{child.name}</Link>
+                                        ))}
+                                    </div>
+                                )
+                            })}
+                            {dynamicLinks.map((nav) => {
+                                const children = childrenMap.get(nav.id)
+                                return (
+                                    <div key={`cms-m-${nav.id}`}>
+                                        <Link to={nav.url} className="block text-sm font-semibold text-slate-700 py-2.5 px-3 rounded-xl hover:bg-slate-50" onClick={() => setMobileOpen(false)}>{nav.name}</Link>
+                                        {children && children.map((child) => (
+                                            <Link key={`cms-m-child-${child.id}`} to={child.url} className="block text-sm text-slate-500 py-2 pl-7 pr-3 rounded-xl hover:bg-slate-50" onClick={() => setMobileOpen(false)}>{child.name}</Link>
+                                        ))}
+                                    </div>
+                                )
+                            })}
                             <Link
                                 to="/destek"
                                 className="flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50/70 px-3.5 py-3 text-sm font-bold text-emerald-700 shadow-[0_10px_24px_rgba(16,185,129,0.1)] transition-all duration-200 hover:border-emerald-300 hover:bg-emerald-50"
