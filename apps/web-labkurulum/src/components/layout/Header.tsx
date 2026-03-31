@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom'
-import { Menu, X, ChevronDown, ArrowRight, Phone } from 'lucide-react'
+import { Menu, X, ChevronDown, ArrowRight } from 'lucide-react'
 import { useState, useEffect, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getNavigations } from '@forlabs/core'
-
 interface NavItem {
     id: number
     name: string
@@ -162,38 +161,17 @@ export default function Header() {
 
     return (
         <>
-            {/* Top micro bar */}
-            <div className="bg-brand-800 text-white">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between h-8 text-[11px]">
-                    <div className="flex items-center gap-4">
-                        <a href="https://for-labs.com" target="_blank" rel="noopener noreferrer" className="font-medium text-brand-200 hover:text-white transition-colors">
-                            For-Labs Ekosistemi
-                        </a>
-                        <span className="w-px h-3 bg-brand-600" />
-                        <a href="https://atagotr.com" target="_blank" rel="noopener noreferrer" className="text-brand-300 hover:text-white transition-colors">Atago TR</a>
-                    </div>
-                    <a href="tel:+902121234567" className="hidden sm:flex items-center gap-1.5 text-brand-200 hover:text-white transition-colors">
-                        <Phone className="w-3 h-3" />
-                        +90 (212) 123 45 67
-                    </a>
-                </div>
-            </div>
-
             {/* Main navbar */}
             <div className={`transition-all duration-200 border-b ${scrolled ? 'bg-white/95 backdrop-blur-md border-slate-200 shadow-sm' : 'bg-white border-slate-100'}`}>
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         {/* Logo */}
-                        <Link to="/" className="group flex items-center gap-3 shrink-0">
-                            <div className="flex items-center gap-0.5">
-                                <div className="w-8 h-8 rounded-sm bg-brand-600 flex items-center justify-center">
-                                    <span className="text-white font-mono font-bold text-sm leading-none">LK</span>
-                                </div>
-                                <div className="ml-2">
-                                    <span className="font-extrabold text-lg tracking-tight text-brand-800">LAB</span>
-                                    <span className="font-extrabold text-lg tracking-tight text-slate-500">KURULUM</span>
-                                </div>
-                            </div>
+                        <Link to="/" className="group flex items-center gap-2 shrink-0">
+                            <img 
+                                src="/labkurulum-logo.svg" 
+                                alt="Lab Kurulum Logo" 
+                                className="h-9 w-auto transition-transform duration-300 group-hover:scale-105" 
+                            />
                         </Link>
 
                         {/* Desktop Nav */}

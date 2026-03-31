@@ -89,7 +89,7 @@ export default function HomePage() {
 
     return (
         <>
-            <title>Lab Kurulum — Anahtar Teslim Laboratuvar Çözümleri</title>
+            <title>Lab Kurulum - Anahtar Teslim Laboratuvar Kurulumu</title>
 
             {/* ═══ HERO ═══ */}
             <section className="relative bg-blueprint-grid-heavy overflow-hidden">
@@ -101,22 +101,21 @@ export default function HomePage() {
                             <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-sm border border-brand-200 bg-brand-50/80">
                                 <span className="w-2 h-2 rounded-full bg-accent-500 animate-pulse" />
                                 <span className="text-[11px] font-mono font-semibold text-brand-700 uppercase tracking-widest">
-                                    Proje Kabul Açık — 2026 Q2
+                                    Proje Kabul Açık
                                 </span>
                             </div>
 
                             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-brand-900 leading-[1.1]">
-                                Geleceğin Laboratuvarlarını{' '}
+                                Laboratuvar Kurulumunu{' '}
                                 <span className="relative inline-block">
-                                    <span className="relative z-10">Bugünden</span>
+                                    <span className="relative z-10">Uzman Mühendislere</span>
                                     <span className="absolute bottom-1 left-0 right-0 h-3 bg-accent-400/30 -z-0" />
                                 </span>{' '}
-                                İnşa Ediyoruz
+                                Bırakın.
                             </h1>
 
                             <p className="mt-6 text-lg text-slate-600 leading-relaxed max-w-2xl">
-                                Tasarımdan kuruluma, ekipman tedariğinden akreditasyona — laboratuvarınızın her aşamasını
-                                mühendislik disipliniyle yönetiyoruz.
+                                Tasarımdan kuruluma, ekipman tedariğinden akreditasyona, laboratuvarınızın her aşamasını mühendislik disipliniyle yönetiyoruz.
                             </p>
 
                             <div className="mt-10 flex flex-col sm:flex-row items-start gap-4">
@@ -139,8 +138,8 @@ export default function HomePage() {
                             {/* Stats row */}
                             <div className="mt-14 flex flex-wrap gap-8 sm:gap-12">
                                 {[
-                                    { value: '150+', label: 'Tamamlanan Proje' },
-                                    { value: '12', label: 'Yıllık Deneyim' },
+                                    { value: '250+', label: 'Tamamlanan Proje' },
+                                    { value: '30+', label: 'Yıllık Deneyim' },
                                     { value: '98%', label: 'Müşteri Memnuniyeti' },
                                 ].map((stat) => (
                                     <div key={stat.label}>
@@ -158,10 +157,10 @@ export default function HomePage() {
                                 <div className="absolute inset-0 bg-brand-100/30 rounded-full blur-3xl -z-10" />
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] border border-brand-100 rounded-full opacity-50 -z-10" />
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] h-[85%] border border-brand-200/50 rounded-full -z-10" />
-                                
-                                <img 
-                                    src="/labkurulum-banner.png" 
-                                    alt="Lab Kurulum banner" 
+
+                                <img
+                                    src="/labkurulum-banner.png"
+                                    alt="Lab Kurulum banner"
                                     className="w-full h-auto max-h-[500px] object-contain drop-shadow-2xl animate-float"
                                 />
                             </div>

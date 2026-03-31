@@ -103,7 +103,7 @@ productsRoute.get("/", async (c) => {
         );
     }
     if (categoryIdParam) {
-        const catId = Number(categoryIdParam);
+        const catIds = categoryIdParam.split(',').map(Number).filter((n) => !isNaN(n));
         // Build descendant set so clicking a parent category also shows child products
         const allCats = await db
             .select({ id: categories.id, parent_id: categories.parent_id })
@@ -115,8 +115,8 @@ productsRoute.get("/", async (c) => {
                 childrenMap.get(cat.parent_id)!.push(cat.id);
             }
         }
-        const matchIds = new Set<number>([catId]);
-        const queue = [catId];
+        const matchIds = new Set<number>(catIds);
+        const queue = [...catIds];
         while (queue.length > 0) {
             const current = queue.pop()!;
             for (const child of (childrenMap.get(current) ?? [])) {

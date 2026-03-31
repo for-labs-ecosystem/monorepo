@@ -49,13 +49,11 @@ export default function Footer() {
                     {/* Brand */}
                     <div>
                         <Link to="/" className="inline-flex items-center gap-2 mb-5">
-                            <div className="w-7 h-7 rounded-sm bg-brand-600 flex items-center justify-center">
-                                <span className="text-white font-mono font-bold text-xs leading-none">LK</span>
-                            </div>
-                            <div>
-                                <span className="font-extrabold text-base tracking-tight text-white">LAB</span>
-                                <span className="font-extrabold text-base tracking-tight text-brand-400">KURULUM</span>
-                            </div>
+                            <img 
+                                src="/labkurulum-footer-logo.svg" 
+                                alt="Lab Kurulum Logo" 
+                                className="h-8 w-auto opacity-90 transition-opacity hover:opacity-100" 
+                            />
                         </Link>
                         <p className="text-sm text-slate-400 leading-relaxed mb-6">
                             For-Labs Ekosistemi'nin anahtar teslim laboratuvar kurulum, tasarım ve proje yönetimi markası.

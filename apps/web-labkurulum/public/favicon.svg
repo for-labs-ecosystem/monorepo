@@ -1,4 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="4" fill="#1e40af"/>
-  <text x="16" y="22" font-family="monospace" font-size="14" font-weight="bold" fill="white" text-anchor="middle">LK</text>
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="primaryGrad" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1e40af" />
+      <stop offset="100%" stop-color="#1e3a8a" />
+    </linearGradient>
+    <linearGradient id="brandGrad" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+  </defs>
+  <!-- Background Shape -->
+  <rect width="256" height="256" rx="56" fill="url(#primaryGrad)" />
+  <rect x="8" y="8" width="240" height="240" rx="48" fill="url(#brandGrad)" opacity="0.15" />
+  
+  <!-- Outer Glow / Blur effect simulated by repeated strokes -->
+  <path d="M128 32 C181.019 32 224 74.9807 224 128 C224 181.019 181.019 224 128 224 C74.9807 224 32 181.019 32 128 C32 74.9807 74.9807 32 128 32Z" stroke="white" stroke-width="4" stroke-dasharray="16 16" opacity="0.3" transform="rotate(15 128 128)" />
+  
+  <!-- Geometric Structure -->
+  <path d="M90 176 V80 L166 128 Z" fill="white" opacity="0.1" />
+  <path d="M72 176 L72 80 L96 80 L96 156 L164 156 L164 176 Z" fill="white" />
+  <path d="M112 110 L140 80 L168 80 L128 124 L170 176 L140 176 L112 140 L112 110 Z" fill="#93c5fd" />
 </svg>
