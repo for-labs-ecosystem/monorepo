@@ -11,7 +11,7 @@ interface ProjectItem {
     slug: string
     title: string
     short_description: string | null
-    image_url: string | null
+    cover_image_url: string | null
     client_name: string | null
     completion_date: string | null
 }
@@ -61,10 +61,10 @@ export default function ProjectsPage() {
                                 to={`/projeler/${project.slug}`}
                                 className="group border border-slate-200 rounded-md bg-white overflow-hidden transition-all duration-300 hover:border-brand-300 hover:shadow-sm"
                             >
-                                {project.image_url ? (
+                                {project.cover_image_url ? (
                                     <div className="aspect-[16/10] overflow-hidden bg-slate-100">
                                         <img
-                                            src={getImageUrl(project.image_url)}
+                                            src={getImageUrl(project.cover_image_url)}
                                             alt={project.title}
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                         />

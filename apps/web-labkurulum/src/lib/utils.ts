@@ -12,3 +12,12 @@ export function getImageUrl(path: string | null | undefined): string {
     if (path.startsWith('http')) return path
     return `${API_BASE}${path}`
 }
+
+/**
+ * Strip HTML tags from a string — used for showing clean text excerpts
+ * in product/service cards where rich content shouldn't render as raw HTML.
+ */
+export function stripHtml(html: string | null | undefined): string {
+    if (!html) return ''
+    return html.replace(/<[^>]*>/g, '').trim()
+}

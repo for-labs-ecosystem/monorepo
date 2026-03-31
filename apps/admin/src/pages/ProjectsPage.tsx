@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { api } from "../lib/api";
+import { api, resolveMediaUrl } from "../lib/api";
 import DataTable, { SiteLabels } from "../components/DataTable";
 import { Image as ImageIcon, Star, CheckCircle2, XCircle } from "lucide-react";
 
@@ -40,7 +40,7 @@ export default function ProjectsPage() {
                 <div className="flex items-center gap-3">
                     <div className="w-12 h-8 rounded-lg bg-slate-100 border border-slate-200 shrink-0 flex items-center justify-center overflow-hidden">
                         {row.cover_image_url ? (
-                            <img src={row.cover_image_url} alt="" className="w-full h-full object-cover" />
+                            <img src={resolveMediaUrl(row.cover_image_url)} alt="" className="w-full h-full object-cover" />
                         ) : (
                             <ImageIcon size={14} className="text-slate-300" />
                         )}

@@ -10,7 +10,7 @@ interface ProjectDetail {
     content: string | null
     description: string | null
     short_description: string | null
-    image_url: string | null
+    cover_image_url: string | null
     gallery: string | null
     client_name: string | null
     completion_date: string | null
@@ -86,10 +86,10 @@ export default function ProjectDetailPage() {
                     <p className="text-lg text-slate-500 mb-10 leading-relaxed">{project.short_description}</p>
                 )}
 
-                {project.image_url && (
+                {project.cover_image_url && (
                     <div className="mb-10 overflow-hidden rounded-md border border-slate-200">
                         <img
-                            src={resolveMediaUrl(project.image_url)}
+                            src={resolveMediaUrl(project.cover_image_url)}
                             alt={project.title}
                             className="w-full h-56 sm:h-64 md:h-80 object-cover"
                         />

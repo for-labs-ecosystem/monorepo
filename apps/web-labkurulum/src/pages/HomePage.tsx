@@ -19,7 +19,7 @@ interface ProjectItem {
     slug: string
     title: string
     short_description: string | null
-    image_url: string | null
+    cover_image_url: string | null
     client_name: string | null
     completion_date: string | null
 }
@@ -52,20 +52,40 @@ const CAPABILITY_CARDS = [
 ]
 
 export default function HomePage() {
-    const { data: servicesRes } = useQuery({
+    // Try featured first, fallback to all items if none are featured
+    const { data: featuredServicesRes } = useQuery({
         queryKey: ['services', SITE_ID, 'featured'],
         queryFn: () => getServices({ is_featured: '1', limit: '4' }),
         staleTime: 5 * 60 * 1000,
     })
 
-    const { data: projectsRes } = useQuery({
+    const { data: allServicesRes } = useQuery({
+        queryKey: ['services', SITE_ID, 'all-homepage'],
+        queryFn: () => getServices({ limit: '4' }),
+        staleTime: 5 * 60 * 1000,
+        enabled: (featuredServicesRes?.data ?? []).length === 0,
+    })
+
+    const { data: featuredProjectsRes } = useQuery({
         queryKey: ['projects', SITE_ID, 'featured'],
         queryFn: () => getProjects({ is_featured: '1', limit: '3' }),
         staleTime: 5 * 60 * 1000,
     })
 
-    const services = (servicesRes?.data ?? []) as unknown as ServiceItem[]
-    const projects = (projectsRes?.data ?? []) as unknown as ProjectItem[]
+    const { data: allProjectsRes } = useQuery({
+        queryKey: ['projects', SITE_ID, 'all-homepage'],
+        queryFn: () => getProjects({ limit: '3' }),
+        staleTime: 5 * 60 * 1000,
+        enabled: (featuredProjectsRes?.data ?? []).length === 0,
+    })
+
+    // Use featured items if available, otherwise fall back to all items
+    const services = ((featuredServicesRes?.data ?? []).length > 0
+        ? featuredServicesRes?.data
+        : allServicesRes?.data ?? []) as unknown as ServiceItem[]
+    const projects = ((featuredProjectsRes?.data ?? []).length > 0
+        ? featuredProjectsRes?.data
+        : allProjectsRes?.data ?? []) as unknown as ProjectItem[]
 
     return (
         <>
@@ -74,59 +94,77 @@ export default function HomePage() {
             {/* ═══ HERO ═══ */}
             <section className="relative bg-blueprint-grid-heavy overflow-hidden">
                 <div className="absolute inset-0 bg-linear-to-b from-brand-50/60 via-white/20 to-white pointer-events-none" />
-                <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 lg:py-36">
-                    <div className="max-w-3xl">
-                        {/* Technical tag */}
-                        <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-sm border border-brand-200 bg-brand-50/80">
-                            <span className="w-2 h-2 rounded-full bg-accent-500 animate-pulse" />
-                            <span className="text-[11px] font-mono font-semibold text-brand-700 uppercase tracking-widest">
-                                Proje Kabul Açık — 2026 Q2
-                            </span>
+                <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-24 lg:pt-20 lg:pb-36">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                        <div className="lg:col-span-7">
+                            {/* Technical tag */}
+                            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-sm border border-brand-200 bg-brand-50/80">
+                                <span className="w-2 h-2 rounded-full bg-accent-500 animate-pulse" />
+                                <span className="text-[11px] font-mono font-semibold text-brand-700 uppercase tracking-widest">
+                                    Proje Kabul Açık — 2026 Q2
+                                </span>
+                            </div>
+
+                            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-brand-900 leading-[1.1]">
+                                Geleceğin Laboratuvarlarını{' '}
+                                <span className="relative inline-block">
+                                    <span className="relative z-10">Bugünden</span>
+                                    <span className="absolute bottom-1 left-0 right-0 h-3 bg-accent-400/30 -z-0" />
+                                </span>{' '}
+                                İnşa Ediyoruz
+                            </h1>
+
+                            <p className="mt-6 text-lg text-slate-600 leading-relaxed max-w-2xl">
+                                Tasarımdan kuruluma, ekipman tedariğinden akreditasyona — laboratuvarınızın her aşamasını
+                                mühendislik disipliniyle yönetiyoruz.
+                            </p>
+
+                            <div className="mt-10 flex flex-col sm:flex-row items-start gap-4">
+                                <Link
+                                    to="/iletisim"
+                                    className="inline-flex items-center gap-2 px-7 py-3.5 rounded-sm bg-brand-600 text-white text-sm font-bold uppercase tracking-wider transition-all hover:bg-brand-700 hover:shadow-lg dimension-line"
+                                >
+                                    Proje Başlat
+                                    <ArrowRight className="w-4 h-4" />
+                                </Link>
+                                <Link
+                                    to="/projeler"
+                                    className="inline-flex items-center gap-2 px-7 py-3.5 rounded-sm border border-slate-300 text-slate-700 text-sm font-semibold transition-all hover:border-brand-300 hover:text-brand-700"
+                                >
+                                    Referans Projeler
+                                    <ChevronRight className="w-4 h-4" />
+                                </Link>
+                            </div>
+
+                            {/* Stats row */}
+                            <div className="mt-14 flex flex-wrap gap-8 sm:gap-12">
+                                {[
+                                    { value: '150+', label: 'Tamamlanan Proje' },
+                                    { value: '12', label: 'Yıllık Deneyim' },
+                                    { value: '98%', label: 'Müşteri Memnuniyeti' },
+                                ].map((stat) => (
+                                    <div key={stat.label}>
+                                        <div className="text-2xl sm:text-3xl font-extrabold text-brand-700 font-mono tracking-tight">{stat.value}</div>
+                                        <div className="text-xs text-slate-500 font-medium uppercase tracking-wider mt-1">{stat.label}</div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
-                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-brand-900 leading-[1.1]">
-                            Geleceğin Laboratuvarlarını{' '}
-                            <span className="relative inline-block">
-                                <span className="relative z-10">Bugünden</span>
-                                <span className="absolute bottom-1 left-0 right-0 h-3 bg-accent-400/30 -z-0" />
-                            </span>{' '}
-                            İnşa Ediyoruz
-                        </h1>
-
-                        <p className="mt-6 text-lg text-slate-600 leading-relaxed max-w-2xl">
-                            Tasarımdan kuruluma, ekipman tedariğinden akreditasyona — laboratuvarınızın her aşamasını
-                            mühendislik disipliniyle yönetiyoruz.
-                        </p>
-
-                        <div className="mt-10 flex flex-col sm:flex-row items-start gap-4">
-                            <Link
-                                to="/iletisim"
-                                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-sm bg-brand-600 text-white text-sm font-bold uppercase tracking-wider transition-all hover:bg-brand-700 hover:shadow-lg dimension-line"
-                            >
-                                Proje Başlat
-                                <ArrowRight className="w-4 h-4" />
-                            </Link>
-                            <Link
-                                to="/projeler"
-                                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-sm border border-slate-300 text-slate-700 text-sm font-semibold transition-all hover:border-brand-300 hover:text-brand-700"
-                            >
-                                Referans Projeler
-                                <ChevronRight className="w-4 h-4" />
-                            </Link>
-                        </div>
-
-                        {/* Stats row */}
-                        <div className="mt-14 flex flex-wrap gap-8 sm:gap-12">
-                            {[
-                                { value: '150+', label: 'Tamamlanan Proje' },
-                                { value: '12', label: 'Yıllık Deneyim' },
-                                { value: '98%', label: 'Müşteri Memnuniyeti' },
-                            ].map((stat) => (
-                                <div key={stat.label}>
-                                    <div className="text-2xl sm:text-3xl font-extrabold text-brand-700 font-mono tracking-tight">{stat.value}</div>
-                                    <div className="text-xs text-slate-500 font-medium uppercase tracking-wider mt-1">{stat.label}</div>
-                                </div>
-                            ))}
+                        {/* Banner Image */}
+                        <div className="relative hidden lg:block lg:col-span-5 h-full min-h-[400px]">
+                            <div className="absolute top-1/2 left-0 w-full aspect-square -translate-y-1/2 flex items-center justify-center">
+                                {/* Decorative elements */}
+                                <div className="absolute inset-0 bg-brand-100/30 rounded-full blur-3xl -z-10" />
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] border border-brand-100 rounded-full opacity-50 -z-10" />
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] h-[85%] border border-brand-200/50 rounded-full -z-10" />
+                                
+                                <img 
+                                    src="/labkurulum-banner.png" 
+                                    alt="Lab Kurulum banner" 
+                                    className="w-full h-auto max-h-[500px] object-contain drop-shadow-2xl animate-float"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -262,9 +300,9 @@ export default function HomePage() {
                                     className={`group relative border border-slate-200 rounded-md overflow-hidden bg-white transition-all duration-300 hover:border-brand-300 hover:shadow-sm ${idx === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
                                 >
                                     <div className={`overflow-hidden bg-slate-100 ${idx === 0 ? 'aspect-[16/10]' : 'aspect-[16/9]'}`}>
-                                        {project.image_url ? (
+                                        {project.cover_image_url ? (
                                             <img
-                                                src={getImageUrl(project.image_url)}
+                                                src={getImageUrl(project.cover_image_url)}
                                                 alt={project.title}
                                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                             />

@@ -418,11 +418,18 @@ export default function CategoryFormPage() {
                 savedId = res.data.id;
             }
 
-            for (const sv of siteVisibility) {
-                await api.setCategorySiteOverride(savedId, sv.siteId, {
-                    is_visible: sv.isVisible,
-                    sort_order: parseInt(form.sort_order) || 0,
-                });
+            // Save overrides — all sites in parallel for reliability
+            const overrideResults = await Promise.allSettled(
+                siteVisibility.map((sv) =>
+                    api.setCategorySiteOverride(savedId, sv.siteId, {
+                        is_visible: sv.isVisible,
+                        sort_order: parseInt(form.sort_order) || 0,
+                    })
+                )
+            );
+            const failedOverrides = overrideResults.filter((r) => r.status === "rejected");
+            if (failedOverrides.length > 0) {
+                console.error("Some site overrides failed:", failedOverrides);
             }
 
             queryClient.invalidateQueries({ queryKey: ["categories"] });

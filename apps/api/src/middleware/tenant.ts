@@ -28,7 +28,9 @@ export async function tenantMiddleware(c: Context, next: Next) {
                 .from(sites)
                 .where(eq(sites.id, siteId))
                 .get();
-            if (site && site.is_active) {
+            const isAdminRequest = c.req.query("admin") === "true";
+            // Admin requests bypass is_active check — admins must manage all sites including inactive ones
+            if (site && (site.is_active || isAdminRequest)) {
                 c.set("siteSlug", site.slug);
                 c.set("siteId", site.id);
                 c.set("site", site);

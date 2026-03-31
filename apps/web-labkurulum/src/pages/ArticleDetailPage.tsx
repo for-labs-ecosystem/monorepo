@@ -9,7 +9,7 @@ interface ArticleDetail {
     title: string
     content: string | null
     short_description: string | null
-    image_url: string | null
+    cover_image_url: string | null
     created_at: string | null
     category_name: string | null
     meta_title: string | null
@@ -87,10 +87,10 @@ export default function ArticleDetailPage() {
                     </p>
                 )}
 
-                {article.image_url && (
+                {article.cover_image_url && (
                     <div className="mb-10 overflow-hidden rounded-md border border-slate-200">
                         <img
-                            src={resolveMediaUrl(article.image_url)}
+                            src={resolveMediaUrl(article.cover_image_url)}
                             alt={article.title}
                             className="w-full h-48 sm:h-56 md:h-72 object-cover"
                         />

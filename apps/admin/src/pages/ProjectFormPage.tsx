@@ -255,11 +255,11 @@ export default function ProjectFormPage() {
                 cover_image_url: form.cover_image_url || null,
                 header_image_url: form.header_image_url || null,
                 video_url: form.video_url || null,
-                gallery: gallery.length > 0 ? JSON.stringify(gallery) : null,
+                gallery: gallery.length > 0 ? gallery : null,
                 metrics: metrics.filter(m => m.label && m.value).length > 0 
-                    ? JSON.stringify(metrics.filter(m => m.label && m.value)) 
+                    ? metrics.filter(m => m.label && m.value) 
                     : null,
-                tags: tags.length > 0 ? JSON.stringify(tags) : null,
+                tags: tags.length > 0 ? tags : null,
                 testimonial: form.testimonial || null,
                 testimonial_author: form.testimonial_author || null,
                 testimonial_author_title: form.testimonial_author_title || null,
@@ -272,20 +272,26 @@ export default function ProjectFormPage() {
 
             let savedId: number;
             if (isEdit && id) {
-                await api.updateProject(Number(id), payload);
+                await api.updateProject(Number(id), payload as any);
                 savedId = Number(id);
             } else {
-                const res = await api.createProject(payload);
+                const res = await api.createProject(payload as any);
                 savedId = res.data.id;
             }
 
-            // Save overrides
-            for (const sv of siteVisibility) {
-                await api.setProjectSiteOverride(savedId, sv.siteId, {
-                    is_visible: sv.isVisible,
-                    is_featured: !!sv.is_featured,
-                    sort_order: parseInt(form.sort_order) || 0,
-                });
+            // Save overrides — all sites in parallel for reliability
+            const overrideResults = await Promise.allSettled(
+                siteVisibility.map((sv) =>
+                    api.setProjectSiteOverride(savedId, sv.siteId, {
+                        is_visible: sv.isVisible,
+                        is_featured: !!sv.is_featured,
+                        sort_order: parseInt(form.sort_order) || 0,
+                    })
+                )
+            );
+            const failedOverrides = overrideResults.filter((r) => r.status === "rejected");
+            if (failedOverrides.length > 0) {
+                console.error("Some site overrides failed:", failedOverrides);
             }
 
             queryClient.invalidateQueries({ queryKey: ["projects"] });

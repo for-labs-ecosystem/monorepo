@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { api } from "../lib/api";
+import { api, resolveMediaUrl } from "../lib/api";
 import DataTable, { SiteLabels } from "../components/DataTable";
 import { Star, FileText, CheckCircle2, XCircle } from "lucide-react";
 
@@ -49,7 +49,7 @@ export default function ArticlesPage() {
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 shrink-0 flex items-center justify-center overflow-hidden">
                         {row.cover_image_url ? (
-                            <img src={row.cover_image_url} alt="" className="w-full h-full object-cover" />
+                            <img src={resolveMediaUrl(row.cover_image_url)} alt="" className="w-full h-full object-cover" />
                         ) : (
                             <FileText size={18} className="text-indigo-300" />
                         )}

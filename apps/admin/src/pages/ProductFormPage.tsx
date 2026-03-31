@@ -358,8 +358,8 @@ export default function ProductFormPage() {
                 content_en: form.content_en || null,
                 specs: form.specs_tr || null,
                 specs_en: form.specs_en || null,
-                features: JSON.stringify(form.features_tr),
-                features_en: JSON.stringify(form.features_en),
+                features: form.features_tr.length > 0 ? form.features_tr : null,
+                features_en: form.features_en.length > 0 ? form.features_en : null,
                 price: form.price ? parseFloat(form.price) : null,
                 compare_price: form.compare_price ? parseFloat(form.compare_price) : null,
                 currency: form.currency || "TRY",
@@ -370,17 +370,17 @@ export default function ProductFormPage() {
                 model_number: form.model_number || null,
                 warranty_period: form.warranty_period || null,
                 campaign_label: form.campaign_label || null,
-                tags: JSON.stringify(form.tags),
-                tags_en: JSON.stringify(form.tags_en),
-                application_areas: JSON.stringify(form.application_areas),
-                application_areas_en: JSON.stringify(form.application_areas_en),
-                analysis_types: JSON.stringify(form.analysis_types),
-                analysis_types_en: JSON.stringify(form.analysis_types_en),
+                tags: form.tags.length > 0 ? form.tags : null,
+                tags_en: form.tags_en.length > 0 ? form.tags_en : null,
+                application_areas: form.application_areas.length > 0 ? form.application_areas : null,
+                application_areas_en: form.application_areas_en.length > 0 ? form.application_areas_en : null,
+                analysis_types: form.analysis_types.length > 0 ? form.analysis_types : null,
+                analysis_types_en: form.analysis_types_en.length > 0 ? form.analysis_types_en : null,
                 automation_level: form.automation_level || null,
-                compliance_tags: JSON.stringify(form.compliance_tags),
+                compliance_tags: form.compliance_tags.length > 0 ? form.compliance_tags : null,
                 category_id: form.category_id ? parseInt(form.category_id) : null,
                 image_url: gallery.length > 0 ? gallery[thumbnailIndex] : null,
-                gallery: gallery.length > 0 ? JSON.stringify(gallery) : null,
+                gallery: gallery.length > 0 ? gallery : null,
                 meta_title: form.meta_title || null,
                 meta_description: form.meta_description || null,
                 canonical_url: form.canonical_url || null,
@@ -391,24 +391,30 @@ export default function ProductFormPage() {
 
             let savedId: number;
             if (isEdit && id) {
-                const res = await api.updateProduct(Number(id), payload);
+                const res = await api.updateProduct(Number(id), payload as any);
                 savedId = res.data.id;
             } else {
-                const res = await api.createProduct(payload);
+                const res = await api.createProduct(payload as any);
                 savedId = res.data.id;
             }
 
-            // Save overrides
-            for (const sv of siteVisibility) {
-                await api.setProductSiteOverride(savedId, sv.siteId, {
-                    is_visible: sv.isVisible,
-                    is_featured: !!sv.is_featured,
-                    sort_order: parseInt(form.sort_order) || 0,
-                    stock_quantity: form.stock_quantity ? parseInt(form.stock_quantity) : null,
-                    meta_title: sv.meta_title || null,
-                    meta_description: sv.meta_description || null,
-                    canonical_url: sv.canonical_url || null,
-                });
+            // Save overrides — all sites in parallel for reliability
+            const overrideResults = await Promise.allSettled(
+                siteVisibility.map((sv) =>
+                    api.setProductSiteOverride(savedId, sv.siteId, {
+                        is_visible: sv.isVisible,
+                        is_featured: !!sv.is_featured,
+                        sort_order: parseInt(form.sort_order) || 0,
+                        stock_quantity: form.stock_quantity ? parseInt(form.stock_quantity) : null,
+                        meta_title: sv.meta_title || null,
+                        meta_description: sv.meta_description || null,
+                        canonical_url: sv.canonical_url || null,
+                    })
+                )
+            );
+            const failedOverrides = overrideResults.filter((r) => r.status === "rejected");
+            if (failedOverrides.length > 0) {
+                console.error("Some site overrides failed:", failedOverrides);
             }
 
             queryClient.invalidateQueries({ queryKey: ["products"] });

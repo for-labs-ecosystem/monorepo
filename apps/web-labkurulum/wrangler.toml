@@ -4,4 +4,4 @@ pages_build_output_dir = "dist"
 
 [env.production.vars]
 VITE_SITE_ID = "4"
-VITE_API_URL = "https://api.for-labs.com"
+VITE_API_URL = "https://forlabs-api-worker.social-protekanalitik.workers.dev"

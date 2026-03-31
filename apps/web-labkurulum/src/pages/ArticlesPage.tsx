@@ -11,7 +11,7 @@ interface ArticleItem {
     slug: string
     title: string
     short_description: string | null
-    image_url: string | null
+    cover_image_url: string | null
     created_at: string | null
     category_name: string | null
 }
@@ -61,10 +61,10 @@ export default function ArticlesPage() {
                                 to={`/bilgi-bankasi/${article.slug}`}
                                 className="group border border-slate-200 rounded-md bg-white overflow-hidden transition-all duration-300 hover:border-brand-300 hover:shadow-sm"
                             >
-                                {article.image_url ? (
+                                {article.cover_image_url ? (
                                     <div className="aspect-[16/9] overflow-hidden bg-slate-100">
                                         <img
-                                            src={getImageUrl(article.image_url)}
+                                            src={getImageUrl(article.cover_image_url)}
                                             alt={article.title}
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                         />

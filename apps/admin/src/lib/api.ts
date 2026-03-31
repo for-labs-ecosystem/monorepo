@@ -232,14 +232,14 @@ class ApiClient {
     }
     /** Create or update per-site visibility/override for a product */
     setProductSiteOverride(productId: number, siteId: number, data: SiteOverridePayload) {
-        return this.request<{ data: SiteOverridePayload }>(`/products/${productId}/override?site_id=${siteId}`, {
+        return this.request<{ data: SiteOverridePayload }>(`/products/${productId}/override?site_id=${siteId}&admin=true`, {
             method: "POST",
             body: JSON.stringify(data),
         });
     }
     /** Fetch existing overrides for a product across all sites */
     getProductOverrides(productId: number) {
-        return this.request<{ data: SiteOverridePayload[] }>(`/products/${productId}/overrides`);
+        return this.request<{ data: SiteOverridePayload[] }>(`/products/${productId}/overrides`, { params: { admin: "true" } });
     }
 
     // ─── Articles ───
@@ -269,13 +269,13 @@ class ApiClient {
         return this.request<{ message: string }>(`/articles/${id}`, { method: "DELETE" });
     }
     setArticleSiteOverride(articleId: number, siteId: number, data: SiteOverridePayload) {
-        return this.request<{ data: SiteOverridePayload }>(`/articles/${articleId}/override?site_id=${siteId}`, {
+        return this.request<{ data: SiteOverridePayload }>(`/articles/${articleId}/override?site_id=${siteId}&admin=true`, {
             method: "POST",
             body: JSON.stringify(data),
         });
     }
     getArticleOverrides(articleId: number) {
-        return this.request<{ data: SiteOverridePayload[] }>(`/articles/${articleId}/overrides`);
+        return this.request<{ data: SiteOverridePayload[] }>(`/articles/${articleId}/overrides`, { params: { admin: "true" } });
     }
 
     // ─── Services ───
@@ -305,13 +305,13 @@ class ApiClient {
         return this.request<{ message: string }>(`/services/${id}`, { method: "DELETE" });
     }
     setServiceSiteOverride(serviceId: number, siteId: number, data: SiteOverridePayload) {
-        return this.request<{ data: SiteOverridePayload }>(`/services/${serviceId}/override?site_id=${siteId}`, {
+        return this.request<{ data: SiteOverridePayload }>(`/services/${serviceId}/override?site_id=${siteId}&admin=true`, {
             method: "POST",
             body: JSON.stringify(data),
         });
     }
     getServiceOverrides(serviceId: number) {
-        return this.request<{ data: SiteOverridePayload[] }>(`/services/${serviceId}/overrides`);
+        return this.request<{ data: SiteOverridePayload[] }>(`/services/${serviceId}/overrides`, { params: { admin: "true" } });
     }
 
     // ─── Pages ───
@@ -376,13 +376,13 @@ class ApiClient {
         return this.request<{ message: string }>(`/projects/${id}`, { method: "DELETE" });
     }
     setProjectSiteOverride(projectId: number, siteId: number, data: SiteOverridePayload) {
-        return this.request<{ data: SiteOverridePayload }>(`/projects/${projectId}/override?site_id=${siteId}`, {
+        return this.request<{ data: SiteOverridePayload }>(`/projects/${projectId}/override?site_id=${siteId}&admin=true`, {
             method: "POST",
             body: JSON.stringify(data),
         });
     }
     getProjectOverrides(projectId: number) {
-        return this.request<{ data: SiteOverridePayload[] }>(`/projects/${projectId}/overrides`);
+        return this.request<{ data: SiteOverridePayload[] }>(`/projects/${projectId}/overrides`, { params: { admin: "true" } });
     }
 
     // ─── Categories ───
@@ -410,13 +410,13 @@ class ApiClient {
         return this.request<{ message: string }>(`/categories/${id}`, { method: "DELETE" });
     }
     setCategorySiteOverride(categoryId: number, siteId: number, data: SiteOverridePayload) {
-        return this.request<{ data: SiteOverridePayload }>(`/categories/${categoryId}/override?site_id=${siteId}`, {
+        return this.request<{ data: SiteOverridePayload }>(`/categories/${categoryId}/override?site_id=${siteId}&admin=true`, {
             method: "POST",
             body: JSON.stringify(data),
         });
     }
     getCategoryOverrides(categoryId: number) {
-        return this.request<{ data: SiteOverridePayload[] }>(`/categories/${categoryId}/overrides`);
+        return this.request<{ data: SiteOverridePayload[] }>(`/categories/${categoryId}/overrides`, { params: { admin: "true" } });
     }
     reorderCategories(items: Array<{ id: number; parent_id: number | null; sort_order: number }>) {
         return this.request<{ message: string; count: number }>("/categories/reorder", {

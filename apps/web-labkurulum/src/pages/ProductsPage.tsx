@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getProducts, getCategories } from '@forlabs/core'
 import { Search, Grid3X3, List, ArrowRight } from 'lucide-react'
-import { getImageUrl } from '@/lib/utils'
+import { getImageUrl, stripHtml } from '@/lib/utils'
 
 const SITE_ID = import.meta.env.VITE_SITE_ID as string
 
@@ -192,7 +192,7 @@ export default function ProductsPage() {
                                     )}
                                     <h3 className="text-sm font-bold text-brand-900 group-hover:text-brand-600 transition-colors truncate">{product.title}</h3>
                                     {product.short_description && (
-                                        <p className="text-xs text-slate-500 mt-1 line-clamp-1">{product.short_description}</p>
+                                        <p className="text-xs text-slate-500 mt-1 line-clamp-1">{stripHtml(product.short_description)}</p>
                                     )}
                                 </div>
                                 <div className="text-right shrink-0">

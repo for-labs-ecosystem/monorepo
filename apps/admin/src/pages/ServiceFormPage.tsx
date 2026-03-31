@@ -136,7 +136,8 @@ export default function ServiceFormPage() {
 
         if (d.tags) {
             try {
-                setTags(typeof d.tags === 'string' ? JSON.parse(d.tags) : d.tags);
+                const parsed = typeof d.tags === 'string' ? JSON.parse(d.tags) : d.tags;
+                setTags(Array.isArray(parsed) ? parsed : []);
             } catch { setTags([]); }
         }
     }, [existing]);
@@ -164,7 +165,7 @@ export default function ServiceFormPage() {
                 is_active: !!form.is_active,
                 is_featured: !!form.is_featured,
                 sort_order: parseInt(form.sort_order) || 0,
-                tags: tags.length > 0 ? JSON.stringify(tags) : null,
+                tags: tags.length > 0 ? tags : null,
                 meta_title: form.meta_title || null,
                 meta_description: form.meta_description || null,
                 canonical_url: form.canonical_url || null,
@@ -172,23 +173,29 @@ export default function ServiceFormPage() {
 
             let savedId: number;
             if (isEdit && id) {
-                await api.updateService(Number(id), payload);
+                await api.updateService(Number(id), payload as any);
                 savedId = Number(id);
             } else {
-                const res = await api.createService(payload);
+                const res = await api.createService(payload as any);
                 savedId = res.data.id;
             }
 
-            // Save overrides
-            for (const sv of siteVisibility) {
-                await api.setServiceSiteOverride(savedId, sv.siteId, {
-                    is_visible: sv.isVisible,
-                    is_featured: !!sv.is_featured,
-                    sort_order: parseInt(form.sort_order) || 0,
-                    meta_title: sv.meta_title || null,
-                    meta_description: sv.meta_description || null,
-                    canonical_url: sv.canonical_url || null,
-                });
+            // Save overrides — all sites in parallel for reliability
+            const overrideResults = await Promise.allSettled(
+                siteVisibility.map((sv) =>
+                    api.setServiceSiteOverride(savedId, sv.siteId, {
+                        is_visible: sv.isVisible,
+                        is_featured: !!sv.is_featured,
+                        sort_order: parseInt(form.sort_order) || 0,
+                        meta_title: sv.meta_title || null,
+                        meta_description: sv.meta_description || null,
+                        canonical_url: sv.canonical_url || null,
+                    })
+                )
+            );
+            const failedOverrides = overrideResults.filter((r) => r.status === "rejected");
+            if (failedOverrides.length > 0) {
+                console.error("Some site overrides failed:", failedOverrides);
             }
 
             queryClient.invalidateQueries({ queryKey: ["services"] });

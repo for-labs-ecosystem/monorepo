@@ -262,16 +262,22 @@ export default function ArticleFormPage() {
                 savedId = res.data.id;
             }
 
-            // Save overrides
-            for (const sv of siteVisibility) {
-                await api.setArticleSiteOverride(savedId, sv.siteId, {
-                    is_visible: sv.isVisible,
-                    is_featured: sv.isVisible ? (!!sv.is_featured || !!form.is_featured) : !!sv.is_featured,
-                    sort_order: parseInt(form.sort_order) || 0,
-                    meta_title: sv.meta_title || null,
-                    meta_description: sv.meta_description || null,
-                    canonical_url: sv.canonical_url || null,
-                });
+            // Save overrides — all sites in parallel for reliability
+            const overrideResults = await Promise.allSettled(
+                siteVisibility.map((sv) =>
+                    api.setArticleSiteOverride(savedId, sv.siteId, {
+                        is_visible: sv.isVisible,
+                        is_featured: sv.isVisible ? (!!sv.is_featured || !!form.is_featured) : !!sv.is_featured,
+                        sort_order: parseInt(form.sort_order) || 0,
+                        meta_title: sv.meta_title || null,
+                        meta_description: sv.meta_description || null,
+                        canonical_url: sv.canonical_url || null,
+                    })
+                )
+            );
+            const failedOverrides = overrideResults.filter((r) => r.status === "rejected");
+            if (failedOverrides.length > 0) {
+                console.error("Some site overrides failed:", failedOverrides);
             }
 
             queryClient.invalidateQueries({ queryKey: ["articles"] });

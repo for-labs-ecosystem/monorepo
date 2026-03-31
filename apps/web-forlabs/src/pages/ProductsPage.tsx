@@ -9,7 +9,7 @@ import { useProducts, useCategories } from '@/hooks/useProducts'
 import { useCart } from '@/lib/cart'
 import { useLanguage, t, localizedField } from '@/lib/i18n'
 import { useMemberAuth } from '@/lib/auth'
-import { getImageUrl } from '@/lib/utils'
+import { getImageUrl, stripHtml } from '@/lib/utils'
 import type { Product, Category } from '@forlabs/shared'
 
 // ─── Build category tree ───
@@ -310,7 +310,7 @@ function ProductCard({ product }: { product: Product }) {
                 </h3>
                 {description && (
                     <p className="mt-2 text-[13px] leading-relaxed text-slate-500 line-clamp-2">
-                        {description}
+                        {stripHtml(description)}
                     </p>
                 )}
 
