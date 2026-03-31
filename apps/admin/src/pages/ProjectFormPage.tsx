@@ -100,6 +100,7 @@ export default function ProjectFormPage() {
     });
 
     const [siteVisibility, setSiteVisibility] = useState<SiteVisibility[]>([]);
+    const overridesSynced = useRef(false);
 
     const { data: existing } = useQuery({
         queryKey: ["project", id],
@@ -124,18 +125,23 @@ export default function ProjectFormPage() {
         return () => document.removeEventListener("mousedown", handler);
     }, []);
 
-    // Sync siteVisibility from overrides
+    // Sync siteVisibility from overrides (once)
     useEffect(() => {
         if (!isEdit) return;
+        if (overridesSynced.current) return;
         if (overrides?.data && siteVisibility.length > 0) {
+            overridesSynced.current = true;
             setSiteVisibility((prev) =>
                 prev.map((sv) => {
                     const ov = overrides.data.find((o: any) => o.site_id === sv.siteId);
                     if (ov) {
                         return {
                             ...sv,
-                            isVisible: ov.is_visible !== false,
+                            isVisible: !!ov.is_visible,
                             is_featured: !!ov.is_featured,
+                            meta_title: ov.meta_title || "",
+                            meta_description: ov.meta_description || "",
+                            canonical_url: ov.canonical_url || "",
                         };
                     }
                     return sv;

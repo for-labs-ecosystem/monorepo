@@ -81,6 +81,7 @@ export default function ArticleFormPage() {
     const productDropdownRef = useRef<HTMLDivElement>(null);
 
     const [siteVisibility, setSiteVisibility] = useState<SiteVisibility[]>([]);
+    const overridesSynced = useRef(false);
 
     const { data: categoriesData } = useQuery({
         queryKey: ["article-categories"],
@@ -106,17 +107,19 @@ export default function ArticleFormPage() {
 
     const categoryList = categoriesData?.data || [];
 
-    // Sync siteVisibility from overrides
+    // Sync siteVisibility from overrides (once)
     useEffect(() => {
         if (!isEdit) return;
+        if (overridesSynced.current) return;
         if (overrides?.data && siteVisibility.length > 0) {
+            overridesSynced.current = true;
             setSiteVisibility((prev) =>
                 prev.map((sv) => {
                     const ov = overrides.data.find((o: any) => o.site_id === sv.siteId);
                     if (ov) {
                         return {
                             ...sv,
-                            isVisible: ov.is_visible !== false,
+                            isVisible: !!ov.is_visible,
                             is_featured: !!ov.is_featured,
                             meta_title: ov.meta_title || "",
                             meta_description: ov.meta_description || "",

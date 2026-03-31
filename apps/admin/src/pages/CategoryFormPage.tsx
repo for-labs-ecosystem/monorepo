@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
@@ -305,17 +305,13 @@ export default function CategoryFormPage() {
     });
 
     const [siteVisibility, setSiteVisibility] = useState<SiteVisibility[]>([]);
+    const overridesSynced = useRef(false);
     const [parentVisibilityApplied, setParentVisibilityApplied] = useState(false);
 
     const { data: existing } = useQuery({
         queryKey: ["category", id],
         queryFn: () => api.getCategory(Number(id)),
         enabled: isEdit,
-    });
-
-    const { data: allCategoriesRes } = useQuery({
-        queryKey: ["categories"],
-        queryFn: () => api.getCategories(),
     });
 
     const { data: overrides } = useQuery({
@@ -326,20 +322,34 @@ export default function CategoryFormPage() {
 
     const { data: parentOverridesRes } = useQuery({
         queryKey: ["category-overrides", defaultParentId],
-        queryFn: () => api.getCategoryOverrides(defaultParentId!),
-        enabled: isChildCreate,
+        queryFn: () => api.getCategoryOverrides(Number(defaultParentId)),
+        enabled: isChildCreate && !!defaultParentId,
     });
 
-    // Sync siteVisibility from overrides (edit mode)
+    const { data: allCategoriesRes } = useQuery({
+        queryKey: ["categories"],
+        queryFn: () => api.getCategories(),
+    });
+
+    // Sync siteVisibility from overrides (with parent inheritance, once)
     useEffect(() => {
         if (!isEdit) return;
+        if (overridesSynced.current) return;
         if (overrides?.data && siteVisibility.length > 0) {
+            overridesSynced.current = true;
             setSiteVisibility((prev) =>
                 prev.map((sv) => {
-                    const ov = overrides.data.find(
-                        (o: { site_id?: number; is_visible?: boolean }) => o.site_id === sv.siteId
-                    );
-                    if (ov) return { ...sv, isVisible: ov.is_visible !== false };
+                    const ov = overrides.data.find((o: any) => o.site_id === sv.siteId);
+                    if (ov) {
+                        return {
+                            ...sv,
+                            isVisible: !!ov.is_visible,
+                            is_featured: !!ov.is_featured,
+                            meta_title: ov.meta_title || "",
+                            meta_description: ov.meta_description || "",
+                            canonical_url: ov.canonical_url || "",
+                        };
+                    }
                     return sv;
                 })
             );
@@ -357,7 +367,7 @@ export default function CategoryFormPage() {
                 const parentOv = parentOverridesRes.data.find(
                     (o: { site_id?: number; is_visible?: boolean }) => o.site_id === sv.siteId
                 );
-                if (parentOv) return { ...sv, isVisible: parentOv.is_visible !== false };
+                if (parentOv) return { ...sv, isVisible: !!parentOv.is_visible };
                 return sv;
             })
         );

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
@@ -64,6 +64,7 @@ export default function ServiceFormPage() {
     });
 
     const [siteVisibility, setSiteVisibility] = useState<SiteVisibility[]>([]);
+    const overridesSynced = useRef(false);
 
     const { data: categoriesData } = useQuery({
         queryKey: ["service-categories"],
@@ -84,17 +85,19 @@ export default function ServiceFormPage() {
 
     const categoryList = categoriesData?.data || [];
 
-    // Sync siteVisibility from overrides
+    // Sync siteVisibility from overrides (once)
     useEffect(() => {
         if (!isEdit) return;
+        if (overridesSynced.current) return;
         if (overrides?.data && siteVisibility.length > 0) {
+            overridesSynced.current = true;
             setSiteVisibility((prev) =>
                 prev.map((sv) => {
                     const ov = overrides.data.find((o: any) => o.site_id === sv.siteId);
                     if (ov) {
                         return {
                             ...sv,
-                            isVisible: ov.is_visible !== false,
+                            isVisible: !!ov.is_visible,
                             is_featured: !!ov.is_featured,
                             meta_title: ov.meta_title || "",
                             meta_description: ov.meta_description || "",
