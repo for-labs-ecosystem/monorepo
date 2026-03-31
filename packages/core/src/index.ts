@@ -44,6 +44,9 @@ export {
     type MatchResponse,
 } from './api'
 
+// TipTap Content Renderer
+export { TiptapRenderer, resolveMediaUrl } from './TiptapRenderer'
+
 // Hooks
 export {
     useProducts,

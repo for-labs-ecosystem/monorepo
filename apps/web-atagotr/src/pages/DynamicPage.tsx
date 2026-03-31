@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { getPage } from '@forlabs/core'
+import { getPage, TiptapRenderer, resolveMediaUrl } from '@forlabs/core'
 
 interface PageData {
   id: number
@@ -62,31 +62,18 @@ export default function DynamicPage() {
       {page.canonical_url && <link rel="canonical" href={page.canonical_url} />}
 
       <article className="mx-auto max-w-4xl px-6 lg:px-10 py-16 lg:py-24">
-        {/* Cover Image */}
         {page.cover_image_url && (
-          <div className="mb-10 overflow-hidden rounded-2xl">
+          <div className="mb-12 overflow-hidden rounded-2xl shadow-sm">
             <img
-              src={page.cover_image_url}
+              src={resolveMediaUrl(page.cover_image_url)}
               alt={title}
-              className="w-full h-auto object-cover"
+              className="w-full h-48 sm:h-56 md:h-72 object-cover"
             />
           </div>
         )}
 
-        {/* Title */}
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight leading-tight mb-8">
-          {title}
-        </h1>
-
-        {/* Content */}
         {content ? (
-          <div
-            className="prose prose-slate prose-lg max-w-none
-              prose-headings:font-bold prose-headings:tracking-tight
-              prose-a:text-[#0052cc] prose-a:no-underline hover:prose-a:underline
-              prose-img:rounded-xl prose-img:shadow-sm"
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
+          <TiptapRenderer content={content} />
         ) : (
           <p className="text-slate-400 italic">Bu sayfanın henüz içeriği bulunmuyor.</p>
         )}
