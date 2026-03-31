@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { ImageIcon, Upload, X, Camera } from "lucide-react";
-import { api } from "../lib/api";
+import { api, resolveMediaUrl } from "../lib/api";
 
 interface CoverImageProps {
     value: string;
@@ -49,7 +49,7 @@ export default function CoverImage({ value, onChange, disabled }: CoverImageProp
         return (
             <div className="relative group rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
                 <img
-                    src={value}
+                    src={resolveMediaUrl(value)}
                     alt="Kapak görseli"
                     className="w-full h-48 md:h-56 object-cover"
                 />

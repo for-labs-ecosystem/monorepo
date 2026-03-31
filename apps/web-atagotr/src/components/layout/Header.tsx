@@ -1,8 +1,18 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { ShoppingCart, User, Search, Menu, X, LogOut, ArrowRight, Heart } from 'lucide-react'
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { useCart, useMemberAuth, parseFavoriteIds } from '@forlabs/core'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useCart, useMemberAuth, parseFavoriteIds, getNavigations } from '@forlabs/core'
 import { getImageUrl } from '@/lib/utils'
+
+interface NavItem {
+    id: number
+    name: string
+    url: string
+    location: string
+    parent_id: number | null
+    sort_order: number
+}
 
 const API_BASE = import.meta.env.VITE_API_URL as string
 const SITE_ID = import.meta.env.VITE_SITE_ID as string
@@ -30,6 +40,18 @@ export default function Header() {
     const { totalItems } = useCart()
     const { member, logout } = useMemberAuth()
     const totalFavorites = parseFavoriteIds(member?.favorite_products).length
+
+    const { data: navRes } = useQuery({
+        queryKey: ['navigations', 'header', SITE_ID],
+        queryFn: () => getNavigations({ site_id: SITE_ID, location: 'header' }),
+        staleTime: 5 * 60 * 1000,
+    })
+    const dynamicLinks = useMemo(() => {
+        const items = (navRes?.data ?? []) as NavItem[]
+        return items
+            .filter((n) => n.location === 'header' && !n.parent_id)
+            .sort((a, b) => a.sort_order - b.sort_order)
+    }, [navRes])
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 40)
@@ -135,7 +157,7 @@ export default function Header() {
                         <nav className="hidden md:flex items-center gap-3">
                             <Link
                                 to="/urunler"
-                                className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full border border-[#0052cc]/15 bg-gradient-to-r from-[#0052cc]/[0.08] via-white to-[#f97316]/[0.12] px-4 py-2 text-sm font-black tracking-[-0.02em] text-[#00398f] shadow-[0_10px_30px_rgba(0,82,204,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#0052cc]/30 hover:shadow-[0_14px_36px_rgba(0,82,204,0.16)]"
+                                className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full border border-[#0052cc]/15 bg-linear-to-r from-[#0052cc]/[0.08] via-white to-[#f97316]/[0.12] px-4 py-2 text-sm font-black tracking-[-0.02em] text-[#00398f] shadow-[0_10px_30px_rgba(0,82,204,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#0052cc]/30 hover:shadow-[0_14px_36px_rgba(0,82,204,0.16)]"
                             >
                                 <span className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(255,255,255,0.8),transparent_45%)] opacity-80 transition-opacity duration-300 group-hover:opacity-100" />
                                 <span className="relative">Ürünler</span>
@@ -148,22 +170,32 @@ export default function Header() {
                                 className="group relative inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-slate-700 transition-all duration-300 hover:bg-slate-100/80 hover:text-[#0052cc]"
                             >
                                 <span className="relative">Hizmetler</span>
-                                <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-gradient-to-r from-[#0052cc] to-[#5b9cff] transition-transform duration-300 group-hover:scale-x-100" />
+                                <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-linear-to-r from-[#0052cc] to-[#5b9cff] transition-transform duration-300 group-hover:scale-x-100" />
                             </Link>
                             <Link
                                 to="/bilgi-bankasi"
                                 className="group relative inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-slate-700 transition-all duration-300 hover:bg-slate-100/80 hover:text-[#0052cc]"
                             >
                                 <span className="relative">Bilgi Bankası</span>
-                                <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-gradient-to-r from-[#0052cc] to-[#5b9cff] transition-transform duration-300 group-hover:scale-x-100" />
+                                <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-linear-to-r from-[#0052cc] to-[#5b9cff] transition-transform duration-300 group-hover:scale-x-100" />
                             </Link>
                             <Link
                                 to="/hakkimizda"
                                 className="group relative inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-slate-700 transition-all duration-300 hover:bg-slate-100/80 hover:text-[#0052cc]"
                             >
                                 <span className="relative">Hakkımızda</span>
-                                <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-gradient-to-r from-[#0052cc] to-[#5b9cff] transition-transform duration-300 group-hover:scale-x-100" />
+                                <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-linear-to-r from-[#0052cc] to-[#5b9cff] transition-transform duration-300 group-hover:scale-x-100" />
                             </Link>
+                            {dynamicLinks.map((nav) => (
+                                <Link
+                                    key={`cms-${nav.id}`}
+                                    to={nav.url}
+                                    className="group relative inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-slate-700 transition-all duration-300 hover:bg-slate-100/80 hover:text-[#0052cc]"
+                                >
+                                    <span className="relative">{nav.name}</span>
+                                    <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-linear-to-r from-[#0052cc] to-[#5b9cff] transition-transform duration-300 group-hover:scale-x-100" />
+                                </Link>
+                            ))}
                             <Link
                                 to="/destek"
                                 className="group inline-flex items-center gap-2 rounded-full border border-emerald-200/80 bg-white px-3.5 py-2 text-sm font-semibold tracking-[-0.01em] text-slate-700 shadow-[0_8px_22px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-300 hover:bg-emerald-50 hover:font-black hover:text-emerald-700 hover:shadow-[0_12px_28px_rgba(16,185,129,0.16)]"
@@ -360,7 +392,7 @@ export default function Header() {
                         <div className="px-4 py-3 space-y-2 border-t border-slate-100">
                             <Link
                                 to="/urunler"
-                                className="flex items-center justify-between rounded-2xl border border-[#0052cc]/15 bg-gradient-to-r from-[#0052cc]/[0.08] via-white to-[#f97316]/[0.12] px-3.5 py-3 text-sm font-black tracking-[-0.02em] text-[#00398f] shadow-[0_10px_26px_rgba(0,82,204,0.08)]"
+                                className="flex items-center justify-between rounded-2xl border border-[#0052cc]/15 bg-linear-to-r from-[#0052cc]/[0.08] via-white to-[#f97316]/[0.12] px-3.5 py-3 text-sm font-black tracking-[-0.02em] text-[#00398f] shadow-[0_10px_26px_rgba(0,82,204,0.08)]"
                                 onClick={() => setMobileOpen(false)}
                             >
                                 <span>Ürünler</span>
@@ -371,6 +403,9 @@ export default function Header() {
                             <Link to="/hizmetler" className="block text-sm font-semibold text-slate-700 py-2.5 px-3 rounded-xl hover:bg-slate-50" onClick={() => setMobileOpen(false)}>Hizmetler</Link>
                             <Link to="/bilgi-bankasi" className="block text-sm font-semibold text-slate-700 py-2.5 px-3 rounded-xl hover:bg-slate-50" onClick={() => setMobileOpen(false)}>Bilgi Bankası</Link>
                             <Link to="/hakkimizda" className="block text-sm font-semibold text-slate-700 py-2.5 px-3 rounded-xl hover:bg-slate-50" onClick={() => setMobileOpen(false)}>Hakkımızda</Link>
+                            {dynamicLinks.map((nav) => (
+                                <Link key={`cms-m-${nav.id}`} to={nav.url} className="block text-sm font-semibold text-slate-700 py-2.5 px-3 rounded-xl hover:bg-slate-50" onClick={() => setMobileOpen(false)}>{nav.name}</Link>
+                            ))}
                             <Link
                                 to="/destek"
                                 className="flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50/70 px-3.5 py-3 text-sm font-bold text-emerald-700 shadow-[0_10px_24px_rgba(16,185,129,0.1)] transition-all duration-200 hover:border-emerald-300 hover:bg-emerald-50"

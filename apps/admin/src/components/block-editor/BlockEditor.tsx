@@ -7,7 +7,7 @@ import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { api } from "../../lib/api";
+import { api, resolveMediaUrl } from "../../lib/api";
 import { HeroSection, TwoColumnGrid, AccordionBlock } from "./CustomBlocks";
 import {
     Bold,
@@ -206,7 +206,7 @@ export default function BlockEditor({ value, onChange, placeholder }: BlockEdito
             setUploading(true);
             try {
                 const res = await api.uploadMedia(file, "pages");
-                editor.chain().focus().setImage({ src: res.data.url, alt: file.name }).run();
+                editor.chain().focus().setImage({ src: resolveMediaUrl(res.data.url), alt: file.name }).run();
             } catch (err) {
                 console.error("Image upload failed:", err);
             } finally {
@@ -359,11 +359,11 @@ export default function BlockEditor({ value, onChange, placeholder }: BlockEdito
                 <>
                     {/* Backdrop to close on outside click */}
                     <div
-                        className="fixed inset-0 z-[9998]"
+                        className="fixed inset-0 z-9998"
                         onClick={() => setShowAddMenu(false)}
                     />
                     <div
-                        className="fixed z-[9999] w-64 bg-white rounded-xl border border-slate-200 shadow-2xl shadow-slate-200/60 py-2 max-h-80 overflow-y-auto"
+                        className="fixed z-9999 w-64 bg-white rounded-xl border border-slate-200 shadow-2xl shadow-slate-200/60 py-2 max-h-80 overflow-y-auto"
                         style={{
                             top: addBtnRef.current.getBoundingClientRect().top,
                             left: addBtnRef.current.getBoundingClientRect().right + 8,

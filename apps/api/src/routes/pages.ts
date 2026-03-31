@@ -69,7 +69,7 @@ pagesRoute.get("/", async (c) => {
     const enriched = result.map(p => ({
         ...p,
         sites: allSites.filter(s => {
-            return overrideMap.get(`${p.id}_${s.id}`) ?? true; // Pages default to visible if global
+            return overrideMap.get(`${p.id}_${s.id}`) === true; // Only show sites with explicit is_visible=true override
         }),
         navigations: allNavs
             .filter(n => n.page_id === p.id)
@@ -184,7 +184,22 @@ pagesRoute.put("/:id", async (c) => {
     try {
         const updated = await db
             .update(pages)
-            .set({ ...body, updated_at: sql`(CURRENT_TIMESTAMP)` })
+            .set({
+                slug: body.slug,
+                title: body.title,
+                title_en: body.title_en ?? null,
+                content: body.content ?? null,
+                content_en: body.content_en ?? null,
+                cover_image_url: body.cover_image_url ?? null,
+                meta_title: body.meta_title ?? null,
+                meta_description: body.meta_description ?? null,
+                canonical_url: body.canonical_url ?? null,
+                keywords: body.keywords ?? null,
+                page_type: body.page_type || "corporate",
+                sort_order: body.sort_order ?? 0,
+                is_active: body.is_active ?? true,
+                updated_at: sql`(CURRENT_TIMESTAMP)`,
+            })
             .where(eq(pages.id, id))
             .returning()
             .get();

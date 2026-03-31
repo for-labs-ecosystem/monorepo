@@ -78,6 +78,10 @@ export function getPages(params?: Record<string, string | number | undefined>) {
     return request<{ data: unknown[] }>('/api/pages', { params })
 }
 
+export function getPage(idOrSlug: number | string) {
+    return request<{ data: unknown }>(`/api/pages/${idOrSlug}`)
+}
+
 // --- Navigations ---
 export function getNavigations(params?: Record<string, string | number | undefined>) {
     return request<{ data: unknown[] }>('/api/navigations', { params })

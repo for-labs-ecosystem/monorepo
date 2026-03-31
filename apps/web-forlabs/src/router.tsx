@@ -23,6 +23,7 @@ const KvkkPage = lazy(() => import('@/pages/KvkkPage'))
 const TermsPage = lazy(() => import('@/pages/TermsPage'))
 const PrivacyPage = lazy(() => import('@/pages/PrivacyPage'))
 const AuthCallbackPage = lazy(() => import('@/pages/AuthCallbackPage'))
+const DynamicPage = lazy(() => import('@/pages/DynamicPage'))
 
 export const router = createBrowserRouter([
   {
@@ -49,6 +50,8 @@ export const router = createBrowserRouter([
       { path: 'kullanim-kosullari', element: <TermsPage /> },
       { path: 'gizlilik-politikasi', element: <PrivacyPage /> },
       { path: 'auth/callback', element: <AuthCallbackPage /> },
+      // Catch-all: CMS dynamic pages (must be LAST)
+      { path: ':slug', element: <DynamicPage /> },
     ],
   },
 ])

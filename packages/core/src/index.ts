@@ -26,6 +26,7 @@ export {
     getService,
     getCategories,
     getPages,
+    getPage,
     getNavigations,
     getProjects,
     getProject,

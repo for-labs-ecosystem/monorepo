@@ -11,7 +11,7 @@ import {
     Upload,
 } from "lucide-react";
 import { useState, useRef } from "react";
-import { api } from "../../lib/api";
+import { api, resolveMediaUrl } from "../../lib/api";
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    Shared Block Wrapper — consistent chrome for all blocks
@@ -266,7 +266,7 @@ function GridNodeView({ node, updateAttributes, selected, deleteNode }: any) {
             ) : imageUrl ? (
                 <div className="relative w-full group/img">
                     <img
-                        src={imageUrl}
+                        src={resolveMediaUrl(imageUrl)}
                         alt=""
                         className="w-full h-auto rounded-xl object-cover"
                     />

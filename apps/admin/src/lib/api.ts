@@ -321,31 +321,34 @@ class ApiClient {
         return this.request<{ data: Page[]; count: number }>("/pages", { params });
     }
     getPage(id: number) {
-        return this.request<{ data: Page }>(`/pages/${id}`);
+        return this.request<{ data: Page }>(`/pages/${id}`, { params: { admin: "true" } });
     }
     createPage(data: Partial<Page>) {
         return this.request<{ data: Page }>("/pages", {
             method: "POST",
+            params: { admin: "true" },
             body: JSON.stringify(data),
         });
     }
     updatePage(id: number, data: Partial<Page>) {
         return this.request<{ data: Page }>(`/pages/${id}`, {
             method: "PUT",
+            params: { admin: "true" },
             body: JSON.stringify(data),
         });
     }
     deletePage(id: number) {
-        return this.request<{ message: string }>(`/pages/${id}`, { method: "DELETE" });
+        return this.request<{ message: string }>(`/pages/${id}`, { method: "DELETE", params: { admin: "true" } });
     }
     setPageSiteOverride(pageId: number, siteId: number, data: SiteOverridePayload) {
-        return this.request<{ data: SiteOverridePayload }>(`/pages/${pageId}/override?site_id=${siteId}`, {
+        return this.request<{ data: SiteOverridePayload }>(`/pages/${pageId}/override`, {
             method: "POST",
+            params: { site_id: String(siteId), admin: "true" },
             body: JSON.stringify(data),
         });
     }
     getPageOverrides(pageId: number) {
-        return this.request<{ data: SiteOverridePayload[] }>(`/pages/${pageId}/overrides`);
+        return this.request<{ data: SiteOverridePayload[] }>(`/pages/${pageId}/overrides`, { params: { admin: "true" } });
     }
 
     // ─── Projects ───
@@ -427,10 +430,12 @@ class ApiClient {
         const params: Record<string, string> = {};
         if (siteId) params.site_id = String(siteId);
         if (location) params.location = location;
+        // Admin panelde tüm sitelerin nav verisini çekmek için admin=true gerekli
+        params.admin = "true";
         return this.request<{ data: Navigation[]; count: number }>("/navigations", { params });
     }
     getNavigationsByPage(pageId: number) {
-        return this.request<{ data: Navigation[] }>(`/navigations/by-page/${pageId}`);
+        return this.request<{ data: Navigation[] }>(`/navigations/by-page/${pageId}`, { params: { admin: "true" } });
     }
     syncPageNavigations(data: {
         page_id: number;
@@ -440,6 +445,7 @@ class ApiClient {
     }) {
         return this.request<{ data: Navigation[]; count: number }>("/navigations/sync-page", {
             method: "POST",
+            params: { admin: "true" },
             body: JSON.stringify(data),
         });
     }

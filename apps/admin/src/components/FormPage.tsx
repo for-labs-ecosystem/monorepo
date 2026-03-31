@@ -61,6 +61,7 @@ interface FormPageProps {
     onDelete?: () => Promise<void>;
     isEdit?: boolean;
     saving?: boolean;
+    saveLabel?: string;
     children: React.ReactNode;
     sidebar?: React.ReactNode;
 }
@@ -73,6 +74,7 @@ export default function FormPage({
     onDelete,
     isEdit = false,
     saving = false,
+    saveLabel,
     children,
     sidebar,
 }: FormPageProps) {
@@ -134,7 +136,7 @@ export default function FormPage({
                     >
                         {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                         <span className="font-bold text-xs uppercase tracking-wider">
-                            {saving ? "Kaydediliyor..." : isEdit ? "Değişiklikleri Kaydet" : "Yeni Kayıt Oluştur"}
+                            {saving ? "Kaydediliyor..." : saveLabel ? saveLabel : isEdit ? "Değişiklikleri Kaydet" : "Yeni Kayıt Oluştur"}
                         </span>
                     </button>
                 </div>
