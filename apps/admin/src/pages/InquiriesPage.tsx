@@ -79,7 +79,7 @@ function InquiryDrawer({
 
     const site = sites.find((s) => s.id === inquiry.site_id);
     const isUnread = inquiry.status === "new" || inquiry.status === "read";
-    const payloadEntries = inquiry.payload ? Object.entries(inquiry.payload) : [];
+    const payloadEntries = inquiry.payload ? Object.entries(inquiry.payload).filter(([key]) => key !== 'metadata') : [];
 
     const fetchMessages = useCallback(async () => {
         if (!inquiry.id) return;
@@ -251,16 +251,25 @@ function InquiryDrawer({
                             {payloadEntries.length > 0 && (
                                 <div className="space-y-4">
                                     <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Form Verileri</p>
-                                    {payloadEntries.map(([key, value]) => (
-                                        <div key={key}>
-                                            <p className="text-xs text-slate-500 mb-1 font-medium capitalize">
-                                                {key.replace(/_/g, " ")}
-                                            </p>
-                                            <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
-                                                {value}
-                                            </p>
-                                        </div>
-                                    ))}
+                                    {payloadEntries.map(([key, value]) => {
+                                        let displayValue = String(value);
+                                        if (key === 'site_id' || key === 'site id') {
+                                            const siteObj = sites.find((s) => String(s.id) === String(value));
+                                            if (siteObj) {
+                                                displayValue = `${value} (${siteObj.name})`;
+                                            }
+                                        }
+                                        return (
+                                            <div key={key}>
+                                                <p className="text-xs text-slate-500 mb-1 font-medium capitalize">
+                                                    {key.replace(/_/g, " ")}
+                                                </p>
+                                                <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
+                                                    {displayValue}
+                                                </p>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             )}
 
