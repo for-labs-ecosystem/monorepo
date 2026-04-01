@@ -1,23 +1,21 @@
 <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="primaryGrad" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#1e40af" />
-      <stop offset="100%" stop-color="#1e3a8a" />
-    </linearGradient>
-    <linearGradient id="brandGrad" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#3b82f6" />
-      <stop offset="100%" stop-color="#2563eb" />
-    </linearGradient>
-  </defs>
-  <!-- Background Shape -->
-  <rect width="256" height="256" rx="56" fill="url(#primaryGrad)" />
-  <rect x="8" y="8" width="240" height="240" rx="48" fill="url(#brandGrad)" opacity="0.15" />
-  
-  <!-- Outer Glow / Blur effect simulated by repeated strokes -->
-  <path d="M128 32 C181.019 32 224 74.9807 224 128 C224 181.019 181.019 224 128 224 C74.9807 224 32 181.019 32 128 C32 74.9807 74.9807 32 128 32Z" stroke="white" stroke-width="4" stroke-dasharray="16 16" opacity="0.3" transform="rotate(15 128 128)" />
-  
-  <!-- Geometric Structure -->
-  <path d="M90 176 V80 L166 128 Z" fill="white" opacity="0.1" />
-  <path d="M72 176 L72 80 L96 80 L96 156 L164 156 L164 176 Z" fill="white" />
-  <path d="M112 110 L140 80 L168 80 L128 124 L170 176 L140 176 L112 140 L112 110 Z" fill="#93c5fd" />
+<g clip-path="url(#clip0_1142_495)">
+<path d="M200 0H56C25.0721 0 0 25.0721 0 56V200C0 230.928 25.0721 256 56 256H200C230.928 256 256 230.928 256 200V56C256 25.0721 230.928 0 200 0Z" fill="url(#paint0_linear_1142_495)"/>
+<path opacity="0.15" d="M200 8H56C29.4903 8 8 29.4903 8 56V200C8 226.51 29.4903 248 56 248H200C226.51 248 248 226.51 248 200V56C248 29.4903 226.51 8 200 8Z" fill="url(#paint1_linear_1142_495)"/>
+<path opacity="0.3" d="M152.846 35.2711C204.058 48.9934 234.451 101.634 220.728 152.847C207.006 204.059 154.365 234.451 103.153 220.729C51.9401 207.006 21.5482 154.366 35.2706 103.153C48.993 51.9406 101.633 21.5487 152.846 35.2711Z" stroke="white" stroke-width="4" stroke-dasharray="16 16"/>
+<path d="M167.828 130.828C169.391 129.266 169.391 126.734 167.828 125.172L142.373 99.7157C140.81 98.1536 138.278 98.1536 136.716 99.7157C135.154 101.278 135.154 103.81 136.716 105.373L159.343 128L136.716 150.627C135.154 152.19 135.154 154.722 136.716 156.284C138.278 157.846 140.81 157.846 142.373 156.284L167.828 130.828ZM91 128V132H165V128V124H91V128Z" fill="white"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_1142_495" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+<stop stop-color="#1E40AF"/>
+<stop offset="1" stop-color="#1E3A8A"/>
+</linearGradient>
+<linearGradient id="paint1_linear_1142_495" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+<stop stop-color="#3B82F6"/>
+<stop offset="1" stop-color="#2563EB"/>
+</linearGradient>
+<clipPath id="clip0_1142_495">
+<rect width="256" height="256" fill="white"/>
+</clipPath>
+</defs>
 </svg>

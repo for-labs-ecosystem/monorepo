@@ -106,12 +106,12 @@ export default function HomePage() {
                             </div>
 
                             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-brand-900 leading-[1.1]">
-                                Laboratuvar Kurulumunu{' '}
-                                <span className="relative inline-block">
-                                    <span className="relative z-10">Uzman Mühendislere</span>
+                                Çizim Masasından İlk Analize:<br />
+                                <span className="relative inline-block mt-2">
+                                    <span className="relative z-10">Anahtar Teslim</span>
                                     <span className="absolute bottom-1 left-0 right-0 h-3 bg-accent-400/30 -z-0" />
                                 </span>{' '}
-                                Bırakın.
+                                Lab Kurulumu
                             </h1>
 
                             <p className="mt-6 text-lg text-slate-600 leading-relaxed max-w-2xl">
