@@ -105,9 +105,15 @@ export default function HomePage() {
                                 </span>
                             </div>
 
+                            <div className="mb-4 group cursor-default w-fit">
+                                <span className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-slate-400 transition-all duration-300 group-hover:text-brand-600">
+                                    Çizim Masasından İlk Analize:
+                                </span>
+                                <div className="h-0.5 w-12 bg-slate-200 mt-2 transition-all duration-500 group-hover:bg-brand-500 group-hover:w-full" />
+                            </div>
+
                             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-brand-900 leading-[1.1]">
-                                Çizim Masasından İlk Analize:<br />
-                                <span className="relative inline-block mt-2">
+                                <span className="relative inline-block">
                                     <span className="relative z-10">Anahtar Teslim</span>
                                     <span className="absolute bottom-1 left-0 right-0 h-3 bg-accent-400/30 -z-0" />
                                 </span>{' '}
