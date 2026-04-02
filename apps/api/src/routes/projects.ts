@@ -53,7 +53,7 @@ projectsRoute.get("/", async (c) => {
         .where(
             c.req.query("admin") === "true"
                 ? undefined
-                : sql`COALESCE(${siteProjectOverrides.is_visible}, 1) = 1`
+                : sql`COALESCE(${siteProjectOverrides.is_visible}, 0) = 1`
         )
         .orderBy(sql`COALESCE(${siteProjectOverrides.sort_order}, 0)`);
 

@@ -14,8 +14,16 @@ export const DOMAIN_MAP: Record<string, string> = {
     "www.gidatest.com": "gidatest",
     "alerjen.net": "alerjen",
     "www.alerjen.net": "alerjen",
+    "forlabs-alerjen.pages.dev": "alerjen",
+
     "hijyenkontrol.com": "hijyenkontrol",
     "www.hijyenkontrol.com": "hijyenkontrol",
+
+    "forlabs-atagotr.pages.dev": "atagotr",
+    "forlabs-labkurulum.pages.dev": "labkurulum",
+    "forlabs-web.pages.dev": "forlabs",
+    "forlabs-admin.pages.dev": "admin",
+
     // Local development
     "localhost": "forlabs",
 } as const;

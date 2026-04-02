@@ -53,7 +53,7 @@ servicesRoute.get("/", async (c) => {
                 ? undefined
                 : and(
                     eq(services.is_active, true),
-                    sql`COALESCE(${siteServiceOverrides.is_visible}, 1) = 1`
+                    sql`COALESCE(${siteServiceOverrides.is_visible}, 0) = 1`
                 )
         )
         .orderBy(sql`COALESCE(${siteServiceOverrides.sort_order}, 0)`);

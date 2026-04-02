@@ -95,11 +95,11 @@ productsRoute.get("/", async (c) => {
     let filtered = result;
     if (q) {
         filtered = filtered.filter((p) =>
-            p.title?.toLowerCase().includes(q) ||
-            p.brand?.toLowerCase().includes(q) ||
-            p.model_number?.toLowerCase().includes(q) ||
-            p.sku?.toLowerCase().includes(q) ||
-            p.description?.toLowerCase().includes(q)
+            (p.title?.toLowerCase() ?? "").includes(q) ||
+            (p.brand?.toLowerCase() ?? "").includes(q) ||
+            (p.model_number?.toLowerCase() ?? "").includes(q) ||
+            (p.sku?.toLowerCase() ?? "").includes(q) ||
+            (p.description?.toLowerCase() ?? "").includes(q)
         );
     }
     if (categoryIdParam) {

@@ -143,8 +143,12 @@ app.notFound((c) => {
 
 // ─── Error handler ───
 app.onError((err, c) => {
-    console.error(`${err}`);
-    return c.json({ error: "Internal Server Error" }, 500);
+    console.error(`API Error: ${err.message}`, err);
+    return c.json({ 
+        error: "Internal Server Error", 
+        message: err.message,
+        stack: c.env.ENVIRONMENT === "development" ? err.stack : undefined
+    }, 500);
 });
 
 export default app;

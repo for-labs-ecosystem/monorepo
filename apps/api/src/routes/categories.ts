@@ -94,7 +94,7 @@ categoriesRoute.get("/", async (c) => {
         .where(
             and(
                 eq(products.is_active, true),
-                sql`COALESCE(${siteProductOverrides.is_visible}, 1) = 1`
+                sql`COALESCE(${siteProductOverrides.is_visible}, 0) = 1`
             )
         );
 
