@@ -31,7 +31,18 @@ import { getEcosystemConfig } from './config'
 function loadCart(): CartItem[] {
     try {
         const stored = localStorage.getItem(CART_STORAGE_KEY)
-        return stored ? JSON.parse(stored) : []
+        if (!stored) return []
+
+        const parsed = JSON.parse(stored)
+        if (!Array.isArray(parsed)) return []
+
+        return parsed
+            .map((item: CartItem) => ({
+                ...item,
+                id: Number(item.id),
+                quantity: Number(item.quantity) || 1,
+            }))
+            .filter((item: CartItem) => !Number.isNaN(item.id))
     } catch {
         return []
     }
@@ -106,32 +117,37 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }, [items, member, updateProfile, siteId])
 
     const addItem = useCallback((item: Omit<CartItem, 'quantity'>, quantity = 1) => {
+        const normalizedItem = {
+            ...item,
+            id: Number(item.id),
+        }
+
         setItems(prev => {
-            const existing = prev.find(i => i.id === item.id)
+            const existing = prev.find(i => Number(i.id) === normalizedItem.id)
             if (existing) {
                 return prev.map(i =>
-                    i.id === item.id ? { ...i, quantity: i.quantity + quantity } : i
+                    Number(i.id) === normalizedItem.id ? { ...i, id: normalizedItem.id, quantity: i.quantity + quantity } : i
                 )
             }
-            return [...prev, { ...item, quantity }]
+            return [...prev, { ...normalizedItem, quantity }]
         })
     }, [])
 
     const removeItem = useCallback((id: number) => {
-        setItems(prev => prev.filter(i => i.id !== id))
+        setItems(prev => prev.filter(i => Number(i.id) !== Number(id)))
     }, [])
 
     const updateQuantity = useCallback((id: number, quantity: number) => {
         if (quantity <= 0) {
-            setItems(prev => prev.filter(i => i.id !== id))
+            setItems(prev => prev.filter(i => Number(i.id) !== Number(id)))
         } else {
-            setItems(prev => prev.map(i => i.id === id ? { ...i, quantity } : i))
+            setItems(prev => prev.map(i => Number(i.id) === Number(id) ? { ...i, id: Number(i.id), quantity } : i))
         }
     }, [])
 
     const clearCart = useCallback(() => setItems([]), [])
 
-    const isInCart = useCallback((id: number) => items.some(i => i.id === id), [items])
+    const isInCart = useCallback((id: number) => items.some(i => Number(i.id) === Number(id)), [items])
 
     const totalItems = items.reduce((sum, i) => sum + i.quantity, 0)
     const totalPrice = items.reduce((sum, i) => sum + i.price * i.quantity, 0)

@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useLanguage, t } from '@/lib/i18n'
 import type { TranslationKey } from '@/lib/i18n'
 import { useCart } from '@/lib/cart'
-import { useMemberAuth } from '@/lib/auth'
+import { useMemberAuth, parseFavoriteIds } from '@/lib/auth'
 import { getNavigations } from '@/lib/api'
 import { NavbarSearch } from './NavbarSearch'
 
@@ -67,14 +67,8 @@ export function MainHeader() {
   const [openDropdown, setOpenDropdown] = useState<number | null>(null)
 
   const favCount = useMemo(() => {
-    if (!member?.favorite_products) return 0
-    try {
-      const arr = JSON.parse(member.favorite_products)
-      return Array.isArray(arr) ? arr.length : 0
-    } catch {
-      return 0
-    }
-  }, [member])
+    return parseFavoriteIds(member?.favorite_products, SITE_ID).length
+  }, [member?.favorite_products])
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 8)

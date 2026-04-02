@@ -1,0 +1,7 @@
+name = "forlabs-web"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "dist"
+
+[env.production.vars]
+VITE_SITE_ID = "1"
+VITE_API_URL = "https://api.for-labs.com"

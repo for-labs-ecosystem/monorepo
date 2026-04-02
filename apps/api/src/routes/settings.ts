@@ -2,8 +2,9 @@ import { Hono } from "hono";
 import { eq, sql } from "drizzle-orm";
 import { settings } from "@forlabs/db/schema";
 import { createDb } from "../lib/db";
+import type { Bindings } from "../lib/types";
 
-const settingsRoute = new Hono();
+const settingsRoute = new Hono<{ Bindings: Bindings }>();
 
 const DEFAULTS = {
     company_info: "{}",

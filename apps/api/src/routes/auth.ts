@@ -3,8 +3,9 @@ import { eq } from "drizzle-orm";
 import { users } from "@forlabs/db/schema";
 import { createDb } from "../lib/db";
 import { signJwt, verifyJwt } from "../lib/jwt";
+import type { Bindings } from "../lib/types";
 
-const authRoute = new Hono();
+const authRoute = new Hono<{ Bindings: Bindings }>();
 
 /**
  * GET /api/auth/google/url

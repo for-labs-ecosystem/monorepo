@@ -47,7 +47,7 @@ export default function ProductDetailPage() {
 
     const handleToggleFavorite = useCallback(() => {
         if (!product) return
-        if (!member) { navigate('/giris-yap'); return }
+        if (!member) { navigate('/giris'); return }
         toggleFavoriteProduct(product.id)
     }, [product?.id, member, navigate, toggleFavoriteProduct])
 

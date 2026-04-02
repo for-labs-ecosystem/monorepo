@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Search, Heart, ShoppingCart, ChevronDown, ChevronRight, X, SlidersHorizontal, Check } from 'lucide-react'
 import { useProducts, useCategories, useCart, useMemberAuth, parseFavoriteIds } from '@forlabs/core'
 import { getImageUrl } from '@/lib/utils'
@@ -104,10 +104,14 @@ function CategoryNode({
 function ProductCard({ product }: { product: Product }) {
     const { addItem, removeItem, isInCart } = useCart()
     const { member, toggleFavoriteProduct } = useMemberAuth()
+    const navigate = useNavigate()
     const favorited = parseFavoriteIds(member?.favorite_products).includes(product.id)
     const inCart = isInCart(product.id)
 
-    const handleToggleFavorite = () => {
+    const handleToggleFavorite = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (!member) { navigate('/giris'); return }
         toggleFavoriteProduct(product.id)
     }
 

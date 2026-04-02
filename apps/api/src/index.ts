@@ -24,18 +24,7 @@ import membersRoute from "./routes/members";
 import memberAuthRoute from "./routes/auth-members";
 import wizardStepsRoute from "./routes/wizard-steps";
 
-type Bindings = {
-    DB: D1Database;
-    MEDIA: R2Bucket;
-    ENVIRONMENT: string;
-    IYZICO_API_KEY?: string;
-    IYZICO_SECRET_KEY?: string;
-    GOOGLE_CLIENT_ID?: string;
-    GOOGLE_CLIENT_SECRET?: string;
-    GOOGLE_REDIRECT_URI?: string;
-    JWT_SECRET?: string;
-    RESEND_API_KEY?: string;
-};
+import type { Bindings } from "./lib/types";
 
 const app = new Hono<{ Bindings: Bindings }>();
 

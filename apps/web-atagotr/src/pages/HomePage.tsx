@@ -254,7 +254,7 @@ export default function HomePage() {
                                         onClick={(e) => {
                                             e.preventDefault()
                                             e.stopPropagation()
-                                            if (!member) { navigate('/giris-yap'); return }
+                                            if (!member) { navigate('/giris'); return }
                                             toggleFavoriteProduct(product.id)
                                         }}
                                         className={`absolute top-4 right-4 z-20 w-9 h-9 backdrop-blur-md rounded-full shadow-sm flex items-center justify-center transition-all duration-300 group/fav ${

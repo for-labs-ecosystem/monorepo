@@ -185,10 +185,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const memberData = member.favorite_products ? JSON.parse(member.favorite_products) : {}
             const currentSaveObj = Array.isArray(memberData) ? {} : { ...memberData }
             currentSaveObj[siteId] = favs
-            
-            await updateProfile({ favorite_products: JSON.stringify(currentSaveObj) })
+            const nextFavoriteProducts = JSON.stringify(currentSaveObj)
+
+            setMember(prev => (prev ? { ...prev, favorite_products: nextFavoriteProducts } : prev))
+
+            await updateProfile({ favorite_products: nextFavoriteProducts })
         } catch {
-            await updateProfile({ favorite_products: JSON.stringify({ [siteId]: favs }) })
+            const nextFavoriteProducts = JSON.stringify({ [siteId]: favs })
+
+            setMember(prev => (prev ? { ...prev, favorite_products: nextFavoriteProducts } : prev))
+
+            await updateProfile({ favorite_products: nextFavoriteProducts })
         }
     }, [member, updateProfile])
 
