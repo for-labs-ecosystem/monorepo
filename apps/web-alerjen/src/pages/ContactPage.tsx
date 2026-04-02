@@ -36,7 +36,17 @@ export default function ContactPage() {
                 <div className="absolute top-[-10%] left-[20%] w-[500px] h-[500px] rounded-full bg-ocean-200/8 blur-[120px]" />
                 <div className="relative mx-auto max-w-[1400px] px-6 lg:px-10">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div className="w-full max-w-md order-2 lg:order-1">
+                        {/* Text — always left */}
+                        <div>
+                            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-600 tracking-tight">
+                                İletişim
+                            </h1>
+                            <p className="mt-5 text-lg text-slate-400 max-w-xl leading-relaxed font-light">
+                                Test kitleri hakkında bilgi almak veya herhangi bir sorunuz için bizimle iletişime geçin.
+                            </p>
+                        </div>
+                        {/* WhatsApp card — always right */}
+                        <div className="w-full max-w-md lg:ml-auto">
                             <div className="pebble-card p-8 !bg-white/80">
                                 <div className="flex items-center gap-3 mb-5">
                                     <div className="w-10 h-10 rounded-2xl bg-green-50/80 flex items-center justify-center">
@@ -56,14 +66,6 @@ export default function ContactPage() {
                                     WhatsApp'tan Yazın
                                 </a>
                             </div>
-                        </div>
-                        <div className="order-1 lg:order-2 lg:pl-12">
-                            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-600 tracking-tight">
-                                İletişim
-                            </h1>
-                            <p className="mt-5 text-lg text-slate-400 max-w-xl leading-relaxed font-light">
-                                Test kitleri hakkında bilgi almak, toplu sipariş veya proje teklifi için bizimle iletişime geçin.
-                            </p>
                         </div>
                     </div>
                 </div>

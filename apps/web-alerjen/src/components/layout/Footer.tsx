@@ -35,11 +35,12 @@ export default function Footer() {
 
                     {/* Brand */}
                     <div>
-                        <Link to="/" className="group inline-flex items-center gap-3 mb-8">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-ocean-400 to-ocean-600 shadow-lg shadow-ocean-500/10">
-                                <span className="text-sm font-bold text-white">A</span>
-                            </div>
-                            <span className="text-lg font-bold text-slate-600 tracking-tight">Alerjen</span>
+                        <Link to="/" className="inline-block mb-8">
+                            <img
+                                src="/alerjen-logo.png"
+                                alt="Alerjen.net"
+                                className="h-9 w-auto object-contain"
+                            />
                         </Link>
                         <p className="text-sm text-slate-400 mb-8 leading-relaxed pr-4 max-w-xs">
                             Gıda güvenliği ve alerjen hızlı test kitleri konusunda Türkiye'nin güvenilir tedarikçisi. For-Labs Ekosistemi üyesidir.

@@ -16,8 +16,8 @@ export default function ArticlesPage() {
             <section className="relative overflow-hidden py-20 lg:py-28">
                 <div className="absolute inset-0 bg-gradient-to-br from-mint-50/50 via-white to-peach-50/30" />
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-ocean-200/8 blur-[120px]" />
-                <div className="relative mx-auto max-w-[1400px] px-6 lg:px-10">
-                    <div className="flex items-center gap-2 text-[11px] font-medium text-slate-400 mb-5">
+                <div className="relative mx-auto max-w-[1400px] px-6 lg:px-10 text-center">
+                    <div className="flex items-center justify-center gap-2 text-[11px] font-medium text-slate-400 mb-5">
                         <Link to="/" className="hover:text-ocean-500 transition-colors duration-300">Anasayfa</Link>
                         <ChevronRight className="w-3 h-3" />
                         <span className="text-slate-500">Araştırmalar & Makaleler</span>
@@ -25,7 +25,7 @@ export default function ArticlesPage() {
                     <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-600 tracking-tight">
                         Araştırmalar & Makaleler
                     </h1>
-                    <p className="mt-5 text-lg text-slate-400 max-w-2xl leading-relaxed font-light">
+                    <p className="mt-5 text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed font-light">
                         Gıda güvenliği, alerjen yönetimi ve laboratuvar teknolojileri üzerine bilimsel içerikler ve sektör analizleri.
                     </p>
                 </div>

@@ -9,6 +9,7 @@ const ArticlesPage = lazy(() => import('@/pages/ArticlesPage'))
 const ArticleDetailPage = lazy(() => import('@/pages/ArticleDetailPage'))
 const AboutPage = lazy(() => import('@/pages/AboutPage'))
 const ContactPage = lazy(() => import('@/pages/ContactPage'))
+const QuotePage = lazy(() => import('@/pages/QuotePage'))
 const DynamicPage = lazy(() => import('@/pages/DynamicPage'))
 
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
@@ -56,6 +57,10 @@ const routes: RouteObject[] = [
             {
                 path: 'iletisim',
                 element: <SuspenseWrapper><ContactPage /></SuspenseWrapper>,
+            },
+            {
+                path: 'teklif',
+                element: <SuspenseWrapper><QuotePage /></SuspenseWrapper>,
             },
             // CMS dynamic page catch-all — MUST be last
             {

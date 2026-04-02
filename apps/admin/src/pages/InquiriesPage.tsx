@@ -41,6 +41,22 @@ const statusConfig = {
     archived: { label: "Arşivlendi", color: "bg-slate-50 text-slate-600 border-slate-200" },
 };
 
+/* Human-readable labels for common inquiry payload keys */
+const FIELD_LABELS: Record<string, string> = {
+    phone: "Telefon",
+    company: "Firma",
+    quote_type: "Teklif Türü",
+    message: "Mesaj",
+    type: "Talep Tipi",
+    site_id: "Site ID",
+};
+
+const TYPE_LABELS: Record<string, string> = {
+    quote: "Teklif Talebi",
+    contact: "İletişim",
+    general: "Genel",
+};
+
 function InquiryDrawer({
     inquiry,
     sites,
@@ -188,6 +204,17 @@ function InquiryDrawer({
                                                 {site.name}
                                             </span>
                                         )}
+                                        {/* Show quote type badge if present */}
+                                        {inquiry.payload?.type && (
+                                            <span className="px-2.5 py-1 text-xs font-medium bg-orange-50 text-orange-700 rounded-md border border-orange-200">
+                                                {TYPE_LABELS[inquiry.payload.type] ?? inquiry.payload.type}
+                                            </span>
+                                        )}
+                                        {inquiry.payload?.quote_type && (
+                                            <span className="px-2.5 py-1 text-xs font-medium bg-amber-50 text-amber-700 rounded-md border border-amber-200">
+                                                📋 {inquiry.payload.quote_type}
+                                            </span>
+                                        )}
                                         {inquiry.member_id && (
                                             <span className="px-2.5 py-1 text-xs font-medium bg-blue-50 text-blue-700 rounded-md border border-blue-200">
                                                 Üye Kullanıcı
@@ -262,10 +289,10 @@ function InquiryDrawer({
                                         return (
                                             <div key={key}>
                                                 <p className="text-xs text-slate-500 mb-1 font-medium capitalize">
-                                                    {key.replace(/_/g, " ")}
+                                                    {FIELD_LABELS[key] ?? key.replace(/_/g, " ")}
                                                 </p>
                                                 <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
-                                                    {displayValue}
+                                                    {key === 'type' ? (TYPE_LABELS[displayValue] ?? displayValue) : displayValue}
                                                 </p>
                                             </div>
                                         );
@@ -553,7 +580,7 @@ export default function InquiriesPage() {
                         const payload = inquiry.payload ?? {};
 
                         const COMPANY_KEYS = ["şirket adı", "şirket", "kurum", "firma", "kuruluş", "organization", "company"];
-                        const SUBJECT_KEYS = ["konu", "talep türü", "talep tipi", "hizmet", "ürün", "subject", "aciliyet"];
+                        const SUBJECT_KEYS = ["konu", "talep türü", "talep tipi", "hizmet", "ürün", "subject", "aciliyet", "quote_type"];
                         const MESSAGE_KEYS = ["mesaj", "açıklama", "not", "message", "description", "arıza tanımı"];
 
                         const findByKeys = (keys: string[]) => {

@@ -16,7 +16,7 @@ function ScrollToTop() {
 
 export default function Layout() {
     return (
-        <div className="relative flex flex-col min-h-screen overflow-x-hidden">
+        <div className="relative flex flex-col min-h-screen">
             {/* Dreamy ambient glows — subtle, warm, alive */}
             <div className="glow-mint" style={{ top: '-300px', left: '-250px' }} />
             <div className="glow-peach" style={{ top: '400px', right: '-200px' }} />
@@ -25,9 +25,9 @@ export default function Layout() {
 
             <ScrollToTop />
             <NetworkBar />
-            <div className="sticky top-0 left-0 right-0 z-50">
+            <header className="sticky top-0 left-0 right-0 z-50 w-full">
                 <Header />
-            </div>
+            </header>
             <main className="relative z-10 flex-1">
                 <Outlet />
             </main>

@@ -93,8 +93,8 @@
   }
 
   @keyframes glow-pulse {
-    0%, 100% { opacity: 0.4; transform: scale(1); }
-    50% { opacity: 0.7; transform: scale(1.05); }
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.04); }
   }
 }
 
@@ -219,7 +219,7 @@ body {
   border-radius: 9999px;
 }
 
-/* ─── CTA Button — warm, inviting ─── */
+/* ─── CTA Button — vivid, vibrant orange ─── */
 .btn-warm {
   display: inline-flex;
   align-items: center;
@@ -228,18 +228,41 @@ body {
   padding: 14px 32px;
   border-radius: 9999px;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.01em;
   color: #ffffff;
-  background: linear-gradient(135deg, #f07e62 0%, #ff9e85 100%);
-  box-shadow: 0 8px 24px -4px rgba(240, 126, 98, 0.30);
-  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  background: linear-gradient(135deg, #e8612c 0%, #f0923b 55%, #f5a023 100%);
+  box-shadow:
+    0 8px 24px -4px rgba(232, 97, 44, 0.45),
+    0 2px 8px -2px rgba(232, 97, 44, 0.20),
+    inset 0 1px 0 rgba(255,255,255,0.15);
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   cursor: pointer;
   border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-warm::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+  border-radius: inherit;
+  pointer-events: none;
 }
 
 .btn-warm:hover {
-  box-shadow: 0 12px 32px -4px rgba(240, 126, 98, 0.40);
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #d95525 0%, #e8823a 55%, #f09820 100%);
+  box-shadow:
+    0 14px 32px -4px rgba(232, 97, 44, 0.55),
+    0 4px 12px -2px rgba(232, 97, 44, 0.25);
+  transform: translateY(-3px) scale(1.02);
+}
+
+.btn-warm:active {
+  transform: translateY(0px) scale(0.99);
+  box-shadow: 0 4px 12px -4px rgba(232, 97, 44, 0.40);
 }
 
 .btn-ocean {
@@ -251,14 +274,21 @@ body {
   border-radius: 9999px;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #149283;
-  background: rgba(213, 247, 240, 0.4);
-  border: 1.5px solid rgba(171, 239, 226, 0.5);
-  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  color: #0e7a6c;
+  background: rgba(209, 250, 241, 0.5);
+  border: 1.5px solid rgba(30, 181, 160, 0.35);
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   cursor: pointer;
 }
 
 .btn-ocean:hover {
-  background: rgba(213, 247, 240, 0.7);
-  transform: translateY(-2px);
+  background: rgba(30, 181, 160, 0.12);
+  border-color: rgba(30, 181, 160, 0.55);
+  color: #0a6558;
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 8px 24px -6px rgba(30, 181, 160, 0.20);
+}
+
+.btn-ocean:active {
+  transform: translateY(0px) scale(0.99);
 }
