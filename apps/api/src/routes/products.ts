@@ -82,7 +82,7 @@ productsRoute.get("/", async (c) => {
                 ? undefined
                 : and(
                     eq(products.is_active, true),
-                    sql`COALESCE(${siteProductOverrides.is_visible}, 1) = 1`
+                    sql`COALESCE(${siteProductOverrides.is_visible}, 0) = 1`
                 )
         )
         .orderBy(sql`COALESCE(${siteProductOverrides.sort_order}, ${products.sort_order}, 0)`);
@@ -300,12 +300,54 @@ productsRoute.put("/:id", async (c) => {
     const body = await c.req.json();
     const db = createDb(c.env.DB);
 
+    // Helper: stringify arrays/objects for text columns, pass null through
+    const jsonCol = (val: unknown): string | null => {
+        if (val === null || val === undefined) return null;
+        if (typeof val === "string") return val;
+        return JSON.stringify(val);
+    };
+
     const updated = await db
         .update(products)
         .set({
-            ...body,
+            title: body.title,
+            title_en: body.title_en ?? null,
+            slug: body.slug,
+            description: body.description ?? null,
+            description_en: body.description_en ?? null,
+            content: body.content ?? null,
+            content_en: body.content_en ?? null,
+            specs: body.specs ?? null,
+            specs_en: body.specs_en ?? null,
+            price: body.price ?? null,
+            compare_price: body.compare_price ?? null,
+            currency: body.currency || "TRY",
+            unit: body.unit ?? null,
+            stock_quantity: body.stock_quantity ?? 0,
+            sku: body.sku ?? null,
+            brand: body.brand ?? null,
+            model_number: body.model_number ?? null,
+            warranty_period: body.warranty_period ?? null,
+            campaign_label: body.campaign_label ?? null,
+            features: jsonCol(body.features),
+            features_en: jsonCol(body.features_en),
+            application_areas: jsonCol(body.application_areas),
+            application_areas_en: jsonCol(body.application_areas_en),
+            tags: jsonCol(body.tags),
+            tags_en: jsonCol(body.tags_en),
+            analysis_types: jsonCol(body.analysis_types),
+            analysis_types_en: jsonCol(body.analysis_types_en),
+            automation_level: body.automation_level ?? null,
+            compliance_tags: jsonCol(body.compliance_tags),
+            category_id: body.category_id ?? null,
+            image_url: body.image_url ?? null,
+            gallery: jsonCol(body.gallery),
+            meta_title: body.meta_title ?? null,
+            meta_description: body.meta_description ?? null,
+            canonical_url: body.canonical_url ?? null,
             is_active: body.is_active !== undefined ? (!!body.is_active) : undefined,
             is_featured: body.is_featured !== undefined ? (!!body.is_featured) : undefined,
+            sort_order: body.sort_order ?? 0,
             updated_at: sql`(CURRENT_TIMESTAMP)`,
         })
         .where(eq(products.id, id))
@@ -342,53 +384,57 @@ productsRoute.post("/:id/override", async (c) => {
     const body = await c.req.json();
     const db = createDb(c.env.DB);
 
+    const overrideValues = {
+        site_id: siteId,
+        product_id: productId,
+        title: body.title || null,
+        title_en: body.title_en || null,
+        description: body.description || null,
+        description_en: body.description_en || null,
+        content: body.content || null,
+        content_en: body.content_en || null,
+        specs: body.specs || null,
+        price: body.price ?? null,
+        compare_price: body.compare_price ?? null,
+        currency: body.currency || null,
+        stock_quantity: body.stock_quantity ?? null,
+        image_url: body.image_url || null,
+        gallery: body.gallery ? JSON.stringify(body.gallery) : null,
+        campaign_label: body.campaign_label || null,
+        meta_title: body.meta_title || null,
+        meta_description: body.meta_description || null,
+        canonical_url: body.canonical_url || null,
+        is_visible: body.is_visible ?? true,
+        is_featured: body.is_featured ?? false,
+        sort_order: body.sort_order ?? 0,
+    };
+
     const result = await db
         .insert(siteProductOverrides)
-        .values({
-            site_id: siteId,
-            product_id: productId,
-            title: body.title || null,
-            title_en: body.title_en || null,
-            description: body.description || null,
-            description_en: body.description_en || null,
-            content: body.content || null,
-            content_en: body.content_en || null,
-            specs: body.specs || null,
-            price: body.price ?? null,
-            compare_price: body.compare_price ?? null,
-            currency: body.currency || null,
-            image_url: body.image_url || null,
-            gallery: body.gallery ? JSON.stringify(body.gallery) : null,
-            campaign_label: body.campaign_label || null,
-            meta_title: body.meta_title || null,
-            meta_description: body.meta_description || null,
-            canonical_url: body.canonical_url || null,
-            is_visible: body.is_visible ?? true,
-            is_featured: body.is_featured ?? false,
-            sort_order: body.sort_order ?? 0,
-        })
+        .values(overrideValues)
         .onConflictDoUpdate({
             target: [siteProductOverrides.site_id, siteProductOverrides.product_id],
             set: {
-                title: body.title || null,
-                title_en: body.title_en || null,
-                description: body.description || null,
-                description_en: body.description_en || null,
-                content: body.content || null,
-                content_en: body.content_en || null,
-                specs: body.specs || null,
-                price: body.price ?? null,
-                compare_price: body.compare_price ?? null,
-                currency: body.currency || null,
-                image_url: body.image_url || null,
-                gallery: body.gallery ? JSON.stringify(body.gallery) : null,
-                campaign_label: body.campaign_label || null,
-                meta_title: body.meta_title || null,
-                meta_description: body.meta_description || null,
-                canonical_url: body.canonical_url || null,
-                is_visible: body.is_visible ?? true,
-                is_featured: body.is_featured ?? false,
-                sort_order: body.sort_order ?? 0,
+                title: overrideValues.title,
+                title_en: overrideValues.title_en,
+                description: overrideValues.description,
+                description_en: overrideValues.description_en,
+                content: overrideValues.content,
+                content_en: overrideValues.content_en,
+                specs: overrideValues.specs,
+                price: overrideValues.price,
+                compare_price: overrideValues.compare_price,
+                currency: overrideValues.currency,
+                stock_quantity: overrideValues.stock_quantity,
+                image_url: overrideValues.image_url,
+                gallery: overrideValues.gallery,
+                campaign_label: overrideValues.campaign_label,
+                meta_title: overrideValues.meta_title,
+                meta_description: overrideValues.meta_description,
+                canonical_url: overrideValues.canonical_url,
+                is_visible: overrideValues.is_visible,
+                is_featured: overrideValues.is_featured,
+                sort_order: overrideValues.sort_order,
                 updated_at: sql`(CURRENT_TIMESTAMP)`,
             },
         })

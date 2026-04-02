@@ -49,7 +49,7 @@ articlesRoute.get("/", async (c) => {
         .where(
             c.req.query("admin") === "true"
                 ? undefined
-                : sql`COALESCE(${siteArticleOverrides.is_visible}, 1) = 1`
+                : sql`COALESCE(${siteArticleOverrides.is_visible}, 0) = 1`
         );
 
     // Get all overrides to determine which sites have this article
