@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { User, MapPin, ShoppingBag, Heart, LogOut, Save, Plus, X, Building2, Loader2, Check, Package, FileText, Clock, ChevronRight, AlertTriangle, MessageSquare, Send, Pencil } from 'lucide-react'
 import { useLanguage, t, localizedField } from '@/lib/i18n'
 import { useMemberAuth } from '@/lib/auth'
+import { parseFavoriteIds } from '@forlabs/core'
 import { useProducts } from '@/hooks/useProducts'
 import { getImageUrl } from '@/lib/utils'
 import type { MemberProfile } from '@/lib/auth'
@@ -46,16 +47,17 @@ export default function AccountPage() {
         return ['orders', 'favorites', 'profile', 'inquiries'].includes(t) ? t : 'orders'
     })
 
-    const [unreadInquiries, setUnreadInquiries] = useState(0)
-
     // Update URL when tab changes
     const handleTabChange = (key: Tab) => {
         setActiveTab(key)
         setSearchParams({ tab: key })
     }
 
-    // Fetch unread count for badge
-    const fetchUnreadCount = useCallback(() => {
+    const [unreadInquiries, setUnreadInquiries] = useState(0)
+    const [pendingOrdersCount, setPendingOrdersCount] = useState(0)
+
+    // Fetch unread count and orders count for badges
+    const fetchBadgeData = useCallback(() => {
         if (!token) return
         fetch(`${API_BASE}/api/member-auth/inquiries?site_id=${SITE_ID}`, {
             headers: { 'Authorization': `Bearer ${token}` },
@@ -66,14 +68,24 @@ export default function AccountPage() {
                 setUnreadInquiries(count)
             })
             .catch(() => setUnreadInquiries(0))
+            
+        fetch(`${API_BASE}/api/member-auth/orders?site_id=${SITE_ID}`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+        })
+            .then(res => res.json())
+            .then((res: any) => {
+                const count = res.data?.filter((o: any) => !['delivered', 'cancelled'].includes(o.status)).length || 0
+                setPendingOrdersCount(count)
+            })
+            .catch(() => setPendingOrdersCount(0))
     }, [token])
 
     useEffect(() => {
-        fetchUnreadCount()
+        fetchBadgeData()
         // Polling every 5 seconds for live updates
-        const interval = setInterval(fetchUnreadCount, 5000)
+        const interval = setInterval(fetchBadgeData, 5000)
         return () => clearInterval(interval)
-    }, [fetchUnreadCount])
+    }, [fetchBadgeData])
 
     // Redirect if not logged in
     useEffect(() => {
@@ -91,6 +103,13 @@ export default function AccountPage() {
     }
 
     if (!member) return null
+
+    let favArticlesCount = 0
+    try {
+        const rawArts = member.favorite_articles ? JSON.parse(member.favorite_articles) : []
+        if (Array.isArray(rawArts)) favArticlesCount = rawArts.length
+    } catch { /* */ }
+    const favoritesCount = parseFavoriteIds(member.favorite_products, SITE_ID).length + favArticlesCount
 
     const tabs = [
         { key: 'orders' as Tab, label: t('account.tabOrders', lang), icon: ShoppingBag },
@@ -143,8 +162,18 @@ export default function AccountPage() {
                             <Icon className="h-4 w-4" />
                             <span className="hidden sm:inline">{tab.label}</span>
                             {tab.key === 'inquiries' && unreadInquiries > 0 && (
-                                <span className="absolute top-1 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white animate-bounce-slow">
+                                <span className="absolute -top-1.5 -right-1.5 flex min-w-5 h-5 px-1 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white animate-bounce-slow">
                                     {unreadInquiries}
+                                </span>
+                            )}
+                            {tab.key === 'orders' && pendingOrdersCount > 0 && (
+                                <span className="absolute -top-1.5 -right-1.5 flex min-w-5 h-5 px-1 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white animate-bounce-slow">
+                                    {pendingOrdersCount}
+                                </span>
+                            )}
+                            {tab.key === 'favorites' && favoritesCount > 0 && (
+                                <span className="absolute -top-1.5 -right-1.5 flex min-w-5 h-5 px-1 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white animate-bounce-slow">
+                                    {favoritesCount}
                                 </span>
                             )}
                         </button>
@@ -1019,16 +1048,8 @@ function FavoritesTab({ member, lang }: { member: MemberProfile; lang: 'tr' | 'e
     const { toggleFavoriteProduct } = useMemberAuth()
     const { data: allProductsData } = useProducts()
     const allProducts = allProductsData?.data || []
-    let favProducts: number[] = []
+    const favProducts = parseFavoriteIds(member.favorite_products, SITE_ID)
     let favArticles: number[] = []
-    try {
-        const rawProds = member.favorite_products ? JSON.parse(member.favorite_products) : []
-        if (Array.isArray(rawProds)) {
-            favProducts = rawProds
-                .map((item: unknown) => typeof item === 'object' && item !== null && 'id' in item ? Number((item as Record<string, unknown>).id) : Number(item))
-                .filter((id: number) => !isNaN(id))
-        }
-    } catch { /* */ }
     try { favArticles = member.favorite_articles ? JSON.parse(member.favorite_articles) : [] } catch { /* */ }
 
     const hasAnyFavorites = favProducts.length > 0 || favArticles.length > 0

@@ -8,7 +8,7 @@ import {
 import { useProduct, useProducts } from '@/hooks/useProducts'
 import { useCart } from '@/lib/cart'
 import { useLanguage, t, localizedField } from '@/lib/i18n'
-import { useMemberAuth } from '@/lib/auth'
+import { useMemberAuth, parseFavoriteIds } from '@/lib/auth'
 import { getImageUrl } from '@/lib/utils'
 import type { Product } from '@forlabs/shared'
 
@@ -154,15 +154,8 @@ function RelatedCard({ product }: { product: Product }) {
 
     const isFav = useMemo(() => {
         if (!member?.favorite_products) return false
-        try {
-            const arr = JSON.parse(member.favorite_products)
-            if (!Array.isArray(arr)) return false
-            const ids = arr.map((item: unknown) => typeof item === 'object' && item !== null && 'id' in item ? Number((item as Record<string, unknown>).id) : Number(item))
-            return ids.includes(product.id)
-        } catch {
-            return false
-        }
-    }, [member, product.id])
+        return parseFavoriteIds(member.favorite_products).includes(product.id)
+    }, [member?.favorite_products, product.id])
 
     const handleToggleFavorite = async (e: React.MouseEvent) => {
         e.preventDefault()
@@ -225,7 +218,7 @@ export default function ProductDetailPage() {
     const navigate = useNavigate()
     const { data: productData, isLoading } = useProduct(slug ?? '')
     const { data: allProductsData } = useProducts()
-    const { addItem, isInCart, updateQuantity, items } = useCart()
+    const { addItem, removeItem, isInCart, updateQuantity, items } = useCart()
     const { member, toggleFavoriteProduct } = useMemberAuth()
 
     const [tab, setTab] = useState<'description' | 'specs' | 'features'>('specs')
@@ -277,15 +270,8 @@ export default function ProductDetailPage() {
 
     const isFav = useMemo(() => {
         if (!member?.favorite_products || !product?.id) return false
-        try {
-            const arr = JSON.parse(member.favorite_products)
-            if (!Array.isArray(arr)) return false
-            const ids = arr.map((item: unknown) => typeof item === 'object' && item !== null && 'id' in item ? Number((item as Record<string, unknown>).id) : Number(item))
-            return ids.includes(product.id)
-        } catch {
-            return false
-        }
-    }, [member, product?.id])
+        return parseFavoriteIds(member.favorite_products).includes(product.id)
+    }, [member?.favorite_products, product?.id])
 
     const handleToggleFavorite = async (e: React.MouseEvent) => {
         e.preventDefault()
@@ -317,7 +303,7 @@ export default function ProductDetailPage() {
     const handleAddToCart = () => {
         if (!product || !product.price) return
         if (inCart) {
-            navigate('/sepet')
+            removeItem(product.id)
         } else {
             addItem({
                 id: product.id,

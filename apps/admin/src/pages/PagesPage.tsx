@@ -8,6 +8,7 @@ import { FileCode, Globe, CheckCircle2, ExternalLink } from "lucide-react";
 const SITE_URLS: Record<string, string> = {
     forlabs: "https://forlabs-web.pages.dev",
     atagotr: "https://forlabs-atagotr.pages.dev",
+    labkurulum: "https://forlabs-labkurulum.pages.dev",
 };
 
 function getSiteUrl(siteSlug: string, pageSlug: string): string {

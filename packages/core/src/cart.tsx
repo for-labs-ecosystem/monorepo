@@ -26,6 +26,8 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null)
 
+import { getEcosystemConfig } from './config'
+
 function loadCart(): CartItem[] {
     try {
         const stored = localStorage.getItem(CART_STORAGE_KEY)
@@ -43,6 +45,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const { member, updateProfile } = useMemberAuth()
     const [items, setItems] = useState<CartItem[]>(loadCart)
     const initialSyncDone = useRef(false)
+    const { siteId } = getEcosystemConfig()
 
     // Sync from database on login
     useEffect(() => {
@@ -50,20 +53,31 @@ export function CartProvider({ children }: { children: ReactNode }) {
             initialSyncDone.current = true
             const localItems = loadCart()
             try {
-                const memberCart = member.cart_data ? JSON.parse(member.cart_data) : []
-                if (Array.isArray(memberCart) && memberCart.length > 0) {
-                    setItems(memberCart)
-                    saveCart(memberCart)
+                const memberData = member.cart_data ? JSON.parse(member.cart_data) : {}
+                let memberCartForSite: CartItem[] = []
+                
+                if (Array.isArray(memberData)) {
+                    // Legacy array format
+                    memberCartForSite = memberData
+                } else if (memberData && typeof memberData === 'object') {
+                    memberCartForSite = memberData[siteId] || []
+                }
+
+                if (memberCartForSite.length > 0) {
+                    setItems(memberCartForSite)
+                    saveCart(memberCartForSite)
                 } else if (localItems.length > 0) {
-                    updateProfile({ cart_data: JSON.stringify(localItems) }).catch(() => { })
+                    const newDbData = Array.isArray(memberData) ? {} : { ...memberData }
+                    newDbData[siteId] = localItems
+                    updateProfile({ cart_data: JSON.stringify(newDbData) }).catch(() => { })
                 }
             } catch {
                 if (localItems.length > 0) {
-                    updateProfile({ cart_data: JSON.stringify(localItems) }).catch(() => { })
+                    updateProfile({ cart_data: JSON.stringify({ [siteId]: localItems }) }).catch(() => { })
                 }
             }
         }
-    }, [member, updateProfile])
+    }, [member, updateProfile, siteId])
 
     // Notice we clear sync flag on logout so a future login will trigger sync again
     useEffect(() => {
@@ -76,13 +90,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         saveCart(items)
         if (member && initialSyncDone.current) {
-            // Compare stringified versions to avoid unnecessary uploads
-            const currentSave = JSON.stringify(items)
-            if (member.cart_data !== currentSave) {
-                updateProfile({ cart_data: currentSave }).catch(() => { })
+            try {
+                const memberData = member.cart_data ? JSON.parse(member.cart_data) : {}
+                const currentSaveObj = Array.isArray(memberData) ? {} : { ...memberData }
+                currentSaveObj[siteId] = items
+                
+                const newSaveString = JSON.stringify(currentSaveObj)
+                if (member.cart_data !== newSaveString) {
+                    updateProfile({ cart_data: newSaveString }).catch(() => { })
+                }
+            } catch {
+                updateProfile({ cart_data: JSON.stringify({ [siteId]: items }) }).catch(() => { })
             }
         }
-    }, [items, member, updateProfile])
+    }, [items, member, updateProfile, siteId])
 
     const addItem = useCallback((item: Omit<CartItem, 'quantity'>, quantity = 1) => {
         setItems(prev => {

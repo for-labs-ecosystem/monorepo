@@ -24,6 +24,8 @@ interface FavoritesContextValue {
 
 const FavoritesContext = createContext<FavoritesContextValue | null>(null)
 
+import { getEcosystemConfig } from './config'
+
 function loadFavorites(): FavoriteItem[] {
     try {
         const stored = localStorage.getItem(FAVORITES_STORAGE_KEY)
@@ -46,6 +48,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     const { member, updateProfile } = useMemberAuth()
     const [items, setItems] = useState<FavoriteItem[]>(loadFavorites)
     const initialSyncDone = useRef(false)
+    const { siteId } = getEcosystemConfig()
 
     // Sync from database on login
     useEffect(() => {
@@ -53,20 +56,31 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
             initialSyncDone.current = true
             const localItems = loadFavorites()
             try {
-                const memberFavs = member.favorite_products ? JSON.parse(member.favorite_products) : []
-                if (Array.isArray(memberFavs) && memberFavs.length > 0 && typeof memberFavs[0] === 'object') {
-                    setItems(memberFavs)
-                    saveFavorites(memberFavs)
+                const memberData = member.favorite_products ? JSON.parse(member.favorite_products) : {}
+                let memberFavsForSite: FavoriteItem[] = []
+                
+                if (Array.isArray(memberData)) {
+                    // Legacy array format
+                    memberFavsForSite = memberData
+                } else if (memberData && typeof memberData === 'object') {
+                    memberFavsForSite = memberData[siteId] || []
+                }
+
+                if (memberFavsForSite.length > 0 && typeof memberFavsForSite[0] === 'object') {
+                    setItems(memberFavsForSite)
+                    saveFavorites(memberFavsForSite)
                 } else if (localItems.length > 0) {
-                    updateProfile({ favorite_products: JSON.stringify(localItems) }).catch(() => { })
+                    const newDbData = Array.isArray(memberData) ? {} : { ...memberData }
+                    newDbData[siteId] = localItems
+                    updateProfile({ favorite_products: JSON.stringify(newDbData) }).catch(() => { })
                 }
             } catch {
                 if (localItems.length > 0) {
-                    updateProfile({ favorite_products: JSON.stringify(localItems) }).catch(() => { })
+                    updateProfile({ favorite_products: JSON.stringify({ [siteId]: localItems }) }).catch(() => { })
                 }
             }
         }
-    }, [member, updateProfile])
+    }, [member, updateProfile, siteId])
 
     // Clear sync flag on logout
     useEffect(() => {
@@ -79,12 +93,20 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         saveFavorites(items)
         if (member && initialSyncDone.current) {
-            const currentSave = JSON.stringify(items)
-            if (member.favorite_products !== currentSave) {
-                updateProfile({ favorite_products: currentSave }).catch(() => { })
+            try {
+                const memberData = member.favorite_products ? JSON.parse(member.favorite_products) : {}
+                const currentSaveObj = Array.isArray(memberData) ? {} : { ...memberData }
+                currentSaveObj[siteId] = items
+                
+                const newSaveString = JSON.stringify(currentSaveObj)
+                if (member.favorite_products !== newSaveString) {
+                    updateProfile({ favorite_products: newSaveString }).catch(() => { })
+                }
+            } catch {
+                updateProfile({ favorite_products: JSON.stringify({ [siteId]: items }) }).catch(() => { })
             }
         }
-    }, [items, member, updateProfile])
+    }, [items, member, updateProfile, siteId])
 
     const addFavorite = useCallback((item: FavoriteItem) => {
         setItems(prev => {

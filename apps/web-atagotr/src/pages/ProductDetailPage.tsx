@@ -28,7 +28,7 @@ import {
 export default function ProductDetailPage() {
     const { slug } = useParams<{ slug: string }>()
     const { data, isLoading, error } = useProduct(slug ?? '')
-    const { addItem, isInCart } = useCart()
+    const { addItem, removeItem, isInCart } = useCart()
     const { member, toggleFavoriteProduct } = useMemberAuth()
     const navigate = useNavigate()
     const [quantity, setQuantity] = useState(1)
@@ -65,6 +65,10 @@ export default function ProductDetailPage() {
 
     const handleAddToCart = useCallback(() => {
         if (!product) return
+        if (alreadyInCart) {
+            removeItem(product.id)
+            return
+        }
         const cartItem: Omit<CartItem, 'quantity'> = {
             id: product.id,
             slug: product.slug,
@@ -77,7 +81,7 @@ export default function ProductDetailPage() {
         addItem(cartItem, quantity)
         setAddedToCart(true)
         setTimeout(() => setAddedToCart(false), 2500)
-    }, [product?.id, quantity, addItem])
+    }, [product?.id, alreadyInCart, quantity, addItem, removeItem])
 
     // ── Early returns AFTER all hooks ──
     if (isLoading) {
@@ -291,14 +295,18 @@ export default function ProductDetailPage() {
 
                         <button
                             onClick={handleAddToCart}
-                            disabled={addedToCart}
+                            disabled={addedToCart && !alreadyInCart}
                             className={`flex-1 flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md ${
-                                addedToCart
-                                    ? 'bg-green-500 text-white shadow-green-200'
-                                    : 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-200 hover:shadow-lg'
+                                alreadyInCart
+                                    ? 'bg-green-600 text-white shadow-green-200 hover:bg-green-700'
+                                    : addedToCart
+                                        ? 'bg-green-500 text-white shadow-green-200'
+                                        : 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-200 hover:shadow-lg'
                             }`}
                         >
-                            {addedToCart ? (
+                            {alreadyInCart ? (
+                                <><Check className="w-5 h-5" /> Sepette</>
+                            ) : addedToCart ? (
                                 <><Check className="w-5 h-5" /> Sepete Eklendi!</>
                             ) : (
                                 <><ShoppingCart className="w-5 h-5" /> Sepete Ekle</>

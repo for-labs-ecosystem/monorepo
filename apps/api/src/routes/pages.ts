@@ -29,7 +29,7 @@ pagesRoute.get("/", async (c) => {
             title: sql<string>`COALESCE(${sitePageOverrides.title}, ${pages.title})`,
             title_en: sql<string>`COALESCE(${sitePageOverrides.title_en}, ${pages.title_en})`,
             page_type: pages.page_type,
-            is_active: sql<boolean>`COALESCE(${sitePageOverrides.is_visible}, 1)`,
+            is_active: pages.is_active,
             sort_order: sql<number>`COALESCE(${sitePageOverrides.sort_order}, ${pages.sort_order})`,
             created_at: pages.created_at,
         })

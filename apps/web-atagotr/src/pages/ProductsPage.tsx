@@ -102,7 +102,7 @@ function CategoryNode({
 }
 
 function ProductCard({ product }: { product: Product }) {
-    const { addItem, isInCart } = useCart()
+    const { addItem, removeItem, isInCart } = useCart()
     const { member, toggleFavoriteProduct } = useMemberAuth()
     const favorited = parseFavoriteIds(member?.favorite_products).includes(product.id)
     const inCart = isInCart(product.id)
@@ -111,7 +111,13 @@ function ProductCard({ product }: { product: Product }) {
         toggleFavoriteProduct(product.id)
     }
 
-    const handleAddToCart = () => {
+    const handleAddToCart = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (inCart) {
+            removeItem(product.id)
+            return
+        }
         if (product.price == null) return
         addItem({
             id: product.id,

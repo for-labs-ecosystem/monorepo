@@ -8,7 +8,7 @@ import {
 import { useProducts, useCategories } from '@/hooks/useProducts'
 import { useCart } from '@/lib/cart'
 import { useLanguage, t, localizedField } from '@/lib/i18n'
-import { useMemberAuth } from '@/lib/auth'
+import { useMemberAuth, parseFavoriteIds } from '@/lib/auth'
 import { getImageUrl, stripHtml } from '@/lib/utils'
 import type { Product, Category } from '@forlabs/shared'
 
@@ -204,15 +204,8 @@ function ProductCard({ product }: { product: Product }) {
 
     const isFav = useMemo(() => {
         if (!member?.favorite_products) return false
-        try {
-            const arr = JSON.parse(member.favorite_products)
-            if (!Array.isArray(arr)) return false
-            const ids = arr.map((item: unknown) => typeof item === 'object' && item !== null && 'id' in item ? Number((item as Record<string, unknown>).id) : Number(item))
-            return ids.includes(product.id)
-        } catch {
-            return false
-        }
-    }, [member, product.id])
+        return parseFavoriteIds(member.favorite_products).includes(product.id)
+    }, [member?.favorite_products, product.id])
 
     const handleToggleFavorite = async (e: React.MouseEvent) => {
         e.preventDefault()

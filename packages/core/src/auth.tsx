@@ -7,12 +7,26 @@ import { TOKEN_KEY } from './constants'
  * Parse favorite_products JSON string into a clean number[] of product IDs.
  * Handles numbers, strings, and FavoriteItem objects ({ id, ... }).
  */
-export function parseFavoriteIds(raw: string | null | undefined): number[] {
+export function parseFavoriteIds(raw: string | null | undefined, siteId?: string | number): number[] {
     if (!raw) return []
     try {
         const parsed = JSON.parse(raw)
-        if (!Array.isArray(parsed)) return []
-        return parsed
+        let favArray: unknown[] = []
+        const currentSiteId = siteId || getEcosystemConfig().siteId
+        
+        if (Array.isArray(parsed)) {
+            favArray = parsed
+        } else if (parsed && typeof parsed === 'object') {
+            if (currentSiteId && Array.isArray(parsed[currentSiteId])) {
+                favArray = parsed[currentSiteId]
+            } else {
+                // Return empty if not targeted
+            }
+        }
+        
+        if (!Array.isArray(favArray)) return []
+        
+        return favArray
             .map((item: unknown) =>
                 typeof item === 'object' && item !== null && 'id' in item
                     ? Number((item as Record<string, unknown>).id)
@@ -157,7 +171,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const toggleFavoriteProduct = useCallback(async (productId: number) => {
         if (!member) return
 
-        let favs = parseFavoriteIds(member.favorite_products)
+        const { siteId } = getEcosystemConfig()
+        let favs = parseFavoriteIds(member.favorite_products, siteId)
         const numId = Number(productId)
         const isFav = favs.includes(numId)
         if (isFav) {
@@ -166,7 +181,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             favs.push(numId)
         }
 
-        await updateProfile({ favorite_products: JSON.stringify(favs) })
+        try {
+            const memberData = member.favorite_products ? JSON.parse(member.favorite_products) : {}
+            const currentSaveObj = Array.isArray(memberData) ? {} : { ...memberData }
+            currentSaveObj[siteId] = favs
+            
+            await updateProfile({ favorite_products: JSON.stringify(currentSaveObj) })
+        } catch {
+            await updateProfile({ favorite_products: JSON.stringify({ [siteId]: favs }) })
+        }
     }, [member, updateProfile])
 
     return (

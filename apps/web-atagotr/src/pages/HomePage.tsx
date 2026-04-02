@@ -1,13 +1,14 @@
 import { useState, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, ShieldCheck, Cpu, Network, Heart, ShoppingCart } from 'lucide-react'
-import { useProducts, useCategories, useMemberAuth, parseFavoriteIds } from '@forlabs/core'
+import { ArrowRight, ShieldCheck, Cpu, Network, Heart, ShoppingCart, Check } from 'lucide-react'
+import { useProducts, useCategories, useMemberAuth, useCart, parseFavoriteIds } from '@forlabs/core'
 import { getImageUrl } from '@/lib/utils'
 import type { Product, Category } from '@forlabs/shared'
 
 export default function HomePage() {
     const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null)
     const { member, toggleFavoriteProduct } = useMemberAuth()
+    const { addItem, removeItem, isInCart } = useCart()
     const navigate = useNavigate()
     const favIds = useMemo(() => parseFavoriteIds(member?.favorite_products), [member?.favorite_products])
 
@@ -314,9 +315,40 @@ export default function HomePage() {
                                             )}
                                             
                                             {/* Prominent Add to Cart Button */}
-                                            <button className="flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2.5 rounded-full font-bold text-sm shadow-md shadow-primary-600/20 hover:shadow-lg hover:shadow-primary-600/30 transform hover:-translate-y-0.5 transition-all duration-300">
-                                                <ShoppingCart className="w-4 h-4" />
-                                                <span className="hidden sm:inline">Sepete Ekle</span>
+                                            <button 
+                                                onClick={(e) => {
+                                                    e.preventDefault()
+                                                    e.stopPropagation()
+                                                    if (isInCart(product.id)) {
+                                                        removeItem(product.id)
+                                                    } else if (product.price) {
+                                                        addItem({
+                                                            id: product.id,
+                                                            slug: product.slug,
+                                                            title: product.title,
+                                                            image_url: product.image_url ?? null,
+                                                            price: product.price,
+                                                            currency: product.currency ?? 'TRY',
+                                                            brand: product.brand ?? null,
+                                                        })
+                                                    }
+                                                }}
+                                                className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm shadow-md transform hover:-translate-y-0.5 transition-all duration-300 ${
+                                                isInCart(product.id)
+                                                    ? 'bg-green-600 hover:bg-green-700 text-white shadow-green-600/20 shadow-lg'
+                                                    : 'bg-primary-600 hover:bg-primary-700 text-white shadow-primary-600/20 hover:shadow-lg'
+                                            }`}>
+                                                {isInCart(product.id) ? (
+                                                    <>
+                                                        <Check className="w-4 h-4" />
+                                                        <span className="hidden sm:inline text-white">Sepette</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <ShoppingCart className="w-4 h-4" />
+                                                        <span className="hidden sm:inline">Sepete Ekle</span>
+                                                    </>
+                                                )}
                                             </button>
                                         </div>
                                     </div>

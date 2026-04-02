@@ -742,6 +742,7 @@ memberAuthRoute.get("/google", async (c) => {
     }
 
     const siteId = c.req.query("site_id") || "1";
+    const passedState = c.req.query("state");
     const redirectUri = (c.env as any).GOOGLE_MEMBER_REDIRECT_URI || (c.env as any).GOOGLE_REDIRECT_URI;
 
     const params = new URLSearchParams({
@@ -749,7 +750,7 @@ memberAuthRoute.get("/google", async (c) => {
         redirect_uri: redirectUri,
         response_type: "code",
         scope: "openid email profile",
-        state: siteId,
+        state: passedState || siteId,
         access_type: "offline",
         prompt: "select_account",
     });

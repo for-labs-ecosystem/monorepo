@@ -1292,6 +1292,13 @@ export default function AccountPage() {
         refetchInterval: 5000,
     })
 
+    const ordersQuery = useQuery({
+        queryKey: ['member-orders', SITE_ID],
+        queryFn: fetchMemberOrders,
+        enabled: Boolean(token && member),
+        staleTime: 1000 * 60 * 5,
+    })
+
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
@@ -1305,7 +1312,12 @@ export default function AccountPage() {
     const memberSince = member.created_at
         ? new Date(member.created_at).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long' })
         : null
+    
     const unopenedMessageCount = (inquiriesBadgeQuery.data ?? []).filter((inquiry) => inquiry.status === 'replied').length
+    const activeOrdersCount = (ordersQuery.data ?? []).filter((order) => !['delivered', 'cancelled'].includes(order.status)).length
+    
+    const favIds = parseFavoriteIds(member?.favorite_products, SITE_ID)
+    const favoritesCount = favIds.length
 
     return (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
@@ -1360,9 +1372,22 @@ export default function AccountPage() {
                             >
                                 <Icon className="w-4 h-4" />
                                 {tab.label}
+                                
                                 {tab.key === 'messages' && unopenedMessageCount > 0 && (
                                     <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-primary-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
                                         {unopenedMessageCount}
+                                    </span>
+                                )}
+                                
+                                {tab.key === 'orders' && activeOrdersCount > 0 && (
+                                    <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-blue-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                                        {activeOrdersCount}
+                                    </span>
+                                )}
+                                
+                                {tab.key === 'favorites' && favoritesCount > 0 && (
+                                    <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-rose-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                                        {favoritesCount}
                                     </span>
                                 )}
                             </button>
