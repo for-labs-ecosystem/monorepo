@@ -35,15 +35,7 @@ export default function ContactPage() {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-50/60 via-white to-accent-50/30" />
                 <div className="relative mx-auto max-w-[1400px] px-6 lg:px-10">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div>
-                            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
-                                İletişim
-                            </h1>
-                            <p className="mt-4 text-lg text-slate-500 max-w-2xl leading-relaxed">
-                                Test kitleri hakkında bilgi almak, toplu sipariş veya proje teklifi için bizimle iletişime geçin.
-                            </p>
-                        </div>
-                        <div className="lg:justify-self-end w-full max-w-md">
+                        <div className="w-full max-w-md order-2 lg:order-1">
                             <div className="p-8 rounded-3xl bg-white/60 backdrop-blur-md border border-white shadow-xl shadow-primary-500/5">
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="w-10 h-10 rounded-2xl bg-green-500/10 flex items-center justify-center">
@@ -63,6 +55,14 @@ export default function ContactPage() {
                                     WhatsApp'tan Yazın
                                 </a>
                             </div>
+                        </div>
+                        <div className="order-1 lg:order-2 lg:pl-12">
+                            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
+                                İletişim
+                            </h1>
+                            <p className="mt-4 text-lg text-slate-500 max-w-xl leading-relaxed">
+                                Test kitleri hakkında bilgi almak, toplu sipariş veya proje teklifi için bizimle iletişime geçin.
+                            </p>
                         </div>
                     </div>
                 </div>
