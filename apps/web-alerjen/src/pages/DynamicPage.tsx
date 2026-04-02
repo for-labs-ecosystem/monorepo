@@ -30,17 +30,17 @@ export default function DynamicPage() {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
-                <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-10 h-10 border-2 border-ocean-400 border-t-transparent rounded-full animate-spin" />
             </div>
         )
     }
 
     if (error || !page) {
         return (
-            <div className="mx-auto max-w-3xl px-6 py-24 text-center">
-                <h1 className="text-2xl font-bold text-slate-800 mb-3">Sayfa Bulunamadı</h1>
-                <p className="text-slate-500 text-sm mb-6">Aradığınız sayfa mevcut değil veya kaldırılmış olabilir.</p>
-                <Link to="/" className="text-sm font-bold text-primary-600 hover:text-primary-700 transition-colors">
+            <div className="mx-auto max-w-3xl px-6 py-28 text-center">
+                <h1 className="text-2xl font-semibold text-slate-500 mb-3">Sayfa Bulunamadı</h1>
+                <p className="text-slate-400 text-sm mb-6 font-light">Aradığınız sayfa mevcut değil veya kaldırılmış olabilir.</p>
+                <Link to="/" className="text-[13px] font-semibold text-ocean-500 hover:text-ocean-600 transition-colors duration-300">
                     ← Anasayfaya Dön
                 </Link>
             </div>
@@ -57,9 +57,9 @@ export default function DynamicPage() {
             {page.meta_description && <meta name="description" content={page.meta_description} />}
             {page.canonical_url && <link rel="canonical" href={page.canonical_url} />}
 
-            <article className="mx-auto max-w-4xl px-6 lg:px-10 py-16 lg:py-24">
+            <article className="mx-auto max-w-4xl px-6 lg:px-10 py-20 lg:py-28">
                 {page.cover_image_url && (
-                    <div className="mb-12 overflow-hidden rounded-3xl shadow-sm">
+                    <div className="mb-14 overflow-hidden rounded-[32px]">
                         <img
                             src={resolveMediaUrl(page.cover_image_url)}
                             alt={title}
@@ -71,7 +71,7 @@ export default function DynamicPage() {
                 {content ? (
                     <TiptapRenderer content={content} />
                 ) : (
-                    <p className="text-slate-400 italic">Bu sayfanın henüz içeriği bulunmuyor.</p>
+                    <p className="text-slate-400 italic font-light">Bu sayfanın henüz içeriği bulunmuyor.</p>
                 )}
             </article>
         </>

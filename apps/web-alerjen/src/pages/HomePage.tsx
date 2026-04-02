@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, FlaskConical, ShieldCheck, Microscope, Clock } from 'lucide-react'
+import { ArrowRight, Leaf, LayoutGrid, FlaskConical, Compass, Boxes } from 'lucide-react'
 import { useProducts, useArticles } from '@forlabs/core'
 import { getImageUrl } from '@/lib/utils'
 import QuoteModal from '@/components/QuoteModal'
@@ -17,40 +17,40 @@ export default function HomePage() {
 
     return (
         <>
-            {/* ── Hero ── */}
+            {/* ── Hero — Deep breath ── */}
             <section className="relative overflow-hidden">
-                {/* Background gradients */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-50/80 via-white to-accent-50/40" />
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary-200/20 blur-[120px]" />
-                <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-accent-200/20 blur-[100px]" />
+                {/* Ambient background — morning sunlight on a white desk */}
+                <div className="absolute inset-0 bg-gradient-to-br from-mint-50 via-white to-peach-50/60" />
+                <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] rounded-full bg-ocean-200/10 blur-[160px] animate-glow-pulse" />
+                <div className="absolute bottom-[-20%] left-[10%] w-[600px] h-[600px] rounded-full bg-coral-200/10 blur-[140px] animate-glow-pulse" style={{ animationDelay: '3s' }} />
 
-                <div className="relative mx-auto max-w-[1400px] px-6 lg:px-10 py-20 lg:py-32">
+                <div className="relative mx-auto max-w-[1400px] px-6 lg:px-10 py-24 lg:py-40">
                     <div className="max-w-3xl">
-                        <div className="inline-flex items-center gap-2 rounded-full bg-primary-100/60 border border-primary-200/50 px-4 py-1.5 mb-6">
-                            <FlaskConical className="w-4 h-4 text-primary-600" />
-                            <span className="text-xs font-bold text-primary-700 uppercase tracking-wider">Gıda Güvenliği Çözümleri</span>
+                        <div className="inline-flex items-center gap-2 rounded-full bg-ocean-50/50 border border-ocean-200/30 px-4 py-2 mb-8">
+                            <Leaf className="w-3.5 h-3.5 text-ocean-500" />
+                            <span className="text-[11px] font-semibold text-ocean-600 uppercase tracking-[0.15em]">Gıda Güvenliği Çözümleri</span>
                         </div>
-                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.1]">
+                        <h1 className="text-4xl sm:text-5xl lg:text-[3.6rem] font-bold text-slate-600 tracking-tight leading-[1.1]">
                             Alerjen Testinde{' '}
-                            <span className="bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">
+                            <span className="bg-gradient-to-r from-ocean-500 to-ocean-400 bg-clip-text text-transparent">
                                 Hız ve Güven
                             </span>
                         </h1>
-                        <p className="mt-6 text-lg sm:text-xl text-slate-600 leading-relaxed max-w-2xl">
+                        <p className="mt-8 text-lg sm:text-xl text-slate-400 leading-relaxed max-w-2xl font-light">
                             Gıda endüstrisi için hızlı alerjen ve kontaminasyon test kitleri.
                             Bilimsel doğrulukla üretim hattınızı güvence altına alın.
                         </p>
-                        <div className="mt-8 flex flex-wrap items-center gap-4">
+                        <div className="mt-10 flex flex-wrap items-center gap-4">
                             <Link
                                 to="/urunler"
-                                className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-accent-500/25 hover:bg-accent-400 hover:shadow-xl hover:shadow-accent-500/30 hover:-translate-y-0.5 transition-all duration-200"
+                                className="btn-warm"
                             >
                                 Test Kitlerini Keşfet
                                 <ArrowRight className="w-4 h-4" />
                             </Link>
                             <Link
                                 to="/iletisim"
-                                className="inline-flex items-center gap-2 rounded-full border-2 border-slate-200 bg-white px-7 py-3.5 text-sm font-bold text-slate-700 hover:border-primary-300 hover:text-primary-700 transition-all duration-200"
+                                className="btn-ocean"
                             >
                                 Ücretsiz Danışmanlık
                             </Link>
@@ -59,23 +59,23 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* ── Trust Badges ── */}
-            <section className="relative border-y border-slate-100 bg-white/60 backdrop-blur-sm">
-                <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-10">
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10">
+            {/* ── Trust Badges — Floating pebbles ── */}
+            <section className="relative py-12 lg:py-16">
+                <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-8">
                         {[
-                            { icon: ShieldCheck, label: 'ISO 17025 Uyumlu', desc: 'Uluslararası standartlara uygun test kitleri' },
-                            { icon: Clock, label: 'Sonuç: 5-15 dk', desc: 'Hızlı sonuç alan lateral flow teknolojisi' },
-                            { icon: Microscope, label: 'Bilimsel Doğruluk', desc: 'ppb düzeyinde hassas alerjen tespiti' },
-                            { icon: FlaskConical, label: '50+ Test Türü', desc: 'Glüten, süt, yumurta, fıstık ve daha fazlası' },
+                            { icon: LayoutGrid, label: 'Geniş Marka ve Ürün Portföyü', desc: 'Dünyanın önde gelen test kiti üreticilerini ve global referans markalarını tek bir çatı altında sunuyoruz.' },
+                            { icon: FlaskConical, label: 'Çoklu Metodoloji Seçeneği', desc: 'Lateral Flow, ELISA veya PCR... Numune matrisinize ve tesisinize en uygun doğrulama metodolojisine ulaşın.' },
+                            { icon: Compass, label: 'Objektif Uzman Yönlendirmesi', desc: 'Sadece ürün tedarik etmiyor; prosesiniz için en doğru, hızlı ve maliyet-etkin çözümü belirlemenize rehberlik ediyoruz.' },
+                            { icon: Boxes, label: 'For-Labs Stok ve Destek Güvencesi', desc: 'Üretiminizin aksamaması için güçlü lojistik ağı, sürekli stok bulunabilirliği ve Protek Analitik teknik desteği.' },
                         ].map((item) => (
-                            <div key={item.label} className="flex items-start gap-4">
-                                <div className="shrink-0 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-50 text-primary-600">
-                                    <item.icon className="w-6 h-6" />
+                            <div key={item.label} className="pebble-card p-5 lg:p-6 flex items-start gap-4">
+                                <div className="shrink-0 flex h-11 w-11 items-center justify-center rounded-2xl bg-ocean-50/60">
+                                    <item.icon className="w-5 h-5 text-ocean-400" />
                                 </div>
                                 <div>
-                                    <p className="text-sm font-bold text-slate-900">{item.label}</p>
-                                    <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">{item.desc}</p>
+                                    <p className="text-[13px] font-semibold text-slate-600">{item.label}</p>
+                                    <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">{item.desc}</p>
                                 </div>
                             </div>
                         ))}
@@ -83,60 +83,60 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* ── Popular Products ── */}
-            <section className="py-20 lg:py-28">
+            {/* ── Popular Products — Floating cloud cards ── */}
+            <section className="py-20 lg:py-32">
                 <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
-                    <div className="flex items-end justify-between mb-10">
+                    <div className="flex items-end justify-between mb-14">
                         <div>
-                            <span className="text-xs font-bold text-primary-600 uppercase tracking-[0.15em]">Ürün Vitrini</span>
-                            <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Popüler Test Kitleri</h2>
-                            <p className="mt-2 text-slate-500 max-w-lg">En çok tercih edilen alerjen ve gıda güvenliği hızlı test kitlerimiz.</p>
+                            <span className="text-[11px] font-semibold text-ocean-500 uppercase tracking-[0.2em]">Ürün Vitrini</span>
+                            <h2 className="mt-3 text-3xl sm:text-4xl font-bold text-slate-600 tracking-tight">Popüler Test Kitleri</h2>
+                            <p className="mt-3 text-slate-400 max-w-lg leading-relaxed">En çok tercih edilen alerjen ve gıda güvenliği hızlı test kitlerimiz.</p>
                         </div>
                         <Link
                             to="/urunler"
-                            className="hidden sm:inline-flex items-center gap-1.5 text-sm font-bold text-primary-600 hover:text-primary-700 transition-colors"
+                            className="hidden sm:inline-flex items-center gap-1.5 text-[13px] font-semibold text-ocean-500 hover:text-ocean-600 transition-colors duration-300"
                         >
-                            Tümünü Gör <ArrowRight className="w-4 h-4" />
+                            Tümünü Gör <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                     </div>
 
                     {products.length === 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
                             {[1, 2, 3].map((i) => (
-                                <div key={i} className="h-[380px] rounded-3xl bg-slate-100 animate-pulse" />
+                                <div key={i} className="h-[400px] pebble-card animate-pulse !bg-ocean-50/30" />
                             ))}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
                             {products.map((product) => (
                                 <div
                                     key={product.id}
-                                    className="group flex flex-col bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.10)] hover:-translate-y-1 transition-all duration-300"
+                                    className="group flex flex-col pebble-card overflow-hidden"
                                 >
-                                    <Link to={`/urunler/${product.slug}`} className="aspect-[4/3] bg-slate-50 p-8 flex items-center justify-center overflow-hidden">
+                                    <Link to={`/urunler/${product.slug}`} className="aspect-[4/3] bg-gradient-to-br from-mint-50/40 to-ocean-50/30 p-10 flex items-center justify-center overflow-hidden">
                                         <img
                                             src={getImageUrl(product.image_url)}
                                             alt={product.title}
-                                            className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 mix-blend-multiply"
+                                            className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700 ease-out mix-blend-multiply"
                                         />
                                     </Link>
-                                    <div className="p-6 flex flex-col flex-1 justify-between gap-4">
+                                    <div className="p-7 flex flex-col flex-1 justify-between gap-5">
                                         <div>
                                             {product.brand && (
-                                                <span className="text-[10px] font-bold text-primary-600 uppercase tracking-wider">{product.brand}</span>
+                                                <span className="text-[10px] font-semibold text-ocean-500 uppercase tracking-[0.15em]">{product.brand}</span>
                                             )}
                                             <Link to={`/urunler/${product.slug}`}>
-                                                <h3 className="text-base font-bold text-slate-900 line-clamp-2 group-hover:text-primary-700 transition-colors leading-snug mt-1">
+                                                <h3 className="text-[15px] font-semibold text-slate-600 line-clamp-2 group-hover:text-ocean-600 transition-colors duration-300 leading-snug mt-1.5">
                                                     {product.title}
                                                 </h3>
                                             </Link>
                                             {product.description && (
-                                                <p className="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">{product.description}</p>
+                                                <p className="text-[12px] text-slate-400 mt-2 line-clamp-2 leading-relaxed">{product.description}</p>
                                             )}
                                         </div>
                                         <button
                                             onClick={() => setQuoteProduct({ id: product.id, name: product.title })}
-                                            className="w-full flex items-center justify-center gap-2 rounded-full bg-accent-500 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-accent-500/15 hover:bg-accent-400 hover:shadow-lg hover:shadow-accent-500/25 hover:-translate-y-0.5 transition-all duration-200"
+                                            className="btn-warm w-full !text-[13px] !py-3"
                                         >
                                             Teklif Al
                                         </button>
@@ -146,38 +146,38 @@ export default function HomePage() {
                         </div>
                     )}
 
-                    <div className="mt-8 text-center sm:hidden">
+                    <div className="mt-10 text-center sm:hidden">
                         <Link
                             to="/urunler"
-                            className="inline-flex items-center gap-1.5 text-sm font-bold text-primary-600 hover:text-primary-700 transition-colors"
+                            className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-ocean-500 hover:text-ocean-600 transition-colors duration-300"
                         >
-                            Tüm Ürünleri Gör <ArrowRight className="w-4 h-4" />
+                            Tüm Ürünleri Gör <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                     </div>
                 </div>
             </section>
 
-            {/* ── Latest Research ── */}
-            <section className="py-20 lg:py-28 bg-slate-50/70">
+            {/* ── Latest Research — Magazine-style ── */}
+            <section className="py-20 lg:py-32 bg-gradient-to-b from-transparent via-mint-50/30 to-transparent">
                 <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
-                    <div className="flex items-end justify-between mb-10">
+                    <div className="flex items-end justify-between mb-14">
                         <div>
-                            <span className="text-xs font-bold text-primary-600 uppercase tracking-[0.15em]">Bilgi Portalı</span>
-                            <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Son Araştırmalar</h2>
-                            <p className="mt-2 text-slate-500 max-w-lg">Gıda güvenliği ve alerjen yönetimi üzerine güncel bilimsel içerikler.</p>
+                            <span className="text-[11px] font-semibold text-ocean-500 uppercase tracking-[0.2em]">Bilgi Portalı</span>
+                            <h2 className="mt-3 text-3xl sm:text-4xl font-bold text-slate-600 tracking-tight">Son Araştırmalar</h2>
+                            <p className="mt-3 text-slate-400 max-w-lg leading-relaxed">Gıda güvenliği ve alerjen yönetimi üzerine güncel bilimsel içerikler.</p>
                         </div>
                         <Link
                             to="/arastirmalar"
-                            className="hidden sm:inline-flex items-center gap-1.5 text-sm font-bold text-primary-600 hover:text-primary-700 transition-colors"
+                            className="hidden sm:inline-flex items-center gap-1.5 text-[13px] font-semibold text-ocean-500 hover:text-ocean-600 transition-colors duration-300"
                         >
-                            Tümünü Oku <ArrowRight className="w-4 h-4" />
+                            Tümünü Oku <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                     </div>
 
                     {articles.length === 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             {[1, 2, 3].map((i) => (
-                                <div key={i} className="h-[340px] rounded-3xl bg-white animate-pulse" />
+                                <div key={i} className="h-[360px] pebble-card animate-pulse !bg-ocean-50/20" />
                             ))}
                         </div>
                     ) : (
@@ -186,36 +186,36 @@ export default function HomePage() {
                                 <Link
                                     key={article.id}
                                     to={`/arastirmalar/${article.slug}`}
-                                    className={`group flex flex-col bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ${
+                                    className={`group flex flex-col pebble-card overflow-hidden ${
                                         idx === 0 ? 'md:col-span-2 md:flex-row' : ''
                                     }`}
                                 >
-                                    <div className={`bg-gradient-to-br from-primary-50 to-primary-100/50 flex items-center justify-center overflow-hidden ${
+                                    <div className={`bg-gradient-to-br from-ocean-50/40 to-mint-50/30 flex items-center justify-center overflow-hidden ${
                                         idx === 0 ? 'md:w-1/2 aspect-[16/10]' : 'aspect-[16/10]'
                                     }`}>
                                         {article.cover_image_url ? (
                                             <img
                                                 src={getImageUrl(article.cover_image_url)}
                                                 alt={article.title}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                                             />
                                         ) : (
-                                            <FlaskConical className="w-12 h-12 text-primary-300" />
+                                            <Leaf className="w-10 h-10 text-ocean-200" />
                                         )}
                                     </div>
-                                    <div className={`p-6 flex flex-col justify-center ${idx === 0 ? 'md:w-1/2 md:p-8' : ''}`}>
-                                        <span className="text-[10px] font-bold text-primary-600 uppercase tracking-wider">Araştırma</span>
-                                        <h3 className={`font-bold text-slate-900 group-hover:text-primary-700 transition-colors mt-2 line-clamp-2 leading-snug ${
-                                            idx === 0 ? 'text-xl' : 'text-base'
+                                    <div className={`p-7 flex flex-col justify-center ${idx === 0 ? 'md:w-1/2 md:p-10' : ''}`}>
+                                        <span className="text-[10px] font-semibold text-ocean-500 uppercase tracking-[0.15em]">Araştırma</span>
+                                        <h3 className={`font-semibold text-slate-600 group-hover:text-ocean-600 transition-colors duration-300 mt-2.5 line-clamp-2 leading-snug ${
+                                            idx === 0 ? 'text-xl' : 'text-[15px]'
                                         }`}>
                                             {article.title}
                                         </h3>
                                         {article.excerpt && (
-                                            <p className={`text-slate-500 mt-2 leading-relaxed ${idx === 0 ? 'text-sm line-clamp-3' : 'text-xs line-clamp-2'}`}>
+                                            <p className={`text-slate-400 mt-3 leading-relaxed ${idx === 0 ? 'text-sm line-clamp-3' : 'text-[12px] line-clamp-2'}`}>
                                                 {article.excerpt}
                                             </p>
                                         )}
-                                        <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-primary-600">
+                                        <span className="mt-5 inline-flex items-center gap-1.5 text-[12px] font-semibold text-ocean-500 group-hover:gap-2.5 transition-all duration-300">
                                             Devamını Oku <ArrowRight className="w-3 h-3" />
                                         </span>
                                     </div>
@@ -226,21 +226,24 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* ── CTA Section ── */}
-            <section className="relative overflow-hidden py-20 lg:py-28">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-700" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_60%)]" />
+            {/* ── CTA Section — Warm, inviting, not aggressive ── */}
+            <section className="relative overflow-hidden py-24 lg:py-32">
+                {/* Soft gradient background instead of solid dark */}
+                <div className="absolute inset-0 bg-gradient-to-br from-ocean-50 via-mint-50 to-peach-50/40" />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-ocean-200/15 blur-[120px]" />
+                <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-coral-200/10 blur-[100px]" />
+
                 <div className="relative mx-auto max-w-[1400px] px-6 lg:px-10 text-center">
-                    <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-slate-600 tracking-tight">
                         Projeniz İçin Doğru Test Kitini Bulalım
                     </h2>
-                    <p className="mt-4 text-lg text-primary-100 max-w-2xl mx-auto">
+                    <p className="mt-5 text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed font-light">
                         Uzman ekibimiz, üretim hattınıza en uygun alerjen test çözümünü belirlemek için yanınızda.
                     </p>
-                    <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+                    <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
                         <Link
                             to="/iletisim"
-                            className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-bold text-primary-700 shadow-lg hover:bg-primary-50 hover:-translate-y-0.5 transition-all duration-200"
+                            className="btn-warm"
                         >
                             Ücretsiz Danışmanlık Al
                             <ArrowRight className="w-4 h-4" />
@@ -249,7 +252,7 @@ export default function HomePage() {
                             href="https://wa.me/905320000000"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 rounded-full border-2 border-white/30 px-7 py-3.5 text-sm font-bold text-white hover:bg-white/10 transition-all duration-200"
+                            className="btn-ocean"
                         >
                             WhatsApp ile Yazın
                         </a>

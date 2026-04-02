@@ -48,94 +48,94 @@ export default function QuoteModal({ open, onClose, productId, productName }: Qu
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             {/* Backdrop */}
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+            <div className="absolute inset-0 bg-white/60 backdrop-blur-md" onClick={onClose} />
 
-            {/* Modal */}
-            <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-in-up">
-                {/* Top accent */}
-                <div className="h-1.5 bg-gradient-to-r from-primary-500 via-primary-400 to-accent-500" />
+            {/* Modal — floating pebble */}
+            <div className="relative w-full max-w-lg pebble-card !bg-white/90 overflow-hidden animate-fade-in-up">
+                {/* Top accent — soft gradient whisper */}
+                <div className="h-1 bg-gradient-to-r from-ocean-300/60 via-ocean-400/40 to-coral-300/40" />
 
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors z-10"
+                    className="absolute top-5 right-5 p-2 rounded-xl bg-slate-50/80 hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-all duration-300 z-10"
                 >
                     <X className="w-4 h-4" />
                 </button>
 
-                <div className="p-8">
+                <div className="p-8 lg:p-10">
                     {status === 'success' ? (
                         <div className="flex flex-col items-center justify-center py-8 text-center">
-                            <div className="w-16 h-16 rounded-full bg-primary-50 flex items-center justify-center mb-4">
-                                <CheckCircle className="w-8 h-8 text-primary-600" />
+                            <div className="w-16 h-16 rounded-full bg-ocean-50 flex items-center justify-center mb-5">
+                                <CheckCircle className="w-8 h-8 text-ocean-500" />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-2">Talebiniz Alındı!</h3>
-                            <p className="text-sm text-slate-500">En kısa sürede sizinle iletişime geçeceğiz.</p>
+                            <h3 className="text-xl font-semibold text-slate-600 mb-2">Talebiniz Alındı!</h3>
+                            <p className="text-sm text-slate-400">En kısa sürede sizinle iletişime geçeceğiz.</p>
                         </div>
                     ) : (
                         <>
-                            <div className="mb-6">
-                                <h3 className="text-xl font-bold text-slate-900">Bu Ürün İçin Teklif Al</h3>
-                                <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1.5">
-                                    <div className="w-2 h-2 rounded-full bg-primary-500" />
-                                    <span className="text-xs font-semibold text-primary-700 truncate max-w-[300px]">{productName}</span>
+                            <div className="mb-8">
+                                <h3 className="text-xl font-semibold text-slate-600">Bu Ürün İçin Teklif Al</h3>
+                                <div className="mt-3 inline-flex items-center gap-2.5 rounded-full bg-ocean-50/50 border border-ocean-100/40 px-4 py-2">
+                                    <div className="w-2 h-2 rounded-full bg-ocean-400" />
+                                    <span className="text-xs font-medium text-ocean-700 truncate max-w-[300px]">{productName}</span>
                                 </div>
                             </div>
 
-                            <form onSubmit={handleSubmit} className="space-y-4">
+                            <form onSubmit={handleSubmit} className="space-y-5">
                                 <div>
-                                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">Ad Soyad *</label>
+                                    <label className="block text-[13px] font-medium text-slate-500 mb-2">Ad Soyad *</label>
                                     <input
                                         type="text"
                                         required
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
                                         placeholder="Adınız ve soyadınız"
-                                        className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20 transition-all"
+                                        className="input-soft w-full"
                                     />
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">E-posta *</label>
+                                        <label className="block text-[13px] font-medium text-slate-500 mb-2">E-posta *</label>
                                         <input
                                             type="email"
                                             required
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             placeholder="ornek@firma.com"
-                                            className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20 transition-all"
+                                            className="input-soft w-full"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">Telefon *</label>
+                                        <label className="block text-[13px] font-medium text-slate-500 mb-2">Telefon *</label>
                                         <input
                                             type="tel"
                                             required
                                             value={phone}
                                             onChange={(e) => setPhone(e.target.value)}
                                             placeholder="05XX XXX XX XX"
-                                            className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20 transition-all"
+                                            className="input-soft w-full"
                                         />
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">Mesajınız (opsiyonel)</label>
+                                    <label className="block text-[13px] font-medium text-slate-500 mb-2">Mesajınız (opsiyonel)</label>
                                     <textarea
                                         rows={3}
                                         value={message}
                                         onChange={(e) => setMessage(e.target.value)}
                                         placeholder="Ek bilgi veya özel talepleriniz..."
-                                        className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20 transition-all resize-none"
+                                        className="input-soft w-full resize-none"
                                     />
                                 </div>
 
                                 {status === 'error' && (
-                                    <p className="text-sm text-red-600 font-medium">Bir hata oluştu. Lütfen tekrar deneyin.</p>
+                                    <p className="text-sm text-coral-500 font-medium">Bir hata oluştu. Lütfen tekrar deneyin.</p>
                                 )}
 
                                 <button
                                     type="submit"
                                     disabled={status === 'sending'}
-                                    className="w-full flex items-center justify-center gap-2 rounded-full bg-accent-500 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-accent-500/25 hover:bg-accent-400 hover:shadow-xl hover:shadow-accent-500/30 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200"
+                                    className="w-full btn-warm disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     {status === 'sending' ? (
                                         <>

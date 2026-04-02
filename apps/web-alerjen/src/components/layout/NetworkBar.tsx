@@ -25,19 +25,19 @@ export function NetworkBar() {
     }, [])
 
     return (
-        <div className="relative z-[60] border-b border-slate-200/60 bg-slate-50/80 backdrop-blur-sm text-slate-600" ref={menuRef}>
-            <div className="mx-auto flex h-10 max-w-[1400px] items-center justify-between px-6 lg:px-10">
+        <div className="relative z-[60] border-b border-ocean-100/30 bg-white/40 backdrop-blur-md text-slate-500" ref={menuRef}>
+            <div className="mx-auto flex h-9 max-w-[1400px] items-center justify-between px-6 lg:px-10">
 
                 {/* Ecosystem Trigger */}
                 <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className={`group flex items-center gap-2 rounded-lg px-2 py-1 transition-all ${isOpen ? 'bg-slate-200/70' : 'hover:bg-slate-200/50'}`}
+                    className={`group flex items-center gap-2 rounded-lg px-2 py-1 transition-all duration-300 ${isOpen ? 'bg-ocean-50/60' : 'hover:bg-ocean-50/40'}`}
                 >
-                    <LayoutGrid className={`h-3.5 w-3.5 transition-colors ${isOpen ? 'text-primary-600' : 'text-slate-400 group-hover:text-primary-600'}`} />
-                    <span className={`text-[11px] font-bold tracking-[0.12em] uppercase transition-colors ${isOpen ? 'text-slate-800' : 'text-slate-500 group-hover:text-slate-700'}`}>
+                    <LayoutGrid className={`h-3 w-3 transition-colors duration-300 ${isOpen ? 'text-ocean-500' : 'text-slate-300 group-hover:text-ocean-400'}`} />
+                    <span className={`text-[10px] font-semibold tracking-[0.12em] uppercase transition-colors duration-300 ${isOpen ? 'text-slate-600' : 'text-slate-400 group-hover:text-slate-500'}`}>
                         Ecosystem For-Labs
                     </span>
-                    <ChevronDown className={`h-3 w-3 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`h-2.5 w-2.5 text-slate-300 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {/* WhatsApp CTA */}
@@ -45,18 +45,18 @@ export function NetworkBar() {
                     href="https://wa.me/905320000000"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-[11px] font-semibold text-green-700 hover:bg-green-100 transition-colors"
+                    className="group flex items-center gap-1.5 rounded-full bg-green-50/50 border border-green-100/50 px-3 py-1 text-[10px] font-medium text-green-600 hover:bg-green-50 transition-all duration-300"
                 >
-                    <MessageCircle className="h-3.5 w-3.5" />
+                    <MessageCircle className="h-3 w-3" />
                     <span className="hidden sm:inline">WhatsApp'tan Yazın</span>
                 </a>
             </div>
 
             {/* Dropdown Panel */}
             {isOpen && (
-                <div className="absolute left-0 right-0 top-full border-b border-slate-200 bg-white shadow-lg z-50">
+                <div className="absolute left-0 right-0 top-full border-b border-ocean-100/30 bg-white/80 backdrop-blur-xl shadow-lg shadow-ocean-100/20 z-50">
                     <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-6">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4">For-Labs Ekosistemi</p>
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em] mb-4">For-Labs Ekosistemi</p>
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                             {NETWORK_BRANDS.map((brand) => (
                                 <a
@@ -64,11 +64,11 @@ export function NetworkBar() {
                                     href={brand.href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="group flex flex-col gap-2 rounded-2xl border border-slate-100 bg-slate-50/50 p-4 hover:border-slate-200 hover:bg-white hover:shadow-md transition-all duration-200"
+                                    className="group flex flex-col gap-2 rounded-2xl border border-ocean-100/40 bg-white/60 backdrop-blur-md p-4 hover:bg-white hover:shadow-lg hover:border-ocean-200/50 transition-all duration-300"
                                 >
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm font-bold" style={{ color: brand.color }}>{brand.name}</span>
-                                        <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-slate-500 transition-colors" />
+                                        <span className="text-sm font-semibold" style={{ color: brand.color }}>{brand.name}</span>
+                                        <ArrowUpRight className="h-3 w-3 text-slate-200 group-hover:text-slate-400 transition-colors duration-300" />
                                     </div>
                                     <p className="text-[11px] leading-relaxed text-slate-400 line-clamp-2">{brand.desc}</p>
                                 </a>

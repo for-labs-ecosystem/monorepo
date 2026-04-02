@@ -68,26 +68,30 @@ export default function Header() {
 
     return (
         <>
-            <header className={`w-full bg-white/80 backdrop-blur-lg border-b transition-all duration-300 ${scrolled ? 'border-slate-200 shadow-sm' : 'border-transparent'}`}>
-                <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-6 lg:px-10">
+            <header className={`w-full transition-all duration-500 ${
+                scrolled
+                    ? 'bg-white/70 backdrop-blur-xl border-b border-ocean-100/40 shadow-[0_1px_20px_-6px_rgba(0,0,0,0.04)]'
+                    : 'bg-transparent border-b border-transparent'
+            }`}>
+                <div className="mx-auto flex h-[72px] max-w-[1400px] items-center justify-between px-6 lg:px-10">
 
-                    {/* Logo */}
-                    <Link to="/" className="group flex items-center gap-2 shrink-0">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 shadow-lg shadow-primary-500/20">
-                            <span className="text-sm font-black text-white">A</span>
+                    {/* Logo — clean, typographic, warm */}
+                    <Link to="/" className="group flex items-center gap-3 shrink-0">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-ocean-400 to-ocean-600 shadow-lg shadow-ocean-500/15 group-hover:shadow-ocean-500/25 transition-shadow duration-300">
+                            <span className="text-sm font-bold text-white tracking-tight">A</span>
                         </div>
                         <div className="flex flex-col leading-none">
-                            <span className="text-lg font-extrabold tracking-tight text-slate-900">
+                            <span className="text-[17px] font-bold tracking-tight text-slate-700">
                                 Alerjen
                             </span>
-                            <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-primary-500">
+                            <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-ocean-500/80 mt-0.5">
                                 Test Kitleri
                             </span>
                         </div>
                     </Link>
 
                     {/* Desktop Nav */}
-                    <nav className="hidden md:flex items-center gap-1">
+                    <nav className="hidden md:flex items-center gap-0.5">
                         {STATIC_LINKS.map((link) => {
                             const dbItem = urlToDbItem.get(link.href)
                             const children = dbItem ? childrenMap.get(dbItem.id) : undefined
@@ -96,23 +100,23 @@ export default function Header() {
                                 <div key={link.href} className="relative group">
                                     <Link
                                         to={link.href}
-                                        className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
+                                        className={`flex items-center gap-1 px-4 py-2.5 rounded-full text-[13px] font-medium transition-all duration-300 ${
                                             isActive(link.href)
-                                                ? 'bg-primary-50 text-primary-700'
-                                                : 'text-slate-600 hover:text-primary-700 hover:bg-primary-50/50'
+                                                ? 'bg-ocean-50 text-ocean-700'
+                                                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50/80'
                                         }`}
                                     >
                                         {link.label}
-                                        {children && children.length > 0 && <ChevronDown className="h-3.5 w-3.5 opacity-50" />}
+                                        {children && children.length > 0 && <ChevronDown className="h-3 w-3 opacity-40" />}
                                     </Link>
                                     {children && children.length > 0 && (
-                                        <div className="absolute left-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                            <div className="w-56 bg-white rounded-2xl border border-slate-100 shadow-xl p-2 space-y-0.5">
+                                        <div className="absolute left-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                                            <div className="w-56 pebble-card p-2.5 space-y-0.5">
                                                 {children.sort((a, b) => a.sort_order - b.sort_order).map((child) => (
                                                     <Link
                                                         key={child.id}
                                                         to={child.url}
-                                                        className="block px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-primary-50 hover:text-primary-700 rounded-xl transition-colors"
+                                                        className="block px-4 py-2.5 text-[13px] font-medium text-slate-500 hover:bg-ocean-50/60 hover:text-ocean-700 rounded-xl transition-all duration-200"
                                                     >
                                                         {child.name}
                                                     </Link>
@@ -131,23 +135,23 @@ export default function Header() {
                                 <div key={nav.id} className="relative group">
                                     <Link
                                         to={nav.url}
-                                        className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
+                                        className={`flex items-center gap-1 px-4 py-2.5 rounded-full text-[13px] font-medium transition-all duration-300 ${
                                             isActive(nav.url)
-                                                ? 'bg-primary-50 text-primary-700'
-                                                : 'text-slate-600 hover:text-primary-700 hover:bg-primary-50/50'
+                                                ? 'bg-ocean-50 text-ocean-700'
+                                                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50/80'
                                         }`}
                                     >
                                         {nav.name}
-                                        {children && children.length > 0 && <ChevronDown className="h-3.5 w-3.5 opacity-50" />}
+                                        {children && children.length > 0 && <ChevronDown className="h-3 w-3 opacity-40" />}
                                     </Link>
                                     {children && children.length > 0 && (
-                                        <div className="absolute left-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                            <div className="w-56 bg-white rounded-2xl border border-slate-100 shadow-xl p-2 space-y-0.5">
+                                        <div className="absolute left-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                                            <div className="w-56 pebble-card p-2.5 space-y-0.5">
                                                 {children.sort((a, b) => a.sort_order - b.sort_order).map((child) => (
                                                     <Link
                                                         key={child.id}
                                                         to={child.url}
-                                                        className="block px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-primary-50 hover:text-primary-700 rounded-xl transition-colors"
+                                                        className="block px-4 py-2.5 text-[13px] font-medium text-slate-500 hover:bg-ocean-50/60 hover:text-ocean-700 rounded-xl transition-all duration-200"
                                                     >
                                                         {child.name}
                                                     </Link>
@@ -164,12 +168,12 @@ export default function Header() {
                     <div className="flex items-center gap-3">
                         <Link
                             to="/iletisim"
-                            className="hidden sm:inline-flex items-center gap-2 rounded-full bg-accent-500 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-accent-500/20 hover:bg-accent-400 hover:shadow-lg hover:shadow-accent-500/30 transition-all duration-200 hover:-translate-y-0.5"
+                            className="hidden sm:inline-flex btn-warm text-[13px] !py-2.5 !px-6"
                         >
                             Teklif İste
                         </Link>
                         <button
-                            className="md:hidden p-2 text-slate-500 hover:text-slate-800 transition-colors"
+                            className="md:hidden p-2.5 rounded-2xl text-slate-400 hover:text-slate-600 hover:bg-slate-50/80 transition-all duration-300"
                             onClick={() => setMobileOpen(!mobileOpen)}
                         >
                             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -178,16 +182,16 @@ export default function Header() {
                 </div>
             </header>
 
-            {/* Mobile Nav */}
+            {/* Mobile Nav — floating pebble */}
             {mobileOpen && (
-                <div className="md:hidden fixed inset-x-0 top-[104px] z-50 mx-4 rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden animate-fade-in">
+                <div className="md:hidden fixed inset-x-0 top-[112px] z-50 mx-4 pebble-card overflow-hidden animate-fade-in-up">
                     <div className="p-4 space-y-1">
                         {STATIC_LINKS.map((link) => (
                             <Link
                                 key={link.href}
                                 to={link.href}
-                                className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
-                                    isActive(link.href) ? 'bg-primary-50 text-primary-700' : 'text-slate-700 hover:bg-slate-50'
+                                className={`block px-4 py-3.5 rounded-2xl text-[13px] font-medium transition-all duration-200 ${
+                                    isActive(link.href) ? 'bg-ocean-50 text-ocean-700' : 'text-slate-500 hover:bg-slate-50/80'
                                 }`}
                                 onClick={() => setMobileOpen(false)}
                             >
@@ -198,16 +202,16 @@ export default function Header() {
                             <Link
                                 key={nav.id}
                                 to={nav.url}
-                                className="block px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                                className="block px-4 py-3.5 rounded-2xl text-[13px] font-medium text-slate-500 hover:bg-slate-50/80 transition-all duration-200"
                                 onClick={() => setMobileOpen(false)}
                             >
                                 {nav.name}
                             </Link>
                         ))}
-                        <div className="pt-2 border-t border-slate-100">
+                        <div className="pt-3 border-t border-ocean-100/30">
                             <Link
                                 to="/iletisim"
-                                className="block text-center rounded-full bg-accent-500 px-5 py-3 text-sm font-bold text-white shadow-md"
+                                className="block text-center btn-warm !w-full"
                                 onClick={() => setMobileOpen(false)}
                             >
                                 Teklif İste

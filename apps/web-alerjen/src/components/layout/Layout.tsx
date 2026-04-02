@@ -16,11 +16,12 @@ function ScrollToTop() {
 
 export default function Layout() {
     return (
-        <div className="relative flex flex-col min-h-screen">
-            {/* Mesh gradient blobs */}
-            <div className="mesh-blob-teal" style={{ top: '-200px', left: '-200px' }} />
-            <div className="mesh-blob-coral" style={{ top: '300px', right: '-150px' }} />
-            <div className="mesh-blob-teal" style={{ bottom: '200px', left: '10%', opacity: 0.5 }} />
+        <div className="relative flex flex-col min-h-screen overflow-x-hidden">
+            {/* Dreamy ambient glows — subtle, warm, alive */}
+            <div className="glow-mint" style={{ top: '-300px', left: '-250px' }} />
+            <div className="glow-peach" style={{ top: '400px', right: '-200px' }} />
+            <div className="glow-ocean" style={{ bottom: '200px', left: '15%' }} />
+            <div className="glow-peach" style={{ bottom: '-100px', right: '20%', opacity: 0.5 }} />
 
             <ScrollToTop />
             <NetworkBar />
