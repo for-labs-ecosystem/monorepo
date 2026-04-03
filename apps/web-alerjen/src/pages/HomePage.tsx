@@ -4,6 +4,7 @@ import { ArrowRight, Leaf } from 'lucide-react'
 import { useProducts, useArticles } from '@forlabs/core'
 import { getImageUrl } from '@/lib/utils'
 import QuoteModal from '@/components/QuoteModal'
+import type { QuoteProduct } from '@/components/QuoteModal'
 import type { Product, Article } from '@forlabs/shared'
 
 export default function HomePage() {
@@ -13,7 +14,7 @@ export default function HomePage() {
     const products = (productsData?.data ?? []) as Product[]
     const articles = (articlesData?.data ?? []) as Article[]
 
-    const [quoteProduct, setQuoteProduct] = useState<{ id: number; name: string } | null>(null)
+    const [quoteProduct, setQuoteProduct] = useState<QuoteProduct | null>(null)
 
     return (
         <>
@@ -197,7 +198,7 @@ export default function HomePage() {
                                             )}
                                         </div>
                                         <button
-                                            onClick={() => setQuoteProduct({ id: product.id, name: product.title })}
+                                            onClick={() => setQuoteProduct({ id: product.id, title: product.title, image_url: product.image_url, brand: product.brand, model_number: product.model_number, description: product.description, price: product.price, currency: product.currency, sku: product.sku })}
                                             className="btn-warm w-full !text-[13px] !py-3"
                                         >
                                             Bu Ürün İçin Teklif Al
@@ -356,8 +357,7 @@ export default function HomePage() {
                 <QuoteModal
                     open={!!quoteProduct}
                     onClose={() => setQuoteProduct(null)}
-                    productId={quoteProduct.id}
-                    productName={quoteProduct.name}
+                    product={quoteProduct!}
                 />
             )}
         </>

@@ -414,8 +414,17 @@ export default function ProductDetailPage() {
             <QuoteModal
                 open={quoteOpen}
                 onClose={() => setQuoteOpen(false)}
-                productId={product.id}
-                productName={product.title}
+                product={{
+                    id: product.id,
+                    title: product.title,
+                    image_url: product.image_url,
+                    brand: product.brand,
+                    model_number: product.model_number,
+                    description: product.description,
+                    price: product.price,
+                    currency: product.currency,
+                    sku: product.sku,
+                }}
             />
         </div>
     )

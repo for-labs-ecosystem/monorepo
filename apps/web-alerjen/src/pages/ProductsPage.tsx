@@ -4,6 +4,7 @@ import { Search, ChevronDown, ChevronRight, X, SlidersHorizontal } from 'lucide-
 import { useProducts, useCategories } from '@forlabs/core'
 import { getImageUrl } from '@/lib/utils'
 import QuoteModal from '@/components/QuoteModal'
+import type { QuoteProduct } from '@/components/QuoteModal'
 import type { Product, Category } from '@forlabs/shared'
 
 function buildCategoryTree(categories: Category[]) {
@@ -80,7 +81,7 @@ function CategoryNode({
     )
 }
 
-function ProductCard({ product, onQuote }: { product: Product; onQuote: (p: { id: number; name: string }) => void }) {
+function ProductCard({ product, onQuote }: { product: Product; onQuote: (p: QuoteProduct) => void }) {
     return (
         <div className="group flex flex-col pebble-card overflow-hidden">
             <Link to={`/urunler/${product.slug}`} className="aspect-square bg-gradient-to-br from-mint-50/40 to-ocean-50/20 p-10 flex items-center justify-center overflow-hidden relative">
@@ -121,7 +122,7 @@ function ProductCard({ product, onQuote }: { product: Product; onQuote: (p: { id
                 </div>
 
                 <button
-                    onClick={() => onQuote({ id: product.id, name: product.title })}
+                    onClick={() => onQuote({ id: product.id, title: product.title, image_url: product.image_url, brand: product.brand, model_number: product.model_number, description: product.description, price: product.price, currency: product.currency, sku: product.sku })}
                     className="btn-warm w-full !text-[13px] !py-3"
                 >
                     Bu Ürün İçin Teklif Al
@@ -136,7 +137,7 @@ export default function ProductsPage() {
     const [categoryId, setCategoryId] = useState<string>('')
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [sortOption, setSortOption] = useState('default')
-    const [quoteProduct, setQuoteProduct] = useState<{ id: number; name: string } | null>(null)
+    const [quoteProduct, setQuoteProduct] = useState<QuoteProduct | null>(null)
 
     const params: Record<string, string | number | undefined> = {}
     if (search) params.q = search
@@ -354,8 +355,7 @@ export default function ProductsPage() {
                 <QuoteModal
                     open={!!quoteProduct}
                     onClose={() => setQuoteProduct(null)}
-                    productId={quoteProduct.id}
-                    productName={quoteProduct.name}
+                    product={quoteProduct!}
                 />
             )}
         </div>

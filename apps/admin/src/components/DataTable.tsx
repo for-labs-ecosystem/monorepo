@@ -69,14 +69,22 @@ export default function DataTable<T extends Record<string, any>>({
         : data;
 
     // Generic sorting
+    // updated_at/created_at string'leri ISO 8601 veya SQLite datetime formatında gelir,
+    // lexicographic karşılaştırma doğru çalışır (YYYY-MM-DD HH:MM:SS formatı sıralanabilir).
+    const getDateMs = (row: Record<string, any>): number => {
+        const d = row.updated_at ?? row.created_at;
+        if (d) return new Date(d).getTime() || 0;
+        return row.id || 0; // son çare
+    };
+
     processed = [...processed].sort((a, b) => {
         const aTitle = String(a.title || a.name || "");
         const bTitle = String(b.title || b.name || "");
 
-        if (sortBy === "oldest") return (a.id || 0) - (b.id || 0);
+        if (sortBy === "oldest") return getDateMs(a) - getDateMs(b);
         if (sortBy === "a-z") return aTitle.localeCompare(bTitle);
         if (sortBy === "z-a") return bTitle.localeCompare(aTitle);
-        return (b.id || 0) - (a.id || 0); // newest default
+        return getDateMs(b) - getDateMs(a); // newest default: en son güncellenen üstte
     });
 
     const hasActiveFilters = Object.values(activeFilters).some(v => v !== "all" && v !== "");
