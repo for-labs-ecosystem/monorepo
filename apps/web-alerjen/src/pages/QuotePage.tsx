@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Send, CheckCircle, Loader2, ChevronRight, Package, ClipboardList, FlaskConical, ArrowRight } from 'lucide-react'
 import { submitInquiry } from '@forlabs/core'
@@ -33,11 +33,18 @@ export default function QuotePage() {
     const [phone, setPhone] = useState('')
     const [company, setCompany] = useState('')
     const [details, setDetails] = useState('')
+    const [kvkkAccepted, setKvkkAccepted] = useState(false)
     const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
+    const honeypotRef = useRef<HTMLInputElement>(null)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!selectedType) return
+        // Anti-bot: honeypot dolu ise sessizce success göster
+        if (honeypotRef.current?.value) {
+            setStatus('success')
+            return
+        }
         setStatus('sending')
         try {
             const quoteLabel = QUOTE_OPTIONS.find(o => o.type === selectedType)?.label ?? selectedType;
@@ -240,9 +247,35 @@ export default function QuotePage() {
                                             <p className="text-sm text-coral-500 font-medium">Bir hata oluştu. Lütfen tekrar deneyin.</p>
                                         )}
 
+                                        {/* Honeypot — anti-bot tuzağı */}
+                                        <div className="absolute opacity-0 -z-10 h-0 overflow-hidden" aria-hidden="true" tabIndex={-1}>
+                                            <label>Lütfen bu alanı boş bırakın
+                                                <input
+                                                    type="text"
+                                                    name="company_website"
+                                                    ref={honeypotRef}
+                                                    autoComplete="off"
+                                                    tabIndex={-1}
+                                                />
+                                            </label>
+                                        </div>
+
+                                        {/* KVKK Onayı */}
+                                        <label className="flex items-start gap-3 cursor-pointer group">
+                                            <input
+                                                type="checkbox"
+                                                checked={kvkkAccepted}
+                                                onChange={(e) => setKvkkAccepted(e.target.checked)}
+                                                className="mt-0.5 w-4 h-4 rounded border-slate-300 text-orange-500 focus:ring-orange-400 focus:ring-offset-0 accent-orange-500 cursor-pointer"
+                                            />
+                                            <span className="text-[11.5px] text-slate-400 leading-relaxed group-hover:text-slate-500 transition-colors">
+                                                <strong className="text-slate-500">KVKK Aydınlatma Metni</strong>'ni okudum, kişisel verilerimin işlenmesine onay veriyorum.
+                                            </span>
+                                        </label>
+
                                         <button
                                             type="submit"
-                                            disabled={status === 'sending' || !selectedType}
+                                            disabled={status === 'sending' || !selectedType || !kvkkAccepted}
                                             className="w-full btn-warm disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {status === 'sending' ? (
