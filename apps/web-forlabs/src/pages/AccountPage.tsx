@@ -125,6 +125,7 @@ export default function AccountPage() {
 
     return (
         <div className="mx-auto max-w-300 px-6 py-12 lg:px-10">
+            <title>Hesabım — For Labs</title>
             {/* Account Header */}
             <div className="mb-8 flex items-center justify-between">
                 <div className="flex items-center gap-4">

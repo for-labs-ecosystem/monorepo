@@ -1,0 +1,422 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+@source "../../../packages/core/src";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  /* ─── Typography ─── */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Fraunces", "Playfair Display", Georgia, serif;
+
+  /* ─── Oat — Yulaf Beyazı zeminler ─── */
+  --color-oat-50:  #FDFCFA;
+  --color-oat-100: #FAF9F6;
+  --color-oat-200: #F5F3EE;
+  --color-oat-300: #EDEAE2;
+
+  /* ─── Sage — Adaçayı Yeşili (ana marka) ─── */
+  --color-sage-50:  #F4F7F4;
+  --color-sage-100: #E3EBE3;
+  --color-sage-200: #C5D8C5;
+  --color-sage-300: #9EBF9E;
+  --color-sage-400: #7BA37B;
+  --color-sage-500: #5A855A;
+  --color-sage-600: #456A45;
+  --color-sage-700: #375237;
+
+  /* ─── Forest — Koyu Orman ─── */
+  --color-forest-700: #243A2A;
+  --color-forest-800: #1A3320;
+  --color-forest-900: #0F1F12;
+
+  /* ─── Amber — Hasat Kehribarı (aksan/hover) ─── */
+  --color-harvest-50:  #FFFBF0;
+  --color-harvest-100: #FEF3C7;
+  --color-harvest-200: #FDE68A;
+  --color-harvest-300: #FCD34D;
+  --color-harvest-400: #FBBF24;
+  --color-harvest-500: #D97706;
+  --color-harvest-600: #B45309;
+  --color-harvest-700: #92400E;
+
+  /* ─── Stone — nötr ─── */
+  --color-stone-200: #E7E5E4;
+  --color-stone-300: #D6D3D1;
+  --color-stone-400: #A8A29E;
+  --color-stone-500: #78716C;
+  --color-stone-600: #57534E;
+  --color-stone-700: #44403C;
+
+  /* ─── Animations ─── */
+  --animate-fade-in: fade-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  --animate-fade-in-up: fade-in-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  --animate-organic-float: organic-float 8s ease-in-out infinite;
+  --animate-organic-drift: organic-drift 14s ease-in-out infinite;
+  --animate-sway: sway 7s ease-in-out infinite;
+  --animate-grow: grow 5s ease-in-out infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes organic-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    33%      { transform: translateY(-12px) rotate(0.6deg); }
+    66%      { transform: translateY(-6px) rotate(-0.6deg); }
+  }
+
+  @keyframes organic-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25%      { transform: translate(10px, -8px) scale(1.02); }
+    50%      { transform: translate(-6px, 6px) scale(0.99); }
+    75%      { transform: translate(8px, 4px) scale(1.01); }
+  }
+
+  @keyframes sway {
+    0%, 100% { transform: rotate(-1.5deg); }
+    50%      { transform: rotate(1.5deg); }
+  }
+
+  @keyframes grow {
+    0%, 100% { transform: scale(1); opacity: 0.7; }
+    50%      { transform: scale(1.06); opacity: 1; }
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: #FAF9F6; /* oat-100 */
+  color: #243A2A;            /* forest-700 */
+  min-height: 100dvh;
+}
+
+/* ═════════════════════════════════════════════════════════
+   ORGANIC NOISE OVERLAY — kumlu/organik doku
+   Saf SVG feTurbulence ile dijital pürüzsüzlüğü kırar
+   ═════════════════════════════════════════════════════════ */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.04;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.noise-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='ng'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23ng)'/%3E%3C/svg%3E");
+}
+
+/* ═════════════════════════════════════════════════════════
+   AMBIENT GLOWS — uçuk organik atmosfer
+   ═════════════════════════════════════════════════════════ */
+.glow-sage {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(123, 163, 123, 0.18) 0%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+.glow-harvest {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(217, 119, 6, 0.14) 0%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+/* ═════════════════════════════════════════════════════════
+   CELLULAR CARDS — Asimetrik organik köşeler
+   "Hücresel Grid" — sol üst + sağ alt devasa kavis
+   ═════════════════════════════════════════════════════════ */
+.card-organic {
+  border-radius: 0;
+  border-top-left-radius: 3rem;
+  border-bottom-right-radius: 3rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(231, 229, 228, 0.7);
+  box-shadow: 0 4px 20px -8px rgba(26, 51, 32, 0.08);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+}
+
+.card-organic:hover {
+  border-color: rgba(123, 163, 123, 0.4);
+  box-shadow: 0 18px 48px -16px rgba(26, 51, 32, 0.16);
+  transform: translateY(-4px);
+}
+
+/* Alternatif: sağ üst + sol alt yuvarlak */
+.card-organic-alt {
+  border-radius: 0;
+  border-top-right-radius: 3rem;
+  border-bottom-left-radius: 3rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(231, 229, 228, 0.7);
+  box-shadow: 0 4px 20px -8px rgba(26, 51, 32, 0.08);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+}
+
+.card-organic-alt:hover {
+  border-color: rgba(123, 163, 123, 0.4);
+  box-shadow: 0 18px 48px -16px rgba(26, 51, 32, 0.16);
+  transform: translateY(-4px);
+}
+
+/* Daha "blob" — tüm köşeler yuvarlak ama farklı oranlarda (organik form) */
+.card-blob {
+  border-radius: 2rem 3.5rem 2rem 3.5rem;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(231, 229, 228, 0.6);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card-blob:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(123, 163, 123, 0.4);
+  transform: translateY(-3px);
+}
+
+/* Filled variant — Adaçayı→Orman gradient */
+.card-organic-filled {
+  border-radius: 0;
+  border-top-left-radius: 3rem;
+  border-bottom-right-radius: 3rem;
+  background: linear-gradient(145deg, #243A2A 0%, #375237 50%, #456A45 100%);
+  color: #FAF9F6;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 40px -12px rgba(26, 51, 32, 0.35);
+}
+
+.card-organic-filled::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  right: -20%;
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(circle, rgba(252, 211, 77, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ═════════════════════════════════════════════════════════
+   BUTTONS — Organic CTA'lar
+   ═════════════════════════════════════════════════════════ */
+.btn-organic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 0;
+  border-top-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #FAF9F6;
+  background: linear-gradient(135deg, #456A45 0%, #5A855A 50%, #7BA37B 100%);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow:
+    0 4px 16px -4px rgba(69, 106, 69, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.btn-organic::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, transparent 60%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.btn-organic:hover {
+  background: linear-gradient(135deg, #375237 0%, #456A45 50%, #5A855A 100%);
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 28px -6px rgba(69, 106, 69, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.btn-organic:active {
+  transform: translateY(0);
+}
+
+/* Amber/Hasat aksanlı ghost buton */
+.btn-harvest {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 0;
+  border-top-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #92400E;
+  background: rgba(254, 243, 199, 0.7);
+  border: 1.5px solid rgba(252, 211, 77, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-harvest:hover {
+  background: rgba(253, 230, 138, 0.95);
+  border-color: rgba(217, 119, 6, 0.6);
+  color: #78350F;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -6px rgba(217, 119, 6, 0.25);
+}
+
+/* Outline ghost — sage çerçeveli */
+.btn-ghost-sage {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 0;
+  border-top-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #375237;
+  background: transparent;
+  border: 1.5px solid rgba(123, 163, 123, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-ghost-sage:hover {
+  background: rgba(244, 247, 244, 0.8);
+  border-color: rgba(90, 133, 90, 0.8);
+  color: #243A2A;
+  transform: translateY(-1px);
+}
+
+/* ═════════════════════════════════════════════════════════
+   INPUTS — Organic stilde
+   ═════════════════════════════════════════════════════════ */
+.input-organic {
+  width: 100%;
+  border-radius: 0;
+  border-top-left-radius: 1.25rem;
+  border-bottom-right-radius: 1.25rem;
+  border: 1.5px solid rgba(214, 211, 209, 0.7);
+  background: rgba(255, 255, 255, 0.85);
+  padding: 12px 18px;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: #243A2A;
+  transition: all 0.25s ease;
+}
+
+.input-organic::placeholder {
+  color: #A8A29E;
+}
+
+.input-organic:focus {
+  outline: none;
+  border-color: rgba(90, 133, 90, 0.7);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(90, 133, 90, 0.1);
+}
+
+/* ═════════════════════════════════════════════════════════
+   ORGANIC SHAPES — Dekoratif blob'lar (CSS clip-path)
+   ═════════════════════════════════════════════════════════ */
+.blob-1 {
+  clip-path: path('M 50,5 Q 95,15 95,55 Q 90,95 50,95 Q 10,90 5,55 Q 5,15 50,5 Z');
+}
+
+.organic-frame {
+  border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%;
+}
+
+.organic-frame-2 {
+  border-radius: 45% 55% 60% 40% / 55% 45% 55% 45%;
+}
+
+/* ═════════════════════════════════════════════════════════
+   TYPOGRAPHY HELPERS — Serif vurgular
+   ═════════════════════════════════════════════════════════ */
+.heading-serif {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: #1A3320;
+}
+
+.label-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #5A855A;
+}
+
+/* ═════════════════════════════════════════════════════════
+   THIN SCROLLBAR
+   ═════════════════════════════════════════════════════════ */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #C5D8C5 transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #C5D8C5;
+  border-radius: 9999px;
+}
+
+/* ═════════════════════════════════════════════════════════
+   SELECTION
+   ═════════════════════════════════════════════════════════ */
+::selection {
+  background: rgba(252, 211, 77, 0.4);
+  color: #1A3320;
+}

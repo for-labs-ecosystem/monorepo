@@ -26,6 +26,7 @@ const ArticleDetailPage = lazy(() => import('@/pages/ArticleDetailPage'))
 const ProjectsPage = lazy(() => import('@/pages/ProjectsPage'))
 const ProjectDetailPage = lazy(() => import('@/pages/ProjectDetailPage'))
 const ContactPage = lazy(() => import('@/pages/ContactPage'))
+const ProjectSimulatorPage = lazy(() => import('@/pages/ProjectSimulatorPage'))
 const DynamicPage = lazy(() => import('@/pages/DynamicPage'))
 
 const routes: RouteObject[] = [
@@ -42,6 +43,7 @@ const routes: RouteObject[] = [
             { path: 'projeler', element: <SuspenseWrapper><ProjectsPage /></SuspenseWrapper> },
             { path: 'projeler/:slug', element: <SuspenseWrapper><ProjectDetailPage /></SuspenseWrapper> },
             { path: 'iletisim', element: <SuspenseWrapper><ContactPage /></SuspenseWrapper> },
+            { path: 'projelendir', element: <SuspenseWrapper><ProjectSimulatorPage /></SuspenseWrapper> },
             // CMS dynamic page catch-all — MUST be last
             { path: ':slug', element: <SuspenseWrapper><DynamicPage /></SuspenseWrapper> },
         ],

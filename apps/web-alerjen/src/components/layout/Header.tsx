@@ -99,7 +99,7 @@ export default function Header() {
                         <img
                             src="/alerjen-logo.png"
                             alt="Alerjen.net"
-                            className="h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                            className="h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                         />
                     </Link>
 

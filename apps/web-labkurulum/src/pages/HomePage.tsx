@@ -126,7 +126,7 @@ export default function HomePage() {
 
                             <div className="mt-10 flex flex-col sm:flex-row items-start gap-4">
                                 <Link
-                                    to="/iletisim"
+                                    to="/projelendir"
                                     className="inline-flex items-center gap-2 px-7 py-3.5 rounded-sm bg-brand-600 text-white text-sm font-bold uppercase tracking-wider transition-all hover:bg-brand-700 hover:shadow-lg dimension-line"
                                 >
                                     Proje Başlat

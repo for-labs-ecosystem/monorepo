@@ -97,6 +97,7 @@ pagesRoute.get("/:idOrSlug", async (c) => {
 
     const isNumeric = /^\d+$/.test(param);
     const whereClause = isNumeric ? eq(pages.id, Number(param)) : eq(pages.slug, param);
+    const isAdmin = c.req.query("admin") === "true";
 
     const result = await db
         .select({
@@ -114,6 +115,7 @@ pagesRoute.get("/:idOrSlug", async (c) => {
             page_type: pages.page_type,
             sort_order: sql<number>`COALESCE(${sitePageOverrides.sort_order}, ${pages.sort_order})`,
             is_active: pages.is_active,
+            is_visible: sql<number | null>`${sitePageOverrides.is_visible}`,
             created_at: pages.created_at,
             updated_at: pages.updated_at,
         })
@@ -129,6 +131,17 @@ pagesRoute.get("/:idOrSlug", async (c) => {
         .get();
 
     if (!result) return c.json({ error: "Page not found" }, 404);
+
+    // For public (non-admin) requests, enforce is_active and is_visible checks
+    if (!isAdmin) {
+        // Global is_active must be true
+        if (!result.is_active) return c.json({ error: "Page not found" }, 404);
+        // Per-site is_visible: if an override exists and is explicitly false, hide the page
+        if (result.is_visible !== null && result.is_visible !== undefined && !result.is_visible) {
+            return c.json({ error: "Page not found" }, 404);
+        }
+    }
+
     return c.json({ data: result });
 });
 

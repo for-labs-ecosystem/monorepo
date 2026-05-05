@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>404 Not found | ATAGO CO.,LTD.</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<style>
+		body {
+			font-family: "Noto Sans JP", sans-serif, Georgia, Helvatica;
+			margin: 0;
+		}
+
+		p {
+			color: #333;
+			margin: 0;
+		}
+
+		img {
+			max-width: 100%;
+			height: auto;
+		}
+
+		.for_header_shadow {
+			height: 1px;
+			border-top: 1px solid #ccc;
+		}
+
+
+		.notfound {
+			max-width: 960px;
+			width: 90%;
+			margin: 160px auto;
+			text-align: center;
+		}
+
+		.notfound h1 {
+			color: #223a70;
+			font-weight: 700;
+			position: relative;
+			padding-bottom: 15px;
+			border-bottom: 1px solid #ccc;
+			font-size: 22px;
+		}
+
+		.notfound h1:after {
+			position: absolute;
+			bottom: -2px;
+			left: 0;
+			content: '';
+			width: 20%;
+			height: 3px;
+			background-color: #333;
+		}
+
+		.notfound__text {
+			margin-top: 40px;
+			font-size: 14px;
+		}
+
+		.notfound__text--link {
+			width: 220px;
+			cursor: pointer;
+			height: auto;
+			margin: 40px auto 0;
+			padding: 10px;
+			box-sizing: border-box;
+			border-radius: 10px;
+			text-align: center;
+			display: block;
+			background-color: #223a70;
+			color: #fff;
+			text-decoration: none;
+		}
+
+		footer {
+			width: 100%;
+			overflow: hidden;
+			background: #223a70;
+			margin-top: 50px;
+		}
+
+		footer p {
+			color: #fff;
+		}
+
+		#footer-copyright {
+			font-size: 12px;
+			margin: 0 auto;
+			padding: 10px 0;
+			max-width: 960px;
+			width: 94%;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		@media screen and (max-width:520px) {
+			body {
+				height: 100svh;
+				overflow: hidden;
+			}
+
+			footer {
+				position: absolute;
+				bottom: 0;
+			}
+
+			footer .footer-copyright-p {
+				width: 44%;
+				line-height: 1.8;
+				font-size: 10px;
+
+			}
+
+			footer .footer-logo {
+				width: 120px;
+			}
+		}
+	</style>
+</head>
+
+
+<body>
+
+	<div class="notfound">
+		<img src="/images/404master.png" width="200" height="110">
+		<div class="notfound__text">
+			<p>ご指定のページが見つかりませんでした。<br>お手数をおかけしますが、トップページから再度アクセスしていただきますようお願いします。</p>
+			<br>
+			<p>The page you requested could not be found.<br>We apologize for the inconvenience. Please return to the homepage and try again.</p>
+			<a href="/index.php" class="notfound__text--link">ATAGO TOP PAGE</a>
+		</div>
+	</div>
+
+	<footer>
+		<div id="footer-copyright">
+			<a href="/index.php" class="footer-logo">
+				<img src="/images/atago_logo_footer.png" width="160" height="28" alt="ATAGO CO.,LTD.">
+			</a>
+			<p class="footer-copyright-p">(C) 2003-<script type="text/javascript">
+					myDate = new Date();
+					myYear = myDate.getFullYear();
+					document.write(myYear);
+				</script> ATAGO CO.,LTD. All rights reserved.</p>
+		</div>
+	</footer>
+
+
+
+</body>
+
+</html>

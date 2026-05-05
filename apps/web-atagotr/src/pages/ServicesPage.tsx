@@ -173,6 +173,7 @@ export default function ServicesPage() {
 
     return (
         <div className="bg-slate-50 min-h-screen">
+            <title>Hizmetler — Atago TR</title>
             {/* ── Hero Section (Floating Style) ── */}
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-4">
                 <section className="relative bg-primary-900 rounded-4xl text-white overflow-hidden shadow-2xl shadow-primary-900/20 group">

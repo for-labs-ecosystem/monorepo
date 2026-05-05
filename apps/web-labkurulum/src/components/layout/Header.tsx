@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Menu, X, ChevronDown, ArrowRight } from 'lucide-react'
+import { Menu, X, ChevronDown, ArrowRight, ScanLine } from 'lucide-react'
 import { useState, useEffect, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getNavigations } from '@forlabs/core'
@@ -182,6 +182,16 @@ export default function Header() {
 
                         {/* CTA + Mobile toggle */}
                         <div className="flex items-center gap-3">
+                            {/* Proje Simülatörü linki */}
+                            <Link
+                                to="/projelendir"
+                                id="nav-simulator-link"
+                                className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 text-slate-600 hover:text-brand-600 font-mono text-[11px] uppercase tracking-wider transition-colors duration-200 border border-transparent hover:border-brand-200 rounded-sm"
+                            >
+                                <ScanLine className="w-3.5 h-3.5" />
+                                Proje Simülatörü
+                            </Link>
+
                             <Link
                                 to="/iletisim"
                                 className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-sm bg-accent-500 text-brand-900 text-[13px] font-bold uppercase tracking-wider transition-all duration-200 hover:bg-accent-400 hover:shadow-[0_0_0_2px_rgba(245,158,11,0.3)] dimension-line"
@@ -254,7 +264,16 @@ export default function Header() {
                                 </div>
                             )
                         })}
-                        <div className="pt-3 border-t border-slate-100">
+                        <div className="pt-3 border-t border-slate-100 space-y-2">
+                            <Link
+                                to="/projelendir"
+                                id="mobile-nav-simulator-link"
+                                className="flex items-center gap-2 px-4 py-2.5 rounded-sm border border-slate-200 text-slate-600 font-mono text-sm uppercase tracking-wider"
+                                onClick={() => setMobileOpen(false)}
+                            >
+                                <ScanLine className="w-4 h-4 text-brand-500" />
+                                Proje Simülatörü
+                            </Link>
                             <Link
                                 to="/iletisim"
                                 className="flex items-center justify-center gap-2 px-5 py-3 rounded-sm bg-accent-500 text-brand-900 text-sm font-bold uppercase tracking-wider"

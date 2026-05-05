@@ -1,0 +1,391 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+@import "tailwindcss";
+@source "../../../packages/core/src";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Azure — Elektrik Mavisi, bilimsel teknoloji */
+  --color-azure-50: #eff6ff;
+  --color-azure-100: #dbeafe;
+  --color-azure-200: #bfdbfe;
+  --color-azure-300: #93c5fd;
+  --color-azure-400: #60a5fa;
+  --color-azure-500: #3b82f6;
+  --color-azure-600: #2563eb;
+  --color-azure-700: #1d4ed8;
+  --color-azure-800: #1e40af;
+  --color-azure-900: #1e3a8a;
+
+  /* Lab — Bilimsel yeşilimsi-mavi aksan */
+  --color-lab-50: #f0fdfa;
+  --color-lab-100: #ccfbf1;
+  --color-lab-200: #99f6e4;
+  --color-lab-300: #5eead4;
+  --color-lab-400: #2dd4bf;
+  --color-lab-500: #14b8a6;
+
+  /* Frost — Buzlu cam arka plan tonları */
+  --color-frost-50: #f8fafc;
+  --color-frost-100: #f1f5f9;
+
+  --animate-fade-in: fade-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  --animate-fade-in-up: fade-in-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  --animate-slide-in-right: slide-in-right 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-slow: float-slow 8s ease-in-out infinite;
+  --animate-float-delayed: float-delayed 7s ease-in-out infinite;
+  --animate-glow-pulse: glow-pulse 4s ease-in-out infinite;
+  --animate-drift: drift 20s ease-in-out infinite;
+  --animate-orbit: orbit 15s linear infinite;
+  --animate-shimmer: shimmer 3s ease-in-out infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-in-right {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-16px); }
+  }
+
+  @keyframes float-slow {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-12px) rotate(1deg); }
+    66% { transform: translateY(-6px) rotate(-1deg); }
+  }
+
+  @keyframes float-delayed {
+    0%, 100% { transform: translateY(0px); }
+    40% { transform: translateY(-10px); }
+    70% { transform: translateY(-18px); }
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.25; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.05); }
+  }
+
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(30px, -20px) scale(1.02); }
+    50% { transform: translate(-15px, 15px) scale(0.98); }
+    75% { transform: translate(20px, 10px) scale(1.01); }
+  }
+
+  @keyframes orbit {
+    from { transform: rotate(0deg) translateX(8px) rotate(0deg); }
+    to { transform: rotate(360deg) translateX(8px) rotate(-360deg); }
+  }
+
+  @keyframes shimmer {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: #f5f7fb;
+  color: #0f172a;
+  min-height: 100dvh;
+}
+
+/* ─────────────────────────────────────────
+   AMBIENT MESH GRADIENTS — "Science Lab"
+   Ekteki görseldeki o puslü, derinlikli atmosfer
+   ───────────────────────────────────────── */
+.mesh-gradient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  contain: strict;
+  transform: translateZ(0);
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 15%, rgba(147, 197, 253, 0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 60% at 50% 80%, rgba(20, 184, 166, 0.03) 0%, transparent 60%);
+}
+
+/* ─────────────────────────────────────────
+   BENTO CARD — Premium Glassmorphism
+   rounded-[2rem] ile devasa, kusursuz kavisler
+   ───────────────────────────────────────── */
+.bento-card {
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(226, 232, 240, 0.7);
+  box-shadow: 0 2px 12px -2px rgba(15, 23, 42, 0.05);
+  transition: box-shadow 0.25s ease, transform 0.25s ease, background 0.25s ease;
+  contain: layout paint;
+}
+
+.bento-card:hover {
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 8px 28px -6px rgba(15, 23, 42, 0.09);
+  transform: translateY(-3px);
+}
+
+/* Filled variant — Derin lacivert→elektrik mavisi gradient */
+.bento-card-filled {
+  border-radius: 2rem;
+  background: linear-gradient(145deg, #0c1d3d 0%, #1e3a6e 35%, #2554a8 70%, #3572d4 100%);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  box-shadow:
+    0 12px 32px -8px rgba(12, 29, 61, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.bento-card-filled::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 60%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.bento-card-filled:hover {
+  box-shadow:
+    0 16px 48px -12px rgba(12, 29, 61, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-4px);
+}
+
+/* ─────────────────────────────────────────
+   GLASS WIDGET — Floating info kutucukları
+   Ekteki "Analyzing 65%", "DNA markers" gibi
+   ───────────────────────────────────────── */
+.glass-widget {
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.80);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.glass-widget:hover {
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.10);
+  transform: translateY(-3px);
+}
+
+/* Glass widget — floating, havada süzülen versiyon */
+.glass-widget-floating {
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(226, 232, 240, 0.5);
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.06);
+  transition: all 0.25s ease;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────
+   CTA BUTTON — Elektrik Mavisi + Dış GLOW
+   ───────────────────────────────────────── */
+.btn-azure {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 36px;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #3b82f6 100%);
+  box-shadow:
+    0 0 0 1px rgba(37, 99, 235, 0.15),
+    0 4px 16px -2px rgba(37, 99, 235, 0.5),
+    0 12px 32px -4px rgba(37, 99, 235, 0.3);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-azure::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.btn-azure::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.3) 0%, transparent 40%);
+  z-index: -1;
+  filter: blur(12px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn-azure:hover {
+  background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 50%, #2563eb 100%);
+  box-shadow:
+    0 0 0 1px rgba(37, 99, 235, 0.15),
+    0 6px 24px -2px rgba(37, 99, 235, 0.6),
+    0 20px 48px -4px rgba(37, 99, 235, 0.35);
+  transform: translateY(-3px) scale(1.02);
+}
+
+.btn-azure:hover::after {
+  opacity: 1;
+}
+
+.btn-azure:active {
+  transform: translateY(0px) scale(0.98);
+  box-shadow: 0 4px 12px -4px rgba(37, 99, 235, 0.40);
+}
+
+/* ─── Ghost Button ─── */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 36px;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1d4ed8;
+  background: rgba(239, 246, 255, 0.7);
+  border: 1.5px solid rgba(59, 130, 246, 0.2);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.btn-ghost:hover {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #1e40af;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px -6px rgba(59, 130, 246, 0.15);
+}
+
+.btn-ghost:active {
+  transform: translateY(0px) scale(0.98);
+}
+
+/* ─── Lab Input  ─── */
+.input-lab {
+  border-radius: 1rem;
+  border: 1.5px solid rgba(226, 232, 240, 0.8);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  padding: 14px 20px;
+  font-size: 0.875rem;
+  color: #0f172a;
+  transition: all 0.3s ease;
+}
+
+.input-lab::placeholder {
+  color: #94a3b8;
+}
+
+.input-lab:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* ─── Scrollbar ─── */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #dbeafe transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #dbeafe;
+  border-radius: 9999px;
+}
+
+/* ─── 3D Float wrapper — GPU üzerinde animasyon ─── */
+.hero-3d-float {
+  animation: float 6s ease-in-out infinite;
+  will-change: transform;
+  contain: layout paint;
+}
+
+.hero-3d-float-slow {
+  animation: float-slow 8s ease-in-out infinite;
+  will-change: transform;
+  contain: layout paint;
+}
+
+.hero-3d-float-delayed {
+  animation: float-delayed 7s ease-in-out infinite;
+  will-change: transform;
+  contain: layout paint;
+  animation-delay: 2s;
+}
+
+/* ─── Progress ring — mini radial chart ─── */
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-circle {
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}

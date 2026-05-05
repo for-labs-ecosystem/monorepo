@@ -54,6 +54,7 @@ export default function RegisterPage() {
 
     return (
         <div className="min-h-[80vh] flex items-center justify-center px-4 py-16">
+            <title>Kayıt Ol — For Labs</title>
             <div className="w-full max-w-md">
                 {/* Back link */}
                 <Link

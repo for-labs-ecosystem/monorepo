@@ -38,8 +38,8 @@ productsRoute.get("/", async (c) => {
             content_en: sql<string>`COALESCE(${siteProductOverrides.content_en}, ${products.content_en})`,
             specs: sql<string>`COALESCE(${siteProductOverrides.specs}, ${products.specs})`,
             specs_en: products.specs_en,
-            price: sql<number>`COALESCE(${siteProductOverrides.price}, ${products.price})`,
-            compare_price: sql<number>`COALESCE(${siteProductOverrides.compare_price}, ${products.compare_price})`,
+            price: sql<number>`CASE WHEN COALESCE(${siteProductOverrides.hide_price}, 0) = 1 THEN NULL ELSE COALESCE(${siteProductOverrides.price}, ${products.price}) END`,
+            compare_price: sql<number>`CASE WHEN COALESCE(${siteProductOverrides.hide_price}, 0) = 1 THEN NULL ELSE COALESCE(${siteProductOverrides.compare_price}, ${products.compare_price}) END`,
             currency: sql<string>`COALESCE(${siteProductOverrides.currency}, ${products.currency})`,
             image_url: sql<string>`COALESCE(${siteProductOverrides.image_url}, ${products.image_url})`,
             gallery: sql<string>`COALESCE(${siteProductOverrides.gallery}, ${products.gallery})`,
@@ -65,6 +65,7 @@ productsRoute.get("/", async (c) => {
             category_id: products.category_id,
             is_active: products.is_active,
             is_featured: sql<boolean>`COALESCE(${siteProductOverrides.is_featured}, ${products.is_featured})`,
+            hide_price: sql<boolean>`COALESCE(${siteProductOverrides.hide_price}, 0)`,
             sort_order: sql<number>`COALESCE(${siteProductOverrides.sort_order}, ${products.sort_order})`,
             created_at: products.created_at,
             updated_at: products.updated_at,
@@ -142,21 +143,24 @@ productsRoute.get("/", async (c) => {
         .where(eq(sites.is_active, true));
 
     const allOverrides = await db
-        .select({ product_id: siteProductOverrides.product_id, site_id: siteProductOverrides.site_id, is_visible: siteProductOverrides.is_visible })
+        .select({ product_id: siteProductOverrides.product_id, site_id: siteProductOverrides.site_id, is_visible: siteProductOverrides.is_visible, hide_price: siteProductOverrides.hide_price })
         .from(siteProductOverrides);
 
-    const overrideMap = new Map<string, boolean>();
+    const overrideMap = new Map<string, { is_visible: boolean; hide_price: boolean }>();
     for (const o of allOverrides) {
-        overrideMap.set(`${o.product_id}_${o.site_id}`, !!o.is_visible);
+        overrideMap.set(`${o.product_id}_${o.site_id}`, { is_visible: !!o.is_visible, hide_price: !!o.hide_price });
     }
 
     const enriched = filtered.map((product) => ({
         ...product,
         sites: allSites.filter((site) => {
             const key = `${product.id}_${site.id}`;
-            // Case-insensitive check for boolean-like values from database
             const val = overrideMap.get(key);
-            return val === true;
+            return val?.is_visible === true;
+        }).map((site) => {
+            const key = `${product.id}_${site.id}`;
+            const val = overrideMap.get(key);
+            return { ...site, hide_price: val?.hide_price ?? false };
         }),
     }));
 
@@ -185,8 +189,8 @@ productsRoute.get("/:slugOrId", async (c) => {
             content_en: sql<string>`COALESCE(${siteProductOverrides.content_en}, ${products.content_en})`,
             specs: sql<string>`COALESCE(${siteProductOverrides.specs}, ${products.specs})`,
             specs_en: products.specs_en,
-            price: sql<number>`COALESCE(${siteProductOverrides.price}, ${products.price})`,
-            compare_price: sql<number>`COALESCE(${siteProductOverrides.compare_price}, ${products.compare_price})`,
+            price: sql<number>`CASE WHEN COALESCE(${siteProductOverrides.hide_price}, 0) = 1 THEN NULL ELSE COALESCE(${siteProductOverrides.price}, ${products.price}) END`,
+            compare_price: sql<number>`CASE WHEN COALESCE(${siteProductOverrides.hide_price}, 0) = 1 THEN NULL ELSE COALESCE(${siteProductOverrides.compare_price}, ${products.compare_price}) END`,
             currency: sql<string>`COALESCE(${siteProductOverrides.currency}, ${products.currency})`,
             image_url: sql<string>`COALESCE(${siteProductOverrides.image_url}, ${products.image_url})`,
             gallery: sql<string>`COALESCE(${siteProductOverrides.gallery}, ${products.gallery})`,
@@ -214,6 +218,7 @@ productsRoute.get("/:slugOrId", async (c) => {
             is_featured: c.req.query("admin") === "true"
                 ? products.is_featured
                 : sql<boolean>`COALESCE(${siteProductOverrides.is_featured}, ${products.is_featured})`,
+            hide_price: sql<boolean>`COALESCE(${siteProductOverrides.hide_price}, 0)`,
             sort_order: sql<number>`COALESCE(${siteProductOverrides.sort_order}, ${products.sort_order})`,
             created_at: products.created_at,
             updated_at: products.updated_at,
@@ -405,6 +410,7 @@ productsRoute.post("/:id/override", async (c) => {
         meta_description: body.meta_description || null,
         canonical_url: body.canonical_url || null,
         is_visible: body.is_visible ?? true,
+        hide_price: body.hide_price ?? false,
         is_featured: body.is_featured ?? false,
         sort_order: body.sort_order ?? 0,
     };
@@ -433,6 +439,7 @@ productsRoute.post("/:id/override", async (c) => {
                 meta_description: overrideValues.meta_description,
                 canonical_url: overrideValues.canonical_url,
                 is_visible: overrideValues.is_visible,
+                hide_price: overrideValues.hide_price,
                 is_featured: overrideValues.is_featured,
                 sort_order: overrideValues.sort_order,
                 updated_at: sql`(CURRENT_TIMESTAMP)`,

@@ -187,6 +187,10 @@ export default function ProductDetailPage() {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <title>{product.meta_title || product.title} — Atago TR</title>
+            {product.meta_description && <meta name="description" content={product.meta_description} />}
+            {product.canonical_url && <link rel="canonical" href={product.canonical_url} />}
+
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-slate-500 mb-8">
                 <Link to="/" className="hover:text-primary-600 transition-colors">Ana Sayfa</Link>

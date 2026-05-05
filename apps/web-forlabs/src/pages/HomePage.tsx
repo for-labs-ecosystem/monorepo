@@ -811,6 +811,7 @@ function FooterCTA() {
 export default function HomePage() {
   return (
     <>
+      <title>For Labs — Laboratuvar Teknolojileri Ekosistemi</title>
       <HeroSection />
       <BentoSection />
       <EcosystemSection />

@@ -69,6 +69,7 @@ export default function RegisterPage() {
 
     return (
         <div className="min-h-[70vh] flex items-center justify-center px-4 py-16">
+            <title>Kayıt Ol — Atago TR</title>
             <div className="w-full max-w-md">
                 {/* Header */}
                 <div className="text-center mb-8">

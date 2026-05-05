@@ -333,6 +333,7 @@ export default function WizardPage() {
   // ─── WIZARD VIEW ───
   return (
     <div className="relative min-h-screen bg-slate-50 overflow-hidden selection:bg-brand-100/50">
+      <title>Çözüm Sihirbazı — For Labs</title>
       <PlexusBackground />
 
       <div className="relative z-10 mx-auto max-w-5xl px-6 lg:px-10 pb-40">

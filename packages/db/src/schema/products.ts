@@ -118,6 +118,7 @@ export const siteProductOverrides = sqliteTable(
         canonical_url: text("canonical_url"),
         // ─── Site-specific controls ───
         is_visible: integer("is_visible", { mode: "boolean" }).notNull().default(true),
+        hide_price: integer("hide_price", { mode: "boolean" }).notNull().default(false),
         is_featured: integer("is_featured", { mode: "boolean" }).notNull().default(false),
         sort_order: integer("sort_order").notNull().default(0),
         created_at: text("created_at")

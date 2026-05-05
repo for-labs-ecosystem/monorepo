@@ -18,6 +18,7 @@ export default function HomePage() {
 
     return (
         <>
+            <title>Alerjen — Gıda Güvenliği & Alerjen Hızlı Test Kitleri</title>
             {/* ── Hero — Deep breath, two-column ── */}
             <section className="relative overflow-hidden">
                 {/* Ambient background */}

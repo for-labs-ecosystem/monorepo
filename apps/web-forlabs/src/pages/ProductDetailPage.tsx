@@ -297,6 +297,24 @@ export default function ProductDetailPage() {
             document.title = product.meta_title || `${title} | For Labs`
             const meta = document.querySelector('meta[name="description"]')
             if (meta) meta.setAttribute('content', product.meta_description || description || '')
+
+            // Canonical URL
+            let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
+            if (product.canonical_url) {
+                if (!canonical) {
+                    canonical = document.createElement('link')
+                    canonical.rel = 'canonical'
+                    document.head.appendChild(canonical)
+                }
+                canonical.href = product.canonical_url
+            } else if (canonical) {
+                canonical.remove()
+            }
+        }
+        return () => {
+            // Cleanup canonical when leaving page
+            const canonical = document.querySelector('link[rel="canonical"]')
+            if (canonical) canonical.remove()
         }
     }, [product, title, description])
 

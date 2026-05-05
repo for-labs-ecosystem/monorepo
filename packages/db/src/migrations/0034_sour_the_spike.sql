@@ -1,0 +1,1 @@
+ALTER TABLE `site_product_overrides` ADD `hide_price` integer DEFAULT false NOT NULL;

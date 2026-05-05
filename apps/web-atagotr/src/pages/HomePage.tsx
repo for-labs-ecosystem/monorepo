@@ -32,6 +32,7 @@ export default function HomePage() {
 
     return (
         <div className="bg-slate-50 min-h-screen pb-16">
+            <title>Atago TR — Dijital Refraktometre & Laboratuvar Cihazları</title>
             {/* Hero & Latest Products - Side by Side */}
             <section className="px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">

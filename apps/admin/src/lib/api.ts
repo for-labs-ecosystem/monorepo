@@ -53,6 +53,7 @@ interface SiteOverridePayload {
     site_id?: number;
     is_visible?: boolean;
     is_featured?: boolean;
+    hide_price?: boolean;
     sort_order?: number;
     stock_quantity?: number | null;
     title?: string | null;

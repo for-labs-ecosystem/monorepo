@@ -77,6 +77,7 @@ export interface Product {
     gallery: string | null;
     is_active: boolean;
     is_featured: boolean;
+    hide_price: boolean;
     sort_order: number;
     meta_title: string | null;
     meta_description: string | null;
@@ -470,6 +471,7 @@ export interface SiteProductOverride extends SiteOverrideBase {
     meta_description: string | null;
     canonical_url: string | null;
     is_featured: boolean;
+    hide_price: boolean;
     sort_order: number;
 }
 

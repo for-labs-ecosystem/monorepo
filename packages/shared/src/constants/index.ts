@@ -18,9 +18,12 @@ export const DOMAIN_MAP: Record<string, string> = {
 
     "hijyenkontrol.com": "hijyenkontrol",
     "www.hijyenkontrol.com": "hijyenkontrol",
+    "forlabs-hijyenkontrol.pages.dev": "hijyenkontrol",
 
     "forlabs-atagotr.pages.dev": "atagotr",
     "forlabs-labkurulum.pages.dev": "labkurulum",
+    "forlabs-gidakimya.pages.dev": "gidakimya",
+    "forlabs-gidatest.pages.dev": "gidatest",
     "forlabs-web.pages.dev": "forlabs",
     "forlabs-admin.pages.dev": "admin",
 

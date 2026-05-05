@@ -169,6 +169,7 @@ export default function CheckoutPage() {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <title>Güvenli Ödeme — Atago TR</title>
             {/* Header */}
             <div className="flex items-center gap-3 mb-8">
                 <Link to="/sepet" className="text-slate-400 hover:text-primary-600 transition-colors">

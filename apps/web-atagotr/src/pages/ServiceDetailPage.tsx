@@ -119,6 +119,8 @@ export default function ServiceDetailPage() {
 
     return (
         <div className="bg-slate-50 min-h-screen">
+            <title>{service.meta_title || service.title} — Atago TR</title>
+            {service.meta_description && <meta name="description" content={service.meta_description} />}
             {/* ── Breadcrumb ── */}
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
                 <div className="flex items-center gap-2 text-xs font-medium text-slate-400">

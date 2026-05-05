@@ -243,6 +243,7 @@ export default function ProductFormPage() {
                             ...sv,
                             isVisible: !!ov.is_visible,
                             is_featured: !!ov.is_featured,
+                            hide_price: !!ov.hide_price,
                             meta_title: ov.meta_title || "",
                             meta_description: ov.meta_description || "",
                             canonical_url: ov.canonical_url || ""
@@ -404,6 +405,7 @@ export default function ProductFormPage() {
                     api.setProductSiteOverride(savedId, sv.siteId, {
                         is_visible: sv.isVisible,
                         is_featured: !!sv.is_featured,
+                        hide_price: !!sv.hide_price,
                         sort_order: parseInt(form.sort_order) || 0,
                         stock_quantity: form.stock_quantity ? parseInt(form.stock_quantity) : null,
                         meta_title: sv.meta_title || null,

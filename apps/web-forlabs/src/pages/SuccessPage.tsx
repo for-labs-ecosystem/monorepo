@@ -16,6 +16,7 @@ export default function SuccessPage() {
 
     return (
         <div className="bg-slate-50 min-h-[70vh] py-20">
+            <title>Sipariş Başarılı — For Labs</title>
             <div className="mx-auto max-w-2xl px-6 text-center">
                 <div className="mb-8 flex justify-center">
                     <div className="relative">

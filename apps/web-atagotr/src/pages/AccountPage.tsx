@@ -1321,6 +1321,7 @@ export default function AccountPage() {
 
     return (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+            <title>Hesabım — Atago TR</title>
             {/* ── Profile Header ── */}
             <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-6 mb-8">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

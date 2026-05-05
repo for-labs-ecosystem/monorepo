@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
-import { Globe, Loader2, ChevronDown, ChevronRight, Star, Menu } from "lucide-react";
+import { Globe, Loader2, ChevronDown, ChevronRight, Star, Menu, DollarSign } from "lucide-react";
 
 export interface SiteVisibility {
     siteId: number;
@@ -9,6 +9,7 @@ export interface SiteVisibility {
     domain: string;
     isVisible: boolean;
     is_featured?: boolean;
+    hide_price?: boolean;
     meta_title?: string;
     meta_description?: string;
     canonical_url?: string;
@@ -53,6 +54,7 @@ export default function SitePublisher({
                 domain: site.domain,
                 isVisible: false, // Default is not selected for new elements
                 is_featured: false,
+                hide_price: false,
                 meta_title: "",
                 meta_description: "",
                 canonical_url: "",
@@ -86,6 +88,10 @@ export default function SitePublisher({
         onChange(prev => prev.map(s => s.siteId === siteId ? { ...s, is_featured: !s.is_featured } : s));
     };
 
+    const toggleHidePrice = (siteId: number) => {
+        onChange(prev => prev.map(s => s.siteId === siteId ? { ...s, hide_price: !s.hide_price } : s));
+    };
+
     const updateField = (siteId: number, field: keyof SiteVisibility, value: string | number | null) => {
         onChange(prev => prev.map(s => s.siteId === siteId ? { ...s, [field]: value } : s));
     };
@@ -98,6 +104,7 @@ export default function SitePublisher({
                     sv={sv}
                     onToggle={() => toggleSite(sv.siteId)}
                     onToggleFeatured={() => toggleFeatured(sv.siteId)}
+                    onToggleHidePrice={() => toggleHidePrice(sv.siteId)}
                     onUpdate={(field, val) => updateField(sv.siteId, field, val)}
                     disabled={saving}
                     showNavPlacement={showNavPlacement}
@@ -112,6 +119,7 @@ function SiteCard({
     sv,
     onToggle,
     onToggleFeatured,
+    onToggleHidePrice,
     onUpdate,
     disabled,
     showNavPlacement = false,
@@ -120,6 +128,7 @@ function SiteCard({
     sv: SiteVisibility;
     onToggle: () => void;
     onToggleFeatured: () => void;
+    onToggleHidePrice: () => void;
     onUpdate: (field: keyof SiteVisibility, val: any) => void;
     disabled?: boolean;
     showNavPlacement?: boolean;
@@ -167,6 +176,21 @@ function SiteCard({
                             className={`p-1 rounded-md transition-colors ${sv.is_featured ? 'text-amber-500 bg-amber-50' : 'text-slate-300 hover:text-amber-400 hover:bg-amber-50/50'}`}
                         >
                             <Star size={14} fill={sv.is_featured ? 'currentColor' : 'none'} />
+                        </button>
+                    )}
+                    {/* Hide price toggle */}
+                    {sv.isVisible && (
+                        <button
+                            type="button"
+                            title={sv.hide_price ? "Fiyatı göster" : "Fiyatı gizle"}
+                            disabled={disabled}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onToggleHidePrice();
+                            }}
+                            className={`p-1 rounded-md transition-colors ${sv.hide_price ? 'text-rose-500 bg-rose-50' : 'text-slate-300 hover:text-emerald-500 hover:bg-emerald-50/50'}`}
+                        >
+                            <DollarSign size={14} />
                         </button>
                     )}
                     {/* Visibility toggle switch */}
